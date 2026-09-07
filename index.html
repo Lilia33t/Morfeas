@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+<title>Morfeas — Anesthesia Assistant</title>
+
+<!-- PWA / iOS standalone -->
+<meta name="theme-color" content="#F4F6F9" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Anesthesia" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="icon" type="image/png" href="icon-180.png" />
+
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background: #F4F6F9;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+    font-family: Commissioner, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  * { -webkit-user-select: none; user-select: none; }
+  input, textarea { -webkit-user-select: text; user-select: text; }
+  #root { min-height: 100vh; min-height: 100dvh; }
+  /* iOS safe-area padding at the very top/bottom */
+  #root { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); box-sizing: border-box; }
+
+  /* Splash while React boots */
+  #boot {
+    position: fixed; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px;
+    background: #F4F6F9; color: #1E3A5F; z-index: 9999;
+    transition: opacity .3s ease; font-weight: 700;
+  }
+  #boot.hide { opacity: 0; pointer-events: none; }
+  #boot svg { width: 54px; height: 54px; }
+  #boot .pulse { animation: dash 1.4s ease-in-out infinite; }
+  @keyframes dash { 0%,100% { opacity:.35 } 50% { opacity:1 } }
+</style>
+</head>
+<body>
+<div id="boot">
+  <img src="icon-512.png" alt="Morfeas" style="width:132px;height:132px;border-radius:26px;box-shadow:0 6px 24px rgba(20,37,63,.18)" />
+  <div style="font-size:13px;letter-spacing:.3px;color:#42536A;margin-top:2px">Created by Efstathia Pistioli, MD</div>
+</div>
+<div id="root"></div>
+
+<!-- React runtime (cached offline by the service worker after first load) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+
+<!-- App (pre-compiled, no in-browser Babel needed). Split into ordered
+     modules for maintainability — plain classic scripts (no bundler, no
+     ES-module import/export) so load order matters and must stay as-is. -->
+<script src="src/data.js"></script>
+<script src="src/formulas.js"></script>
+<script src="src/primitives.js"></script>
+<script src="src/tabs.js"></script>
+<script src="src/root.js"></script>
+
+<script>
+  (function () {
+    try {
+      var root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(React.createElement(ErrorBoundary, null, React.createElement(AnesthesiaAssistant)));
+      var boot = document.getElementById("boot");
+      if (boot) { boot.classList.add("hide"); setTimeout(function(){ boot.remove(); }, 350); }
+    } catch (e) {
+      document.getElementById("boot").innerHTML =
+        '<div style="padding:20px;text-align:center;color:#C9544B;font-size:14px">Σφάλμα φόρτισης.<br>Ελέγξτε τη σύνδεση και ανανεώστε.<br><br><small style="color:#8A8076">' + (e && e.message ? e.message : e) + '</small></div>';
+    }
+  })();
+
+  // Service worker for offline use
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").then(function (reg) {
+        function showUpdateBanner() {
+          if (document.getElementById("upd-banner")) return;
+          var b = document.createElement("div");
+          b.id = "upd-banner";
+          b.innerHTML = "⬆️ Νέα έκδοση διαθέσιμη — <b>πατήστε για ανανέωση</b> / New version — <b>tap to refresh</b>";
+          b.style.cssText = "position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:99999;" +
+            "background:#1E3A5F;color:#fff;padding:12px 16px;border-radius:14px;font:600 13.5px/1.4 Commissioner,system-ui,sans-serif;" +
+            "text-align:center;box-shadow:0 6px 20px rgba(20,37,63,.35);cursor:pointer";
+          b.onclick = function () { location.reload(); };
+          document.body.appendChild(b);
+        }
+        // New SW activated while an old page is in control → update ready
+        reg.addEventListener("updatefound", function () {
+          var nw = reg.installing;
+          if (!nw) return;
+          nw.addEventListener("statechange", function () {
+            if (nw.state === "activated" && navigator.serviceWorker.controller) showUpdateBanner();
+          });
+        });
+        // Re-check for updates when the app is reopened / brought to foreground
+        document.addEventListener("visibilitychange", function () {
+          if (!document.hidden) reg.update().catch(function () {});
+        });
+        setInterval(function () { reg.update().catch(function () {}); }, 60 * 60 * 1000);
+      }).catch(function (err) {
+        console.warn("SW registration failed:", err);
+      });
+    });
+  }
+</script>
+</body>
+</html>
