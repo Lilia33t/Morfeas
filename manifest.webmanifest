@@ -1,0 +1,41 @@
+{
+  "name": "Morfeas — Anesthesia Assistant",
+  "short_name": "Morfeas",
+  "description": "Περιεγχειρητικό εργαλείο υποστήριξης — δόσεις, TCI, κλίμακες, αερισμός, επείγοντα. © 2026 Efstathia Pistioli, MD. All rights reserved.",
+  "author": "Efstathia Pistioli, MD",
+  "copyright": "© 2026 Efstathia Pistioli, MD. All rights reserved.",
+  "lang": "el",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2E3A1F",
+  "theme_color": "#F4F6F9",
+  "icons": [
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
