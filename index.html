@@ -52,28 +52,8 @@
 <div id="root"></div>
 
 <!-- React runtime (cached offline by the service worker after first load) -->
-<!-- React: prefer a local copy so the app is genuinely offline-capable.
-     Falls back to the CDN if vendor/ is not present. To go fully offline,
-     download these two files into vendor/:
-       https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js
-       https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js -->
-<script>
-  (function () {
-    var CDN = "https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/";
-    function load(src, cb) {
-      var s = document.createElement("script");
-      s.src = src; s.async = false;
-      s.onload = cb; s.onerror = function () { cb(new Error(src)); };
-      document.head.appendChild(s);
-    }
-    load("vendor/react.production.min.js", function (err) {
-      if (err) load(CDN + "react.production.min.js", function () {});
-      load("vendor/react-dom.production.min.js", function (err2) {
-        if (err2) load(CDN + "react-dom.production.min.js", function () {});
-      });
-    });
-  })();
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 
 <!-- App (pre-compiled, no in-browser Babel needed). Split into ordered
      modules for maintainability — plain classic scripts (no bundler, no
