@@ -1,9 +1,7 @@
 // Morfeas — service worker
 // Bump CACHE whenever anything in APP_SHELL changes, to force an update.
-const CACHE = "anesthesia-v77";
+const CACHE = "anesthesia-v78";
 
-// React is loaded from vendor/ when present (fully offline) and from the CDN
-// otherwise. Both are listed so whichever one the page actually uses is cached.
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -18,8 +16,6 @@ const APP_SHELL = [
   "./icon-192.png",
   "./icon-512.png",
   "./icon-512-maskable.png",
-  "./vendor/react.production.min.js",
-  "./vendor/react-dom.production.min.js",
 ];
 
 // Remote assets are best-effort: they must never block install.
@@ -90,7 +86,7 @@ self.addEventListener("fetch", (event) => {
       }
       return res;
     } catch (e) {
-      // Last resort for scripts: a same-named local/vendor copy if one exists.
+      // Last resort: a copy stored under the plain URL string.
       const alt = await caches.match(req.url, MATCH);
       if (alt) return alt;
       throw e;
