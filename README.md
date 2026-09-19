@@ -40,6 +40,7 @@ Then:
 
 ## Known gaps
 
-- 53 of 81 drug entries have no verified citation. They are mostly standard
-  agents (volatiles, opioids, relaxants), but they have not been checked against
-  a primary source.
+All 81 drug entries now carry a source line in both languages, enforced by a
+test. The depth of checking varies: dose ranges, ceilings and the major
+warnings were verified against the SmPC or the named guideline, but not every
+secondary detail in the notes was re-derived from source.

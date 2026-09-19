@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="Anesthesia" />
+<meta name="apple-mobile-web-app-title" content="Morfeas" />
 <meta name="format-detection" content="telephone=no" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon-180.png" />
@@ -39,6 +39,11 @@
     transition: opacity .3s ease; font-weight: 700;
   }
   #boot.hide { opacity: 0; pointer-events: none; }
+  /* the splash is painted before React runs, so it needs its own dark variant */
+  @media (prefers-color-scheme: dark) {
+    html, body { background: #11161C; }
+    #boot { background: #11161C; color: #E6EDF5; }
+  }
   #boot svg { width: 54px; height: 54px; }
   #boot .pulse { animation: dash 1.4s ease-in-out infinite; }
   @keyframes dash { 0%,100% { opacity:.35 } 50% { opacity:1 } }

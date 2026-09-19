@@ -1,6 +1,6 @@
 // Morfeas — service worker
 // Bump CACHE whenever anything in APP_SHELL changes, to force an update.
-const CACHE = "anesthesia-v166";
+const CACHE = "anesthesia-v189";
 
 const APP_SHELL = [
   "./",
@@ -30,9 +30,17 @@ const REMOTE = [
 // was the actual offline failure.
 const MATCH = { ignoreVary: true };
 
+// cache.add() uses a normal fetch, which may be served from the browser's own
+// HTTP cache. Bumping CACHE would then install stale scripts and the update
+// would never reach the user. "reload" forces a trip to the network.
+function fresh(u) {
+  return new Request(u, { cache: "reload" });
+}
+
 async function fillCache() {
   const cache = await caches.open(CACHE);
-  await Promise.allSettled(APP_SHELL.map((u) => cache.add(u)));
+  await Promise.allSettled(APP_SHELL.map((u) => cache.add(fresh(u))));
+  // Cross-origin URLs cannot use "reload" with a plain Request, so add them as-is.
   await Promise.allSettled(REMOTE.map((u) => cache.add(u)));
 }
 
@@ -51,7 +59,9 @@ self.addEventListener("activate", (event) => {
     for (const u of APP_SHELL.concat(REMOTE)) {
       if (!(await cache.match(u, MATCH))) missing.push(u);
     }
-    await Promise.allSettled(missing.map((u) => cache.add(u)));
+    await Promise.allSettled(
+      missing.map((u) => cache.add(u.startsWith("http") ? u : fresh(u)))
+    );
     await self.clients.claim();
   })());
 });
