@@ -429,6 +429,44 @@ check(
   check("every drug cites a source in both languages", missing, "");
 }
 
+// --- Renal function -----------------------------------------------------------
+// Cockcroft-Gault (drug dosing) and CKD-EPI 2021 (staging) must not drift, and
+// must stay distinct from each other.
+check("CG 60 y M 70 kg SCr 1.0 mg/dL", Math.round(run("crclCG(60, 70, 1.0, 'M')") * 10) / 10, 77.8);
+check("CG female factor 0.85", Math.round(run("crclCG(60, 70, 1.0, 'F')") * 10) / 10, 66.1);
+check("CG 70 y M 70 kg SCr 2.0", Math.round(run("crclCG(70, 70, 2.0, 'M')")), 34);
+check("CKD-EPI 2021, 50 y M SCr 1.0", Math.round(run("egfrCKDEPI2021(50, 1.0, 'M')")), 92);
+check("CKD-EPI 2021, 70 y M SCr 2.0", Math.round(run("egfrCKDEPI2021(70, 2.0, 'M')")), 35);
+check("CKD stage G3b at eGFR 35", run("ckdStage(35)"), "G3b");
+check("CKD stage boundary 60 -> G2", run("ckdStage(60)"), "G2");
+check("CKD stage boundary 59.9 -> G3a", run("ckdStage(59.9)"), "G3a");
+check("creatinine 88.4 umol/L = 1.0 mg/dL", Math.round(run("scrToMgdl(88.4, 'umol')") * 100) / 100, 1);
+check("CG returns null without age", run("crclCG(0, 70, 1.0, 'M')"), null);
+
+// --- Mechanical thrombectomy protocol -------------------------------------------
+// Departmental protocol (Attikon, clinical editing E. Ktorou). The BP targets
+// are the numbers most likely to be misread, so lock them.
+{
+  const all = run("JSON.stringify(THROMBECTOMY)");
+  check("thrombectomy: three tabs", run("THROMBECTOMY.length"), 3);
+  check("thrombectomy: intra-op SBP 140-180", /140\u2013180/.test(all), true);
+  check("thrombectomy: MAP >= 70", /\u2265 70/.test(all), true);
+  check("thrombectomy: post-reperfusion SBP 130-160", /130\u2013160/.test(all), true);
+  check("thrombectomy: every item has EL and EN",
+    run("THROMBECTOMY.every(function(t){return t.secs.every(function(s){return s.items.every(function(i){return i.el && i.en;});});})"), true);
+  const refStart2 = src.indexOf("function ReferencesCard");
+  const refBody2 = src.slice(refStart2, src.indexOf("\nfunction ", refStart2 + 10));
+  check("thrombectomy protocol credited in the bibliography", /Ktorou/.test(refBody2), true);
+}
+
+// --- Fick cardiac output -------------------------------------------------------
+check("BSA Mosteller 170 cm 70 kg", Math.round(run("bsaMosteller(170, 70)") * 100) / 100, 1.82);
+check("CaO2 Hb 15 SaO2 98 PaO2 95", Math.round(run("o2Content(15, 98, 95)") * 10) / 10, 20);
+check("CvO2 Hb 12 SvO2 60", Math.round(run("o2Content(12, 60, 0)") * 100) / 100, 9.65);
+check("Fick CO: VO2 227, CaO2 15.76, CvO2 9.65", Math.round(run("fickCO(227.4, o2Content(12,98,0), o2Content(12,60,0))") * 100) / 100, 3.72);
+check("Fick CO: venous >= arterial returns null", run("fickCO(250, o2Content(12,80,0), o2Content(12,85,0))"), null);
+check("Fick CO: no VO2 returns null", run("fickCO(0, 20, 15)"), null);
+
 // --- Report -----------------------------------------------------------------
 console.log(`\n${pass} passed, ${fail} failed (${pass + fail} total)`);
 if (failures.length) {
