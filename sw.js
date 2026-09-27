@@ -1,6 +1,6 @@
 // Morfeas — service worker
 // Bump CACHE whenever anything in APP_SHELL changes, to force an update.
-const CACHE = "anesthesia-v205";
+const CACHE = "anesthesia-v223";
 
 const APP_SHELL = [
   "./",
