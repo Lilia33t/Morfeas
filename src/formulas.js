@@ -167,7 +167,7 @@ const covLabel = { w: { el: "\u0392\u03AC\u03C1\u03BF\u03C2", en: "Weight" }, h:
 const T = {
   el: {
     appName: "Morfeas",
-    tabs: { meds: "\u03A6\u03AC\u03C1\u03BC\u03B1\u03BA\u03B1", tci: "TCI", tools: "\u0395\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03B1", peds: "\u03A0\u03B1\u03B9\u03B4\u03B9\u03AC", lists: "\u039B\u03AF\u03C3\u03C4\u03B5\u03C2" },
+    tabs: { meds: "\u03A6\u03AC\u03C1\u03BC\u03B1\u03BA\u03B1", tci: "TCI", tools: "\u0395\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03B1", peds: "\u03A0\u03B1\u03B9\u03B4\u03B9\u03AC", lists: "\u039B\u03AF\u03C3\u03C4\u03B5\u03C2", about: "\u03A3\u03C7\u03B5\u03C4\u03B9\u03BA\u03AC" },
     patient: "\u0391\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2",
     weight: "\u0392\u03AC\u03C1\u03BF\u03C2 (kg)",
     age: "\u0397\u03BB\u03B9\u03BA\u03AF\u03B1 (\u03AD\u03C4\u03B7)",
@@ -192,7 +192,7 @@ const T = {
   },
   en: {
     appName: "Morfeas",
-    tabs: { meds: "Meds", tci: "TCI", tools: "Tools", peds: "Peds", lists: "Lists" },
+    tabs: { meds: "Meds", tci: "TCI", tools: "Tools", peds: "Peds", lists: "Lists", about: "About" },
     patient: "Patient",
     weight: "Weight (kg)",
     age: "Age (years)",

@@ -1153,7 +1153,7 @@ const CL_CATS = [
 const CHECKLISTS = [
   // ---------- ACLS ----------
   {
-    id: "vfvt",
+    id: "vfvt", srcEl: "ERC 2021 (Resuscitation 2021;161:115\u201351) \u00B7 AHA ACLS", srcEn: "ERC 2021 (Resuscitation 2021;161:115\u201351) \u00B7 AHA ACLS",
     cat: "acls",
     titleEl: "\u039A\u03BF\u03B9\u03BB\u03B9\u03B1\u03BA\u03AE \u039C\u03B1\u03C1\u03BC\u03B1\u03C1\u03C5\u03B3\u03AE / \u03A4\u03B1\u03C7\u03C5\u03BA\u03B1\u03C1\u03B4\u03AF\u03B1 (VF/VT)",
     titleEn: "VF / Pulseless VT (Shockable)",
@@ -1182,7 +1182,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "asystole_pea",
+    id: "asystole_pea", srcEl: "ERC 2021 \u00B7 AHA ACLS", srcEn: "ERC 2021 \u00B7 AHA ACLS",
     cat: "acls",
     titleEl: "\u0391\u03C3\u03C5\u03C3\u03C4\u03BF\u03BB\u03AF\u03B1 / PEA (\u03BC\u03B7-\u03B1\u03C0\u03B9\u03BD\u03B9\u03B4\u03CE\u03C3\u03B9\u03BC\u03BF\u03C2)",
     titleEn: "Asystole / PEA (Non-Shockable)",
@@ -1209,7 +1209,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "brady",
+    id: "brady", srcEl: "ERC 2021 \u00B7 AHA ACLS \u00B7 ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ERC 2021 \u00B7 AHA ACLS \u00B7 ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "acls",
     titleEl: "\u0391\u03C3\u03C4\u03B1\u03B8\u03AE\u03C2 \u0392\u03C1\u03B1\u03B4\u03C5\u03BA\u03B1\u03C1\u03B4\u03AF\u03B1",
     titleEn: "Unstable Bradycardia",
@@ -1232,7 +1232,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "svt_stable",
+    id: "svt_stable", srcEl: "ERC 2021 \u00B7 AHA ACLS", srcEn: "ERC 2021 \u00B7 AHA ACLS",
     cat: "acls",
     titleEl: "\u03A3\u03C4\u03B1\u03B8\u03B5\u03C1\u03AE \u03A4\u03B1\u03C7\u03C5\u03BA\u03B1\u03C1\u03B4\u03AF\u03B1 (SVT)",
     titleEn: "Stable Tachycardia (SVT)",
@@ -1257,7 +1257,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "svt_unstable",
+    id: "svt_unstable", srcEl: "ERC 2021 \u00B7 AHA ACLS \u00B7 ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ERC 2021 \u00B7 AHA ACLS \u00B7 ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "acls",
     titleEl: "\u0391\u03C3\u03C4\u03B1\u03B8\u03AE\u03C2 \u03A4\u03B1\u03C7\u03C5\u03BA\u03B1\u03C1\u03B4\u03AF\u03B1",
     titleEn: "Unstable Tachycardia",
@@ -1283,7 +1283,7 @@ const CHECKLISTS = [
   },
   // ---------- AIRWAY / BREATHING ----------
   {
-    id: "difficult_airway",
+    id: "difficult_airway", srcEl: "DAS 2025 (Br J Anaesth 2026;136:283\u2013307)", srcEn: "DAS 2025 (Br J Anaesth 2026;136:283\u2013307)",
     cat: "airway",
     titleEl: "\u0394\u03CD\u03C3\u03BA\u03BF\u03BB\u03B7 \u0394\u03B9\u03B1\u03C3\u03C9\u03BB\u03AE\u03BD\u03C9\u03C3\u03B7 \u2014 DAS 2025 (Plan A\u2013D)",
     titleEn: "Difficult Intubation \u2014 DAS 2025 (Plan A\u2013D)",
@@ -1338,7 +1338,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "das_ati",
+    id: "das_ati", srcEl: "DAS 2019 \u2014 awake tracheal intubation", srcEn: "DAS 2019 \u2014 awake tracheal intubation",
     cat: "airway",
     titleEl: "\u039E\u03CD\u03C0\u03BD\u03B9\u03B1 \u0394\u03B9\u03B1\u03C3\u03C9\u03BB\u03AE\u03BD\u03C9\u03C3\u03B7 (ATI) \u2014 DAS 2020",
     titleEn: "Awake Tracheal Intubation (ATI) \u2014 DAS 2020",
@@ -1377,7 +1377,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "das_extubation",
+    id: "das_extubation", srcEl: "DAS 2012 \u2014 tracheal extubation", srcEn: "DAS 2012 \u2014 tracheal extubation",
     cat: "airway",
     titleEl: "\u0391\u03C0\u03BF\u03B4\u03B9\u03B1\u03C3\u03C9\u03BB\u03AE\u03BD\u03C9\u03C3\u03B7 \u2014 DAS 2012",
     titleEn: "Tracheal Extubation \u2014 DAS 2012",
@@ -1410,7 +1410,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "laryngospasm",
+    id: "laryngospasm", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "airway",
     titleEl: "\u039B\u03B1\u03C1\u03C5\u03B3\u03B3\u03CC\u03C3\u03C0\u03B1\u03C3\u03BC\u03BF\u03C2",
     titleEn: "Laryngospasm",
@@ -1435,7 +1435,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "bronchospasm",
+    id: "bronchospasm", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019 \u00B7 BTS/SIGN 158", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019 \u00B7 BTS/SIGN 158",
     cat: "airway",
     titleEl: "\u0392\u03C1\u03BF\u03B3\u03C7\u03CC\u03C3\u03C0\u03B1\u03C3\u03BC\u03BF\u03C2",
     titleEn: "Bronchospasm",
@@ -1458,7 +1458,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "hypoxemia",
+    id: "hypoxemia", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "airway",
     titleEl: "\u03A5\u03C0\u03BF\u03BE\u03B1\u03B9\u03BC\u03AF\u03B1 (\u03B4\u03B9\u03B1\u03C6\u03BF\u03C1\u03B9\u03BA\u03AE)",
     titleEn: "Hypoxemia (Differential)",
@@ -1483,7 +1483,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "aspiration",
+    id: "aspiration", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "airway",
     titleEl: "\u0395\u03B9\u03C3\u03C1\u03CC\u03C6\u03B7\u03C3\u03B7",
     titleEn: "Aspiration",
@@ -1508,7 +1508,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "pneumothorax",
+    id: "pneumothorax", srcEl: "ATLS 10th edition", srcEn: "ATLS 10th edition",
     cat: "airway",
     titleEl: "\u03A0\u03BD\u03B5\u03C5\u03BC\u03BF\u03B8\u03CE\u03C1\u03B1\u03BA\u03B1\u03C2 \u03C5\u03C0\u03CC \u03A4\u03AC\u03C3\u03B7",
     titleEn: "Tension Pneumothorax",
@@ -1531,7 +1531,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "scoop",
+    id: "scoop", srcEl: "DAS 2025 \u2014 emergency front-of-neck airway", srcEn: "DAS 2025 \u2014 emergency front-of-neck airway",
     cat: "airway",
     titleEl: "\u0391\u03B9\u03BC\u03AC\u03C4\u03C9\u03BC\u03B1 \u03BC\u03B5\u03C4\u03AC \u0398\u03C5\u03C1\u03B5\u03BF\u03B5\u03B9\u03B4\u03B5\u03BA\u03C4\u03BF\u03BC\u03AE (SCOOP)",
     titleEn: "Post-Thyroidectomy Haematoma (SCOOP)",
@@ -1577,7 +1577,7 @@ const CHECKLISTS = [
   },
   // ---------- CIRCULATION ----------
   {
-    id: "hypotension",
+    id: "hypotension", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "circ",
     titleEl: "\u0394\u03B9\u03B5\u03B3\u03C7\u03B5\u03B9\u03C1\u03B7\u03C4\u03B9\u03BA\u03AE \u03A5\u03C0\u03CC\u03C4\u03B1\u03C3\u03B7 (\u03B4\u03B9\u03B1\u03C6\u03BF\u03C1\u03B9\u03BA\u03AE)",
     titleEn: "Intraoperative Hypotension (Differential)",
@@ -1602,7 +1602,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "hemorrhage",
+    id: "hemorrhage", srcEl: "Kietaibl S \u03BA.\u03AC., Eur J Anaesthesiol 2023;40:226\u2013304 \u00B7 Rossaint R \u03BA.\u03AC., Crit Care 2023;27:80", srcEn: "Kietaibl S, et al., Eur J Anaesthesiol 2023;40:226\u2013304 \u00B7 Rossaint R, et al., Crit Care 2023;27:80",
     cat: "circ",
     titleEl: "\u039C\u03B1\u03B6\u03B9\u03BA\u03AE \u0391\u03B9\u03BC\u03BF\u03C1\u03C1\u03B1\u03B3\u03AF\u03B1 / \u03A0\u03C1\u03C9\u03C4\u03CC\u03BA\u03BF\u03BB\u03BB\u03BF \u039C\u03B5\u03C4\u03AC\u03B3\u03B3\u03B9\u03C3\u03B7\u03C2",
     titleEn: "Massive Hemorrhage / Transfusion Protocol",
@@ -1627,7 +1627,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "ischemia",
+    id: "ischemia", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "circ",
     titleEl: "\u039C\u03C5\u03BF\u03BA\u03B1\u03C1\u03B4\u03B9\u03B1\u03BA\u03AE \u0399\u03C3\u03C7\u03B1\u03B9\u03BC\u03AF\u03B1",
     titleEn: "Myocardial Ischemia",
@@ -1652,7 +1652,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "vae",
+    id: "vae", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "circ",
     titleEl: "\u03A6\u03BB\u03B5\u03B2\u03B9\u03BA\u03AE \u0395\u03BC\u03B2\u03BF\u03BB\u03AE \u0391\u03AD\u03C1\u03B1",
     titleEn: "Venous Air Embolism",
@@ -1678,7 +1678,7 @@ const CHECKLISTS = [
   },
   // ---------- DRUG / ALLERGY ----------
   {
-    id: "anaphylaxis",
+    id: "anaphylaxis", srcEl: "Resuscitation Council UK 2021 \u00B7 Dodd A \u03BA.\u03AC., Anaesthesia 2024", srcEn: "Resuscitation Council UK 2021 \u00B7 Dodd A, et al., Anaesthesia 2024",
     cat: "drug",
     titleEl: "\u0391\u03BD\u03B1\u03C6\u03C5\u03BB\u03B1\u03BE\u03AF\u03B1",
     titleEn: "Anaphylaxis",
@@ -1711,7 +1711,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "last",
+    id: "last", srcEl: "Neal JM \u03BA.\u03AC., Reg Anesth Pain Med 2021;46:81\u20132 (ASRA LAST 2020)", srcEn: "Neal JM, et al., Reg Anesth Pain Med 2021;46:81\u20132 (ASRA LAST 2020)",
     cat: "drug",
     titleEl: "\u03A4\u03BF\u03BE\u03B9\u03BA\u03CC\u03C4\u03B7\u03C4\u03B1 \u03A4\u03BF\u03C0\u03B9\u03BA\u03CE\u03BD \u0391\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C4\u03B9\u03BA\u03CE\u03BD (LAST)",
     titleEn: "Local Anesthetic Toxicity (LAST)",
@@ -1738,7 +1738,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "mh",
+    id: "mh", srcEl: "MHAUS \u00B7 ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "MHAUS \u00B7 ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "drug",
     titleEl: "\u039A\u03B1\u03BA\u03BF\u03AE\u03B8\u03B7\u03C2 \u03A5\u03C0\u03B5\u03C1\u03C0\u03C5\u03C1\u03B5\u03BE\u03AF\u03B1",
     titleEn: "Malignant Hyperthermia",
@@ -1765,7 +1765,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "transfusion",
+    id: "transfusion", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "drug",
     titleEl: "\u0391\u03BD\u03C4\u03AF\u03B4\u03C1\u03B1\u03C3\u03B7 \u039C\u03B5\u03C4\u03AC\u03B3\u03B3\u03B9\u03C3\u03B7\u03C2",
     titleEn: "Transfusion Reaction",
@@ -1791,7 +1791,7 @@ const CHECKLISTS = [
   },
   // ---------- REGIONAL ----------
   {
-    id: "total_spinal",
+    id: "total_spinal", srcEl: "ASRA \u00B7 OAA \u2014 \u03BF\u03BB\u03B9\u03BA\u03CC\u03C2 \u03C1\u03B1\u03C7\u03B9\u03B1\u03AF\u03BF\u03C2 \u03B1\u03C0\u03BF\u03BA\u03BB\u03B5\u03B9\u03C3\u03BC\u03CC\u03C2", srcEn: "ASRA \u00B7 OAA \u2014 total spinal",
     cat: "regional",
     titleEl: "\u039F\u03BB\u03B9\u03BA\u03AE \u03A1\u03B1\u03C7\u03B9\u03B1\u03AF\u03B1 \u0391\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03AF\u03B1",
     titleEn: "Total Spinal Anesthesia",
@@ -1817,7 +1817,7 @@ const CHECKLISTS = [
   },
   // ---------- OBSTETRIC ----------
   {
-    id: "afe",
+    id: "afe", srcEl: "RCOG \u00B7 OAA \u2014 \u03B5\u03BC\u03B2\u03BF\u03BB\u03AE \u03B1\u03BC\u03BD\u03B9\u03B1\u03BA\u03BF\u03CD \u03C5\u03B3\u03C1\u03BF\u03CD", srcEn: "RCOG \u00B7 OAA \u2014 amniotic fluid embolism",
     cat: "ob",
     titleEl: "\u0395\u03BC\u03B2\u03BF\u03BB\u03AE \u0391\u03BC\u03BD\u03B9\u03B1\u03BA\u03BF\u03CD \u03A5\u03B3\u03C1\u03BF\u03CD",
     titleEn: "Amniotic Fluid Embolism",
@@ -1843,7 +1843,7 @@ const CHECKLISTS = [
   },
   // ---------- SYSTEMS ----------
   {
-    id: "or_fire",
+    id: "or_fire", srcEl: "APSF \u00B7 ECRI \u2014 \u03C0\u03C5\u03C1\u03BA\u03B1\u03B3\u03B9\u03AC \u03C3\u03C4\u03BF \u03C7\u03B5\u03B9\u03C1\u03BF\u03C5\u03C1\u03B3\u03B5\u03AF\u03BF", srcEn: "APSF \u00B7 ECRI \u2014 operating room fire",
     cat: "system",
     titleEl: "\u03A0\u03C5\u03C1\u03BA\u03B1\u03B3\u03B9\u03AC \u03A7\u03B5\u03B9\u03C1\u03BF\u03C5\u03C1\u03B3\u03B5\u03AF\u03BF\u03C5 / \u0391\u03B5\u03C1\u03B1\u03B3\u03C9\u03B3\u03BF\u03CD",
     titleEn: "OR / Airway Fire",
@@ -1866,7 +1866,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "o2_failure",
+    id: "o2_failure", srcEl: "AAGBI \u2014 Quick Reference Handbook", srcEn: "Association of Anaesthetists \u2014 Quick Reference Handbook",
     cat: "system",
     titleEl: "\u0394\u03B9\u03B1\u03BA\u03BF\u03C0\u03AE \u03A0\u03B1\u03C1\u03BF\u03C7\u03AE\u03C2 \u039F\u03BE\u03C5\u03B3\u03CC\u03BD\u03BF\u03C5",
     titleEn: "Oxygen Supply / Pipeline Failure",
@@ -1889,7 +1889,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "power_failure",
+    id: "power_failure", srcEl: "AAGBI \u2014 Quick Reference Handbook", srcEn: "Association of Anaesthetists \u2014 Quick Reference Handbook",
     cat: "system",
     titleEl: "\u0394\u03B9\u03B1\u03BA\u03BF\u03C0\u03AE \u03A1\u03B5\u03CD\u03BC\u03B1\u03C4\u03BF\u03C2",
     titleEn: "Power Failure",
@@ -1912,7 +1912,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "delayed_emergence",
+    id: "delayed_emergence", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "system",
     titleEl: "\u039A\u03B1\u03B8\u03C5\u03C3\u03C4\u03B5\u03C1\u03B7\u03BC\u03AD\u03BD\u03B7 \u0391\u03C6\u03CD\u03C0\u03BD\u03B9\u03C3\u03B7",
     titleEn: "Delayed Emergence",
@@ -1936,7 +1936,7 @@ const CHECKLISTS = [
   },
   // ---------- PROCEDURES ----------
   {
-    id: "rsi",
+    id: "rsi", srcEl: "DAS 2025 \u00B7 ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "DAS 2025 \u00B7 ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "proc",
     titleEl: "\u03A4\u03B1\u03C7\u03B5\u03AF\u03B1 \u0395\u03B9\u03C3\u03B1\u03B3\u03C9\u03B3\u03AE (RSI)",
     titleEn: "Rapid Sequence Induction",
@@ -1964,7 +1964,7 @@ const CHECKLISTS = [
   },
   // ---------- Missing from ESA Emergency Quick Reference Guide ----------
   {
-    id: "newborn",
+    id: "newborn", srcEl: "ERC 2021 \u2014 newborn life support \u00B7 ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ERC 2021 \u2014 newborn life support \u00B7 ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "ob",
     titleEl: "\u0391\u03BD\u03AC\u03BD\u03B7\u03C8\u03B7 \u039D\u03B5\u03BF\u03B3\u03BD\u03BF\u03CD (Newborn Life Support)",
     titleEn: "Newborn Life Support",
@@ -1993,7 +1993,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "airway_pressure",
+    id: "airway_pressure", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "airway",
     titleEl: "\u0391\u03C5\u03BE\u03B7\u03BC\u03AD\u03BD\u03B7 \u03A0\u03AF\u03B5\u03C3\u03B7 \u0391\u03B5\u03C1\u03B1\u03B3\u03C9\u03B3\u03BF\u03CD (\u0394\u03B9\u03B1\u03C6\u03BF\u03C1\u03B9\u03BA\u03AE)",
     titleEn: "Increased Airway Pressure (Differential)",
@@ -2018,7 +2018,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "hypocapnia",
+    id: "hypocapnia", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "airway",
     titleEl: "\u0394\u03B9\u03B1\u03C6\u03BF\u03C1\u03B9\u03BA\u03AE: \u03A5\u03C0\u03BF\u03BA\u03B1\u03C0\u03BD\u03AF\u03B1 / \u03A7\u03B1\u03BC\u03B7\u03BB\u03CC etCO\u2082",
     titleEn: "DDx Hypocapnia / Low etCO\u2082",
@@ -2043,7 +2043,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "hypercapnia",
+    id: "hypercapnia", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "airway",
     titleEl: "\u0394\u03B9\u03B1\u03C6\u03BF\u03C1\u03B9\u03BA\u03AE: \u03A5\u03C0\u03B5\u03C1\u03BA\u03B1\u03C0\u03BD\u03AF\u03B1 / \u03A5\u03C8\u03B7\u03BB\u03CC etCO\u2082",
     titleEn: "DDx Hypercapnia / High etCO\u2082",
@@ -2064,7 +2064,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "lv_shock",
+    id: "lv_shock", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019 \u00B7 Moitra VK \u03BA.\u03AC., Can J Anesth 2012;59:586\u2013603", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019 \u00B7 Moitra VK, et al., Can J Anesth 2012;59:586\u2013603",
     cat: "circ",
     titleEl: "\u039A\u03B1\u03C4\u03B1\u03C0\u03BB\u03B7\u03BE\u03AF\u03B1 \u0391\u03C1\u03B9\u03C3\u03C4\u03B5\u03C1\u03AE\u03C2 \u039A\u03BF\u03B9\u03BB\u03AF\u03B1\u03C2 (LV Shock)",
     titleEn: "Left Ventricular Shock",
@@ -2093,7 +2093,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "rv_shock",
+    id: "rv_shock", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019 \u00B7 Moitra VK \u03BA.\u03AC., Can J Anesth 2012;59:586\u2013603", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019 \u00B7 Moitra VK, et al., Can J Anesth 2012;59:586\u2013603",
     cat: "circ",
     titleEl: "\u039A\u03B1\u03C4\u03B1\u03C0\u03BB\u03B7\u03BE\u03AF\u03B1 \u0394\u03B5\u03BE\u03B9\u03AC\u03C2 \u039A\u03BF\u03B9\u03BB\u03AF\u03B1\u03C2 (RV Shock)",
     titleEn: "Right Ventricular Shock",
@@ -2118,7 +2118,7 @@ const CHECKLISTS = [
     ]
   },
   {
-    id: "hypertension_ddx",
+    id: "hypertension_ddx", srcEl: "ESA/EBA Emergency Quick Reference Guide 2019", srcEn: "ESA/EBA Emergency Quick Reference Guide 2019",
     cat: "circ",
     titleEl: "\u0394\u03B9\u03B1\u03C6\u03BF\u03C1\u03B9\u03BA\u03AE: \u03A5\u03C0\u03AD\u03C1\u03C4\u03B1\u03C3\u03B7",
     titleEn: "DDx Hypertension",

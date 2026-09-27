@@ -514,6 +514,26 @@ check("peds: naloxone BNFc 1 mcg/kg present alongside the protocol dose", /BNFc 
     run("ANTICOAG.every(function(x){return x.name && x.nameEn && x.stopEl && x.stopEn && x.restartEl && x.restartEn;})"), true);
 }
 
+// --- About card -----------------------------------------------------------------
+// The guidelines list and the bibliography now live inside About; neither may be
+// dropped when that card is edited.
+check("about: card exists", typeof run("AboutCard"), "function");
+check("about: guidelines still reachable", typeof run("GuidelinesList"), "function");
+check("about: bibliography still reachable", typeof run("ReferencesCard"), "function");
+check("about: the two old tools are gone",
+  run("TOOL_SECTIONS.filter(function(s){return s.id === 'guidelines' || s.id === 'refs';}).length"), 0);
+check("about: it is a bottom tab, not a tool", run("TOOL_SECTIONS.filter(function(s){return s.id === 'about';}).length"), 0);
+check("about: the tab label exists in both languages", !!(run("T.el.tabs.about") && run("T.en.tabs.about")), true);
+
+// --- Checklist sources ----------------------------------------------------------
+// Every crisis checklist must name the guideline its steps come from, in both
+// languages — the checklists are what gets used under pressure.
+check("every checklist cites a source in both languages",
+  run("CHECKLISTS.filter(function(c){ return !(c.srcEl && c.srcEn); }).map(function(c){ return c.id; }).join(', ')"), "");
+
+check("every risk scale cites a source",
+  run("SCORES.filter(function(s){ return !(s.src && s.src.length > 3); }).map(function(s){ return s.id; }).join(', ')"), "");
+
 // --- Report -----------------------------------------------------------------
 console.log(`\n${pass} passed, ${fail} failed (${pass + fail} total)`);
 if (failures.length) {

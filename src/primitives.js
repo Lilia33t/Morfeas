@@ -286,7 +286,7 @@ function ChecklistTab({ lang, focus }) {
       fontSize: 13,
       cursor: "pointer",
       fontFamily: "inherit"
-    } }, "\u21BA ", lang === "el" ? "\u0395\u03C0\u03B1\u03BD\u03B1\u03C6\u03BF\u03C1\u03AC" : "Reset")));
+    } }, "\u21BA ", lang === "el" ? "\u0395\u03C0\u03B1\u03BD\u03B1\u03C6\u03BF\u03C1\u03AC" : "Reset"), c.srcEl && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: S.muted, fontWeight: 600, lineHeight: 1.45, marginTop: 4, paddingTop: 6, borderTop: "1px solid " + S.line } }, (lang === "el" ? "\u03A0\u03B7\u03B3\u03AE: " : "Source: ") + (lang === "el" ? c.srcEl : c.srcEn))));
   }));
 }
 function TCITab({ lang, weight, age, height, sex }) {
@@ -582,7 +582,7 @@ const EBV_CATS = [
 ];
 const SCORES = [
   {
-    id: "apfel",
+    id: "apfel", src: "Apfel CC, L\u00E4\u00E4r\u00E4 E, Koivuranta M, Greim CA, Roewer N. A simplified risk score for predicting postoperative nausea and vomiting. Anesthesiology 1999;91:693\u2013700. doi:10.1097/00000542-199909000-00022",
     name: "Apfel (PONV)",
     items: [
       { el: "\u0393\u03C5\u03BD\u03B1\u03B9\u03BA\u03B5\u03AF\u03BF \u03C6\u03CD\u03BB\u03BF", en: "Female sex", auto: (p) => p.s === "F" },
@@ -601,7 +601,7 @@ const SCORES = [
     }
   },
   {
-    id: "stopbang",
+    id: "stopbang", src: "Chung F, Yegneswaran B, Liao P, \u03BA.\u03AC. STOP questionnaire: a tool to screen patients for obstructive sleep apnea. Anesthesiology 2008;108:812\u201321. doi:10.1097/ALN.0b013e31816d83e4 \u00B7 Chung F \u03BA.\u03AC., Br J Anaesth 2012;108:768\u201375 (\u03C5\u03C8\u03B7\u03BB\u03CC \u03C3\u03BA\u03BF\u03C1 = \u03C5\u03C8\u03B7\u03BB\u03AE \u03C0\u03B9\u03B8\u03B1\u03BD\u03CC\u03C4\u03B7\u03C4\u03B1 \u0391\u0391\u03A5)",
     name: "STOP-BANG (OSA)",
     items: [
       { el: "\u03A1\u03BF\u03C7\u03B1\u03BB\u03B7\u03C4\u03CC (\u03B4\u03C5\u03BD\u03B1\u03C4\u03CC)", en: "Snoring (loud)", auto: null },
@@ -623,7 +623,7 @@ const SCORES = [
     }
   },
   {
-    id: "rcri",
+    id: "rcri", src: "Lee TH, Marcantonio ER, Mangione CM, \u03BA.\u03AC. Derivation and prospective validation of a simple index for prediction of cardiac risk of major noncardiac surgery. Circulation 1999;100:1043\u20139",
     name: "RCRI (Lee)",
     items: [
       { el: "\u0395\u03C0\u03AD\u03BC\u03B2\u03B1\u03C3\u03B7 \u03C5\u03C8\u03B7\u03BB\u03BF\u03CD \u03BA\u03B9\u03BD\u03B4\u03CD\u03BD\u03BF\u03C5 (\u03B5\u03BD\u03B4\u03BF\u03B8\u03C9\u03C1\u03B1\u03BA\u03B9\u03BA\u03AE/\u03B5\u03BD\u03B4\u03BF\u03BA\u03BF\u03B9\u03BB\u03B9\u03B1\u03BA\u03AE/\u03B1\u03B3\u03B3\u03B5\u03B9\u03B1\u03BA\u03AE \u03AC\u03BD\u03C9 \u03B2\u03BF\u03C5\u03B2\u03C9\u03BD\u03B9\u03BA\u03BF\u03CD)", en: "High-risk surgery (intrathoracic/intraperitoneal/suprainguinal vascular)", auto: null },
