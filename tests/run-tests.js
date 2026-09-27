@@ -467,6 +467,53 @@ check("Fick CO: VO2 227, CaO2 15.76, CvO2 9.65", Math.round(run("fickCO(227.4, o
 check("Fick CO: venous >= arterial returns null", run("fickCO(250, o2Content(12,80,0), o2Content(12,85,0))"), null);
 check("Fick CO: no VO2 returns null", run("fickCO(0, 20, 15)"), null);
 
+// --- GI endoscopy sedation ------------------------------------------------------
+// BSG 2024 dose reductions and the BNF reversal doses are the numbers most likely
+// to be misread, so lock them, along with the ERCP consensus position.
+{
+  const gi = run("JSON.stringify(GI_ENDOSCOPY)");
+  check("GI endoscopy: five tabs", run("GI_ENDOSCOPY.length"), 5);
+  check("ESGE: the ESA withdrew its endorsement", /WITHDREW its endorsement/.test(gi), true);
+  check("ESGE: anaesthetist for ASA >= 3 and Mallampati >= 3", /Mallampati \u2265 3/.test(gi), true);
+  check("ERCP: MAC is the favoured technique", /\u03A0\u03A1\u039F\u03A4\u0399\u039C\u03A9\u039C\u0395\u039D\u0397|FAVOURED/.test(gi), true);
+  check("high risk: half dose at ASA >= 3", /HALF the dose/.test(gi), true);
+  check("naloxone: perioperative titration 40 mcg", /40 \u00b5g \(0.04 mg\) IV, titrated/.test(gi), true);
+  check("naloxone: poisoning regimen kept separate", /Poisoning \(not the perioperative setting\)/.test(gi), true);
+  check("flumazenil 200 mcg then 100 mcg, max 2 mg", /200 \u00b5g over 15 s, then 100 \u00b5g every minute, maximum 2 mg/.test(gi), true);
+  check("naloxone before flumazenil", /give naloxone FIRST/.test(gi), true);
+  check("midazolam 1 mg\/mL only", /1 mg\/mL/.test(gi), true);
+  check("GI endoscopy: every item has EL and EN",
+    run("GI_ENDOSCOPY.every(function(t){return t.secs.every(function(s){return s.items.every(function(i){return i.el && i.en;});});})"), true);
+}
+
+// --- Paediatric IV salbutamol ---------------------------------------------------
+// The card carries two doses on purpose: the departmental protocol and the
+// international one. Neither may quietly replace the other.
+check("peds: departmental salbutamol bolus 4 mcg/kg present", /4 \\xB5g\/kg/.test(src), true);
+check("peds: international salbutamol bolus 15 mcg/kg present", /15 \u00B5g\/kg \u03C3\u03B5 10 min|15 \\xB5g\/kg over 10 min/.test(src), true);
+
+check("peds: naloxone BNFc 1 mcg/kg present alongside the protocol dose", /BNFc \(1 month/.test(src), true);
+
+// --- Anticoagulation and neuraxial blocks (ESAIC/ESRA 2022, Table 3) ------------
+// Every creatinine-clearance threshold in the table is pinned: these are the
+// numbers that decide whether a block is safe.
+{
+  const ac = run("JSON.stringify(ANTICOAG)");
+  check("anticoag: LMWH low 12 h, CrCl<30 24 h", /12 h \u00b7 CrCl <30: 24 h/.test(ac), true);
+  check("anticoag: LMWH high 24 h, CrCl<30 48 h", /24 h \u00b7 CrCl <30: 48 h/.test(ac), true);
+  check("anticoag: rivaroxaban/edoxaban low 24 h, CrCl<30 30 h", /24 h \u00b7 CrCl <30: 30 h/.test(ac), true);
+  check("anticoag: apixaban low 36 h", /Apixaban \u2014 low dose/.test(ac), true);
+  check("anticoag: dabigatran low 48 h", /Dabigatran \u2014 low dose/.test(ac), true);
+  check("anticoag: DXA high 72 h, lab target if CrCl<30", /72 h \u00b7 CrCl <30: until laboratory target/.test(ac), true);
+  check("anticoag: dabigatran high 72 h, lab target if CrCl<50", /72 h \u00b7 CrCl <50: until laboratory target/.test(ac), true);
+  check("anticoag: fondaparinux low 36 h, CrCl<50 72 h", /36 h \u00b7 CrCl <50: 72 h/.test(ac), true);
+  check("anticoag: combinations take the longest interval", /LONGEST interval/.test(ac), true);
+  check("anticoag: ASRA 2025 divergence on reversal agents is flagged", /ASRA 2025 ADVISES AGAINST/.test(ac), true);
+  check("anticoag: ASRA 2025 dabigatran up to 5 days is noted", /up to 5 days if CrCl <50/.test(ac), true);
+  check("anticoag: every row has both languages",
+    run("ANTICOAG.every(function(x){return x.name && x.nameEn && x.stopEl && x.stopEn && x.restartEl && x.restartEn;})"), true);
+}
+
 // --- Report -----------------------------------------------------------------
 console.log(`\n${pass} passed, ${fail} failed (${pass + fail} total)`);
 if (failures.length) {
