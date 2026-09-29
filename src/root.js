@@ -155,6 +155,32 @@ function ToolsTab({ lang, weight, age, height, sex, focus, onUse }) {
     }));
   }));
 }
+const TAB_IDS = ["home", "meds", "tci", "tools", "peds", "lists", "about"];
+
+function HomeScreen({ lang, go }) {
+  const el = lang === "el";
+  const TILES = [
+    { id: "lists", icon: "\u{1F6A8}", el: "Λίστες κρίσεων", en: "Crisis checklists", subEl: "37 λίστες βήμα προς βήμα", subEn: "37 step-by-step checklists", urgent: true },
+    { id: "meds", icon: "\u{1F48A}", el: "Φάρμακα", en: "Drugs", subEl: "81 φάρμακα, δόσεις στο βάρος", subEn: "81 drugs, weight-based doses" },
+    { id: "tools", icon: "\u{1F9EE}", el: "Εργαλεία", en: "Tools", subEl: "38 κάρτες & υπολογιστές", subEn: "38 cards & calculators" },
+    { id: "peds", icon: "\u{1F9D2}", el: "Παιδιατρική κάρτα", en: "Paediatric card", subEl: "αεραγωγός, ζωτικά, επείγοντα", subEn: "airway, vitals, emergencies" },
+        { id: "about", icon: "\u2139\uFE0F", el: "Σχετικά & πηγές", en: "About & sources", subEl: "οδηγίες, βιβλιογραφία, όρια", subEn: "guidelines, references, limits" }
+  ];
+  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } },
+    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: S.muted, fontWeight: 600, lineHeight: 1.5, marginBottom: 2 } },
+      el ? "\u0394\u03B9\u03B1\u03BB\u03AD\u03BE\u03C4\u03B5 \u03B5\u03BD\u03CC\u03C4\u03B7\u03C4\u03B1, \u03AE \u03C7\u03C1\u03B7\u03C3\u03B9\u03BC\u03BF\u03C0\u03BF\u03B9\u03AE\u03C3\u03C4\u03B5 \u03C4\u03B7\u03BD \u03B1\u03BD\u03B1\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7 \u03C0\u03B1\u03C1\u03B1\u03C0\u03AC\u03BD\u03C9 \u03B3\u03B9\u03B1 \u03BD\u03B1 \u03C0\u03AC\u03C4\u03B5 \u03BA\u03B1\u03C4\u03B5\u03C5\u03B8\u03B5\u03AF\u03B1\u03BD \u03C3\u03B5 \u03C6\u03AC\u03C1\u03BC\u03B1\u03BA\u03BF, \u03B4\u03CC\u03C3\u03B7 \u03AE \u03BB\u03AF\u03C3\u03C4\u03B1." : "Pick a section, or use the search box above to jump straight to a drug, dose or checklist."),
+    TILES.filter((x) => TAB_IDS.indexOf(x.id) >= 0).map((x) => /* @__PURE__ */ React.createElement("button", {
+      key: x.id, onClick: () => go(x.id),
+      style: { display: "flex", alignItems: "center", gap: 14, textAlign: "left", width: "100%",
+        background: x.urgent ? S.tintDanger : S.card, color: x.urgent ? S.tintDangerFg : S.ink,
+        border: "1px solid " + (x.urgent ? S.red : S.line), borderRadius: 14, padding: "14px 16px",
+        cursor: "pointer", fontFamily: "inherit" } },
+      /* @__PURE__ */ React.createElement("span", { style: { fontSize: 26, flexShrink: 0 } }, x.icon),
+      /* @__PURE__ */ React.createElement("span", { style: { display: "flex", flexDirection: "column", gap: 2, flex: 1 } },
+        /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 15.5 } }, el ? x.el : x.en),
+        /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: x.urgent ? S.tintDangerFg : S.muted, fontWeight: 600 } }, el ? x.subEl : x.subEn)),
+      /* @__PURE__ */ React.createElement("span", { style: { fontSize: 18, color: S.muted, fontWeight: 700 } }, "\u203A"))));
+}
 function AnesthesiaAssistant() {
   useEffect(() => {
     if (document.getElementById("commissioner-font")) return;
@@ -200,7 +226,7 @@ function AnesthesiaAssistant() {
     ? (lang === "el" ? "\u0398\u03AD\u03BC\u03B1: \u03B1\u03C5\u03C4\u03CC\u03BC\u03B1\u03C4\u03BF" : "Theme: auto")
     : theme === "light" ? (lang === "el" ? "\u0398\u03AD\u03BC\u03B1: \u03C6\u03C9\u03C4\u03B5\u03B9\u03BD\u03CC" : "Theme: light")
     : (lang === "el" ? "\u0398\u03AD\u03BC\u03B1: \u03C3\u03BA\u03BF\u03C4\u03B5\u03B9\u03BD\u03CC" : "Theme: dark");
-  const [tab, setTab] = useState("meds");
+  const [tab, setTab] = useState("home");
   // Global search: `gq` is the query, `focus` tells the destination tab which
   // item to open. The nonce makes repeat picks of the same item re-fire.
   const [gq, setGq] = useState("");
@@ -239,11 +265,11 @@ function AnesthesiaAssistant() {
   }, [lang]);
   const t = T[lang];
   const tabs = [
+    { id: "home", icon: "\u{1F3E0}" },
     { id: "meds", icon: "\u{1F48A}" },
     { id: "tools", icon: "\u{1F9EE}" },
     { id: "peds", icon: "\u{1F9D2}" },
-    { id: "lists", icon: "\u{1F6A8}" },
-    { id: "about", icon: "\u2139\uFE0F" }
+    { id: "lists", icon: "\u{1F6A8}" }
   ];
   if (!accepted) {
     return /* @__PURE__ */ React.createElement("div", { style: {
@@ -318,15 +344,15 @@ function AnesthesiaAssistant() {
     color: S.teal,
     cursor: "pointer",
     fontFamily: "inherit"
-  } }, lang === "el" ? "EN" : "\u0395\u039B"), /* @__PURE__ */ React.createElement("button", { onClick: cycleTheme, title: themeLabel, "aria-label": themeLabel, style: { padding: "6px 10px", borderRadius: 10, border: `1.5px solid ${S.line}`, background: S.card, fontWeight: 700, fontSize: 13, color: S.teal, cursor: "pointer", fontFamily: "inherit", marginLeft: 6 } }, themeIcon)), /* @__PURE__ */ React.createElement(PatientBar, { lang, weight, setWeight, age, setAge, height, setHeight, sex, setSex })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, padding: "4px 16px 16px", overflowY: "auto" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, background: S.card, border: `1.5px solid ${gq ? S.teal : S.line}`, borderRadius: 12, padding: "0 10px", marginBottom: 10 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, opacity: 0.55 } }, "\u{1F50D}"), /* @__PURE__ */ React.createElement("input", { value: gq, onChange: (e) => setGq(e.target.value), placeholder: lang === "el" ? "\u0391\u03BD\u03B1\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7 \u03C6\u03B1\u03C1\u03BC\u03AC\u03BA\u03C9\u03BD, \u03B5\u03C0\u03B5\u03B9\u03B3\u03CC\u03BD\u03C4\u03C9\u03BD, \u03B5\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03C9\u03BD\u2026" : "Search drugs, emergencies, tools\u2026", style: { flex: 1, border: "none", outline: "none", background: "transparent", padding: "11px 0", fontSize: 14.5, fontFamily: "inherit", color: S.ink, minWidth: 0 } }), gq && /* @__PURE__ */ React.createElement("button", { onClick: () => setGq(""), "aria-label": lang === "el" ? "\u039A\u03B1\u03B8\u03B1\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B1\u03BD\u03B1\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7\u03C2" : "Clear search", style: { border: "none", background: "none", color: S.muted, fontWeight: 700, fontSize: 18, cursor: "pointer", fontFamily: "inherit", padding: "0 2px" } }, "\xD7")), recents.length > 0 && gq.trim().length < 2 && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: S.muted, padding: "0 2px 5px" } }, "\u{1F551} " + (lang === "el" ? "\u03A0\u03C1\u03CC\u03C3\u03C6\u03B1\u03C4\u03B1" : "Recent")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, overflowX: "auto", paddingBottom: 2 } }, recents.map((r, i) => /* @__PURE__ */ React.createElement("button", { key: r.tab + r.target + i, onClick: () => jumpTo(r), style: { flexShrink: 0, maxWidth: 190, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", background: S.card, border: `1.5px solid ${S.line}`, borderRadius: 20, padding: "6px 12px", fontSize: 12.5, fontWeight: 700, color: S.ink, cursor: "pointer", fontFamily: "inherit" } }, r.title)))), gq.trim().length >= 2 ? /* @__PURE__ */ React.createElement(SearchResults, { lang, query: gq, onPick: pickResult }) : /* @__PURE__ */ React.createElement(React.Fragment, null, tab === "meds" && /* @__PURE__ */ React.createElement(MedsTab, { lang, weight, focus }), tab === "tools" && /* @__PURE__ */ React.createElement(ToolsTab, { lang, weight, age, height, sex, focus, onUse: (sec) => remember({ tab: "tools", target: sec.id, title: sec[lang], kind: "tool" }) }), tab === "peds" && /* @__PURE__ */ React.createElement(PedsCard, { lang, weight, age }), tab === "lists" && /* @__PURE__ */ React.createElement(ChecklistTab, { lang, focus }), tab === "about" && /* @__PURE__ */ React.createElement(AboutCard, { lang }))), /* @__PURE__ */ React.createElement("div", { style: { padding: "0 16px 8px", fontSize: 11, color: S.muted, fontWeight: 600, lineHeight: 1.4, textAlign: "center" } }, t.disclaimer), /* @__PURE__ */ React.createElement("div", { style: { padding: "0 16px 8px", fontSize: 10, color: S.muted, fontWeight: 600, lineHeight: 1.5, textAlign: "center" } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700 } }, lang === "el" ? "\u0394\u03B7\u03BC\u03B9\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1: Efstathia Pistioli, MD" : "Created by Efstathia Pistioli, MD"), /* @__PURE__ */ React.createElement("br", null), "\xA9 ", (/* @__PURE__ */ new Date()).getFullYear(), " Efstathia Pistioli, MD. ", lang === "el" ? "\u039C\u03B5 \u03B5\u03C0\u03B9\u03C6\u03CD\u03BB\u03B1\u03BE\u03B7 \u03C0\u03B1\u03BD\u03C4\u03CC\u03C2 \u03B4\u03B9\u03BA\u03B1\u03B9\u03CE\u03BC\u03B1\u03C4\u03BF\u03C2." : "All rights reserved."), /* @__PURE__ */ React.createElement("div", { style: {
+  } }, lang === "el" ? "EN" : "\u0395\u039B"), /* @__PURE__ */ React.createElement("button", { onClick: cycleTheme, title: themeLabel, "aria-label": themeLabel, style: { padding: "6px 10px", borderRadius: 10, border: `1.5px solid ${S.line}`, background: S.card, fontWeight: 700, fontSize: 13, color: S.teal, cursor: "pointer", fontFamily: "inherit", marginLeft: 6 } }, themeIcon)), /* @__PURE__ */ React.createElement(PatientBar, { lang, weight, setWeight, age, setAge, height, setHeight, sex, setSex })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, padding: "4px 16px 16px", overflowY: "auto" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, background: S.card, border: `1.5px solid ${gq ? S.teal : S.line}`, borderRadius: 12, padding: "0 10px", marginBottom: 10 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, opacity: 0.55 } }, "\u{1F50D}"), /* @__PURE__ */ React.createElement("input", { value: gq, onChange: (e) => setGq(e.target.value), placeholder: lang === "el" ? "\u0391\u03BD\u03B1\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7 \u03C6\u03B1\u03C1\u03BC\u03AC\u03BA\u03C9\u03BD, \u03B5\u03C0\u03B5\u03B9\u03B3\u03CC\u03BD\u03C4\u03C9\u03BD, \u03B5\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03C9\u03BD\u2026" : "Search drugs, emergencies, tools\u2026", style: { flex: 1, border: "none", outline: "none", background: "transparent", padding: "11px 0", fontSize: 14.5, fontFamily: "inherit", color: S.ink, minWidth: 0 } }), gq && /* @__PURE__ */ React.createElement("button", { onClick: () => setGq(""), "aria-label": lang === "el" ? "\u039A\u03B1\u03B8\u03B1\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B1\u03BD\u03B1\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7\u03C2" : "Clear search", style: { border: "none", background: "none", color: S.muted, fontWeight: 700, fontSize: 18, cursor: "pointer", fontFamily: "inherit", padding: "0 2px" } }, "\xD7")), recents.length > 0 && gq.trim().length < 2 && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: S.muted, padding: "0 2px 5px" } }, "\u{1F551} " + (lang === "el" ? "\u03A0\u03C1\u03CC\u03C3\u03C6\u03B1\u03C4\u03B1" : "Recent")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, overflowX: "auto", paddingBottom: 2 } }, recents.map((r, i) => /* @__PURE__ */ React.createElement("button", { key: r.tab + r.target + i, onClick: () => jumpTo(r), style: { flexShrink: 0, maxWidth: 190, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", background: S.card, border: `1.5px solid ${S.line}`, borderRadius: 20, padding: "6px 12px", fontSize: 12.5, fontWeight: 700, color: S.ink, cursor: "pointer", fontFamily: "inherit" } }, r.title)))), gq.trim().length >= 2 ? /* @__PURE__ */ React.createElement(SearchResults, { lang, query: gq, onPick: pickResult }) : /* @__PURE__ */ React.createElement(React.Fragment, null, tab === "home" && /* @__PURE__ */ React.createElement(HomeScreen, { lang, go: setTab }), tab === "meds" && /* @__PURE__ */ React.createElement(MedsTab, { lang, weight, focus }), tab === "tools" && /* @__PURE__ */ React.createElement(ToolsTab, { lang, weight, age, height, sex, focus, onUse: (sec) => remember({ tab: "tools", target: sec.id, title: sec[lang], kind: "tool" }) }), tab === "peds" && /* @__PURE__ */ React.createElement(PedsCard, { lang, weight, age }), tab === "lists" && /* @__PURE__ */ React.createElement(ChecklistTab, { lang, focus }), tab === "about" && /* @__PURE__ */ React.createElement(AboutCard, { lang }))), /* @__PURE__ */ React.createElement("div", { style: { padding: "0 16px 8px", fontSize: 11, color: S.muted, fontWeight: 600, lineHeight: 1.4, textAlign: "center" } }, t.disclaimer), /* @__PURE__ */ React.createElement("div", { style: { padding: "0 16px 8px", fontSize: 10, color: S.muted, fontWeight: 600, lineHeight: 1.5, textAlign: "center" } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700 } }, lang === "el" ? "\u0394\u03B7\u03BC\u03B9\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1: Efstathia Pistioli, MD" : "Created by Efstathia Pistioli, MD"), /* @__PURE__ */ React.createElement("br", null), "\xA9 ", (/* @__PURE__ */ new Date()).getFullYear(), " Efstathia Pistioli, MD. ", lang === "el" ? "\u039C\u03B5 \u03B5\u03C0\u03B9\u03C6\u03CD\u03BB\u03B1\u03BE\u03B7 \u03C0\u03B1\u03BD\u03C4\u03CC\u03C2 \u03B4\u03B9\u03BA\u03B1\u03B9\u03CE\u03BC\u03B1\u03C4\u03BF\u03C2." : "All rights reserved."), /* @__PURE__ */ React.createElement("div", { style: {
     display: "flex",
     borderTop: `1.5px solid ${S.line}`,
     background: S.card,
     position: "sticky",
     bottom: 0
-  } }, tabs.map((tb) => /* @__PURE__ */ React.createElement("button", { key: tb.id, onClick: () => setTab(tb.id), style: {
+  } }, tabs.map((tb) => /* @__PURE__ */ React.createElement("button", { key: tb.id, onClick: () => setTab(tb.id), "aria-label": t.tabs[tb.id], title: t.tabs[tb.id], style: {
     flex: 1,
-    padding: "8px 1px 10px",
+    padding: "10px 1px 12px",
     border: "none",
     background: "none",
     cursor: "pointer",
@@ -337,7 +363,7 @@ function AnesthesiaAssistant() {
     fontFamily: "inherit",
     minWidth: 0,
     borderTop: tab === tb.id ? `2.5px solid ${S.teal}` : "2.5px solid transparent"
-  } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 18 } }, tb.icon), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 10, fontWeight: 700, color: tab === tb.id ? S.teal : S.muted, whiteSpace: "nowrap" } }, t.tabs[tb.id])))));
+  } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 24, lineHeight: 1, opacity: tab === tb.id ? 1 : 0.55 } }, tb.icon)))));
 }
 
 // Catches render/runtime errors anywhere in the tree below it so a bug in one

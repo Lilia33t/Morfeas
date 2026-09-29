@@ -534,6 +534,8 @@ check("every checklist cites a source in both languages",
 check("every risk scale cites a source",
   run("SCORES.filter(function(s){ return !(s.src && s.src.length > 3); }).map(function(s){ return s.id; }).join(', ')"), "");
 
+check("home tab exists in both languages", !!(run("T.el.tabs.home") && run("T.en.tabs.home")), true);
+
 // --- Report -----------------------------------------------------------------
 console.log(`\n${pass} passed, ${fail} failed (${pass + fail} total)`);
 if (failures.length) {
