@@ -536,6 +536,58 @@ check("every risk scale cites a source",
 
 check("home tab exists in both languages", !!(run("T.el.tabs.home") && run("T.en.tabs.home")), true);
 
+check("oxycodone IV is listed with an SmPC source in both languages",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='oxycodone';})[0];return !!d&&/SmPC/.test(d.notesEl)&&/SmPC/.test(d.notesEn)&&d.cat==='opioid'&&!!d.ciEl&&!!d.ciEn;})()"), true);
+
+check("APP_VERSION matches the service-worker cache version",
+  "anesthesia-v" + run("APP_VERSION"), (fs.readFileSync(path.join(__dirname, "..", "sw.js"), "utf8").match(/CACHE = "([^"]+)"/) || [])[1]);
+
+check("every changelog entry is bilingual and the newest is APP_VERSION",
+  run("CHANGELOG[0].v === APP_VERSION && CHANGELOG.every(function(c){return c.el.length>0 && c.el.length===c.en.length;})"), true);
+
+// TCI central volumes against the published models (70 kg, 170 cm, 35 yr male unless stated)
+(function(){
+  var v = function(id, c){ return run("(function(){var m=TCI_MODELS.filter(function(x){return x.id==='"+id+"';})[0]; var c="+JSON.stringify(c)+"; return m.v1Fn?m.v1Fn(c):(m.v1Fixed!=null?m.v1Fixed:m.v1k*c.w);})()"); };
+  var ref = {w:70,h:170,a:35,s:"M"};
+  var r2 = function(x){ return Math.round(x*100)/100; };
+  check("TCI Marsh V1 0.228 L/kg", r2(v("marsh",ref)), 15.96);
+  check("TCI Schnider V1 4.27 L", r2(v("schnider",ref)), 4.27);
+  check("TCI Eleveld propofol V1 6.28 L at reference", r2(v("eleveld_prop",ref)), 6.28);
+  check("TCI Eleveld propofol V1 sub-linear in obesity (150 kg)", r2(v("eleveld_prop",{w:150,h:170,a:35,s:"M"})), 7.6);
+  check("TCI Paedfusor V1 0.4584 L/kg at 10 yr", r2(v("paedfusor",{w:30,h:140,a:10,s:"M"})), 13.75);
+  check("TCI Paedfusor V1 0.342 L/kg at 14 yr", r2(v("paedfusor",{w:50,h:160,a:14,s:"M"})), 17.1);
+  check("TCI Minto V1 at 40 yr, LBM 55 = 5.1 L", r2(run("5.1 - 0.0201*(40-40) + 0.072*(55-55)")), 5.1);
+  check("TCI Eleveld remifentanil V1 5.81 L at reference", r2(v("eleveld_remi",ref)), 5.81);
+  check("TCI Gepts V1 fixed 14.3 L (not weight-adjusted)", r2(v("gepts",{w:120,h:170,a:50,s:"M"})), 14.3);
+  check("TCI Maitre V1 0.128 L/kg in women", r2(v("maitre",{w:60,h:165,a:40,s:"F"})), 7.68);
+  check("TCI Hannivoort V1 1.78 L per 70 kg", r2(v("hannivoort",ref)), 1.78);
+})();
+
+check("rFVIIa: PPH 60-90 mcg/kg per SmPC, trauma not first-line, sources cited",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='rfviia';})[0];return d.doses[0].lo===60&&d.doses[0].hi===90&&d.doses[1].lo===90&&/R32/.test(d.notesEn)&&/SmPC/.test(d.notesEl)&&/first-line/.test(d.doses[4].fixedEn);})()"), true);
+
+// Dexmedetomidine (Dexdor SmPC): 80 kg, procedural, load 1 mcg/kg over 10 min, 0.7 mcg/kg/h, 4 mcg/mL
+check("dex calc: loading 80 mcg = 20 mL", run("dexRates(80,'proc',true,1,0.7,4).loadMl"), 20);
+check("dex calc: loading pump rate over 10 min = 120 mL/h", run("dexRates(80,'proc',true,1,0.7,4).loadMlh"), 120);
+check("dex calc: maintenance 0.7 mcg/kg/h = 14 mL/h", run("dexRates(80,'proc',true,1,0.7,4).mlh"), 14);
+check("dex calc: 8 mcg/mL halves the rate", run("dexRates(80,'icu',false,1,0.7,8).mlh"), 7);
+check("dex calc: no loading dose in ICU even if requested", run("dexRates(80,'icu',true,1,0.7,4).loadMcg === undefined"), true);
+check("dex calc: ICU ceiling 1.4, procedural 1.0", run("dexRates(80,'icu',false,1,0.7,4).lim.hi + '/' + dexRates(80,'proc',false,1,0.7,4).lim.hi"), "1.4/1");
+check("dexmedetomidine entry: ICU range 0.2-1.4 and SmPC source",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='dexmedetomidine';})[0];return d.doses[3].lo===0.2&&d.doses[3].hi===1.4&&d.doses[0].lo===1&&/SmPC/.test(d.notesEn);})()"), true);
+
+// Unified sedation calculator
+check("sedation: propofol 0.5-1 mg/kg at 70 kg = 3.5-7 mL of 1%", run("(function(){var r=sedItem({t:'kg',lo:0.5,hi:1},70,10);return r.mlLo+'-'+r.mlHi;})()"), "3.5-7");
+check("sedation: remifentanil 0.1 mcg/kg/min, 70 kg, 20 mcg/mL = 21 mL/h", run("sedItem({t:'inf',lo:0.025,hi:0.2,start:0.1,per:'min'},70,20).mlhStart"), 21);
+check("sedation: dex paediatric load 1.5 mcg/kg over 10 min, 10 kg, 4 mcg/mL = 22.5 mL/h", run("sedItem({t:'load10',d:1.5},10,4).mlh"), 22.5);
+check("sedation: propofol 1.5-4.5 mg/kg/h at 70 kg, 10 mg/mL = 10.5-31.5 mL/h", run("(function(){var r=sedItem({t:'inf',lo:1.5,hi:4.5,per:'h'},70,10);return r.mlhLo+'-'+r.mlhHi;})()"), "10.5-31.5");
+check("sedation: every regimen names its source (adult 40 yr, child 1/4/8/14 yr)",
+  run("SED_DRUGS.every(function(d){return [d.adult(40)].concat([1,4,8,14].map(function(a){var r=d.peds(a);return r.asAdult?d.adult(a):r;})).every(function(r){return r.noneEl||(r.srcEl&&r.srcEn);});})"), true);
+check("sedation: ketamine contraindicated under 3 months, remifentanil not given for children",
+  run("!!SED_DRUGS.filter(function(d){return d.id==='ket';})[0].peds(0.1).noneEl && !!SED_DRUGS.filter(function(d){return d.id==='remi';})[0].peds(8).noneEl"), true);
+check("sedation: midazolam 6 m-5 yr 0.05-0.1 mg/kg, 6-12 yr 0.025-0.05 mg/kg",
+  run("(function(){var m=SED_DRUGS.filter(function(d){return d.id==='mdz';})[0];var a=m.peds(3).items[0],b=m.peds(8).items[0];return [a.lo,a.hi,b.lo,b.hi].join(',');})()"), "0.05,0.1,0.025,0.05");
+
 // --- Report -----------------------------------------------------------------
 console.log(`\n${pass} passed, ${fail} failed (${pass + fail} total)`);
 if (failures.length) {

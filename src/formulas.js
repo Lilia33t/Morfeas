@@ -4,6 +4,14 @@ const ffmJan = (w, h, sex) => {
   const bmi = bmiCalc(w, h);
   return sex === "M" ? 9270 * w / (6680 + 216 * bmi) : 9270 * w / (8780 + 244 * bmi);
 };
+// Al-Sallami fat-free mass (used by the Eleveld models): Janmahasatian with an
+// age/maturation factor. Al-Sallami et al., Clin Pharmacokinet 2015.
+const ffmAlSallami = (w, h, sex, age) => {
+  const bmi = w / Math.pow(h / 100, 2);
+  return sex === "M"
+    ? (0.88 + 0.12 / (1 + Math.pow(age / 13.4, -12.7))) * (9270 * w) / (6680 + 216 * bmi)
+    : (1.11 - 0.11 / (1 + Math.pow(age / 7.1, -1.1))) * (9270 * w) / (8780 + 244 * bmi);
+};
 const ibwDevine = (h, sex) => {
   if (!h || h <= 0) return null;
   const inchesOver60 = h / 2.54 - 60;
@@ -60,7 +68,8 @@ const TCI_MODELS = [
     targetType: "Ce (effect-site)",
     targetsEl: "\u0395\u03B9\u03C3\u03B1\u03B3\u03C9\u03B3\u03AE Ce 3\u20136 \xB5g/mL \xB7 \u03A3\u03C5\u03BD\u03C4\u03AE\u03C1\u03B7\u03C3\u03B7 2.5\u20134 \xB5g/mL \xB7 \u039A\u03B1\u03C4\u03B1\u03C3\u03C4\u03BF\u03BB\u03AE 1\u20132 \xB5g/mL",
     targetsEn: "Induction Ce 3\u20136 \xB5g/mL \xB7 Maintenance 2.5\u20134 \xB5g/mL \xB7 Sedation 1\u20132 \xB5g/mL",
-    v1k: 0.12,
+    v1Fn: (c) => 6.2831 * (c.w / (c.w + 33.553)) / (70 / (70 + 33.553)),
+    // Eleveld 2018: V1ref 6.28 L (arterial), sigmoid in weight, E50 33.6 kg
     rangeEl: "\u0395\u03BD\u03B9\u03B1\u03AF\u03BF \u03BC\u03BF\u03BD\u03C4\u03AD\u03BB\u03BF \u03B3\u03B9\u03B1 \u03CC\u03BB\u03BF \u03C4\u03BF \u03C6\u03AC\u03C3\u03BC\u03B1: \u03BD\u03B5\u03BF\u03B3\u03BD\u03AC \u2192 \u03B7\u03BB\u03B9\u03BA\u03B9\u03C9\u03BC\u03AD\u03BD\u03BF\u03C5\u03C2, \u03C6\u03C5\u03C3\u03B9\u03BF\u03BB\u03BF\u03B3\u03B9\u03BA\u03CC \u2192 \u03BD\u03BF\u03C3\u03BF\u03B3\u03CC\u03BD\u03BF \u03C0\u03B1\u03C7\u03CD\u03C3\u03B1\u03C1\u03BA\u03BF. \u03A0\u03C1\u03BF\u03C4\u03B9\u03BC\u03CE\u03BC\u03B5\u03BD\u03BF \u03C3\u03CD\u03B3\u03C7\u03C1\u03BF\u03BD\u03BF \u03BC\u03BF\u03BD\u03C4\u03AD\u03BB\u03BF.",
     rangeEn: "Single model across the spectrum: neonates \u2192 elderly, normal \u2192 morbidly obese. Preferred modern model.",
     valid: (c) => c.w >= 2
@@ -76,7 +85,7 @@ const TCI_MODELS = [
     v1k: 0.41,
     rangeEl: "\u03A0\u03B1\u03B9\u03B4\u03B9\u03AC 3\u201311 \u03B5\u03C4\u03CE\u03BD, >15 kg. \u03A0\u03B1\u03B9\u03B4\u03B9\u03AC \u03C7\u03C1\u03B5\u03B9\u03AC\u03B6\u03BF\u03BD\u03C4\u03B1\u03B9 \u03C5\u03C8\u03B7\u03BB\u03CC\u03C4\u03B5\u03C1\u03BF\u03C5\u03C2 \u03C3\u03C4\u03CC\u03C7\u03BF\u03C5\u03C2 (\u03BC\u03B5\u03B3\u03B1\u03BB\u03CD\u03C4\u03B5\u03C1\u03B7 \u03BA\u03AC\u03B8\u03B1\u03C1\u03C3\u03B7).",
     rangeEn: "Children 3\u201311 yr, >15 kg. Children need higher targets (greater clearance).",
-    valid: (c) => c.a >= 1 && c.a <= 16 && c.w >= 12
+    valid: (c) => c.a >= 3 && c.a <= 11 && c.w >= 15
   },
   {
     id: "paedfusor",
@@ -86,7 +95,8 @@ const TCI_MODELS = [
     targetType: "Cp (plasma)",
     targetsEl: "\u0395\u03B9\u03C3\u03B1\u03B3\u03C9\u03B3\u03AE 4\u20136 \xB5g/mL \xB7 \u03A3\u03C5\u03BD\u03C4\u03AE\u03C1\u03B7\u03C3\u03B7 2.5\u20134 \xB5g/mL",
     targetsEn: "Induction 4\u20136 \xB5g/mL \xB7 Maintenance 2.5\u20134 \xB5g/mL",
-    v1k: 0.4584,
+    v1Fn: (c) => c.w * (c.a < 13 ? 0.4584 : c.a < 14 ? 0.4 : c.a < 15 ? 0.342 : c.a < 16 ? 0.284 : 0.22857),
+    // V1 0.4584 L/kg at 1-12 yr, falling to 0.229 L/kg at 16 yr
     rangeEl: "\u03A0\u03B1\u03B9\u03B4\u03B9\u03AC 1\u201316 \u03B5\u03C4\u03CE\u03BD, 5\u201361 kg. \u0395\u03C0\u03B9\u03BA\u03C5\u03C1\u03C9\u03BC\u03AD\u03BD\u03BF \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03B1\u03C4\u03C1\u03B9\u03BA\u03AE TIVA.",
     rangeEn: "Children 1\u201316 yr, 5\u201361 kg. Validated for pediatric TIVA.",
     valid: (c) => c.a >= 1 && c.a <= 16 && c.w >= 5 && c.w <= 61
@@ -99,7 +109,7 @@ const TCI_MODELS = [
     targetType: "Ce (effect-site)",
     targetsEl: "\u0394\u03B9\u03B1\u03C3\u03C9\u03BB\u03AE\u03BD\u03C9\u03C3\u03B7 Ce 4\u20138 ng/mL \xB7 \u03A3\u03C5\u03BD\u03C4\u03AE\u03C1\u03B7\u03C3\u03B7 2\u20136 ng/mL \xB7 \u0391\u03C5\u03C4\u03CC\u03BC\u03B1\u03C4\u03B7 \u03B1\u03BD\u03B1\u03C0\u03BD\u03BF\u03AE 1\u20133 ng/mL",
     targetsEn: "Intubation Ce 4\u20138 ng/mL \xB7 Maintenance 2\u20136 ng/mL \xB7 Spont. breathing 1\u20133 ng/mL",
-    v1Fixed: 5.1,
+    v1Fn: (c) => 5.1 - 0.0201 * (c.a - 40) + 0.072 * (lbmJames(c.w, c.h, c.s) - 55),
     rangeEl: "\u0392\u03B1\u03C3\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9 \u03C3\u03B5 LBM (James). \u0394\u03CC\u03C3\u03B7 \u2193 \u03BC\u03B5 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1. \u039F\u03A7\u0399 \u03B1\u03BE\u03B9\u03CC\u03C0\u03B9\u03C3\u03C4\u03BF \u03C3\u03B5 \u03BD\u03BF\u03C3\u03BF\u03B3\u03CC\u03BD\u03BF \u03C0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA\u03AF\u03B1 (LBM).",
     rangeEn: "LBM-based (James). Dose \u2193 with age. Unreliable in morbid obesity (LBM).",
     valid: (c) => {
@@ -117,7 +127,8 @@ const TCI_MODELS = [
     targetType: "Ce (effect-site)",
     targetsEl: "\u0394\u03B9\u03B1\u03C3\u03C9\u03BB\u03AE\u03BD\u03C9\u03C3\u03B7 Ce 4\u20138 ng/mL \xB7 \u03A3\u03C5\u03BD\u03C4\u03AE\u03C1\u03B7\u03C3\u03B7 2\u20136 ng/mL \xB7 \u0391\u03C5\u03C4\u03CC\u03BC\u03B1\u03C4\u03B7 \u03B1\u03BD\u03B1\u03C0\u03BD\u03BF\u03AE 1\u20133 ng/mL",
     targetsEn: "Intubation Ce 4\u20138 ng/mL \xB7 Maintenance 2\u20136 ng/mL \xB7 Spont. breathing 1\u20133 ng/mL",
-    v1k: 0.075,
+    v1Fn: (c) => 5.81 * (ffmAlSallami(c.w, c.h, c.s, c.a) / ffmAlSallami(70, 170, "M", 35)) * Math.exp(-0.00554 * (c.a - 35)),
+    // Eleveld 2017: V1ref 5.81 L, scaled by fat-free mass and age
     rangeEl: "\u0395\u03BD\u03B9\u03B1\u03AF\u03BF \u03BC\u03BF\u03BD\u03C4\u03AD\u03BB\u03BF \u03CC\u03BB\u03BF \u03C4\u03BF \u03C6\u03AC\u03C3\u03BC\u03B1 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1\u03C2/\u03B2\u03AC\u03C1\u03BF\u03C5\u03C2. \u03A0\u03C1\u03BF\u03C4\u03B9\u03BC\u03CE\u03BC\u03B5\u03BD\u03BF \u03C3\u03B5 \u03C0\u03B1\u03C7\u03CD\u03C3\u03B1\u03C1\u03BA\u03BF\u03C5\u03C2 & \u03AC\u03BA\u03C1\u03B1 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1\u03C2.",
     rangeEn: "Single model across age/weight spectrum. Preferred in obese & extremes of age.",
     valid: (c) => c.w >= 5
@@ -130,10 +141,11 @@ const TCI_MODELS = [
     targetType: "Cp (plasma)",
     targetsEl: "\u0394\u03B9\u03B5\u03B3\u03C7\u03B5\u03B9\u03C1\u03B7\u03C4\u03B9\u03BA\u03AC 0.2\u20130.5 ng/mL \xB7 \u039A\u03B1\u03C1\u03B4\u03B9\u03BF\u03C7\u03B5\u03B9\u03C1\u03BF\u03C5\u03C1\u03B3\u03B9\u03BA\u03AE \u03AD\u03C9\u03C2 1 ng/mL",
     targetsEn: "Intraop 0.2\u20130.5 ng/mL \xB7 Cardiac up to 1 ng/mL",
-    v1k: 0.164,
-    rangeEl: "\u0395\u03BD\u03AE\u03BB\u03B9\u03BA\u03B5\u03C2. \u03A3\u03C4\u03B1\u03B8\u03B5\u03C1\u03BF\u03AF \u03C3\u03C5\u03BD\u03C4\u03B5\u03BB\u03B5\u03C3\u03C4\u03AD\u03C2 \u03B1\u03BD\u03AC kg.",
-    rangeEn: "Adults. Fixed per-kg coefficients.",
-    valid: (c) => c.w >= 20
+    v1Fixed: 14.3,
+    // Gepts 1995: Vc 14.3 L, not weight-adjusted
+    rangeEl: "\u0397\u03BB\u03B9\u03BA\u03AF\u03B1 \u226512 \u03B5\u03C4\u03CE\u03BD. \u03A4\u03BF \u03BC\u03BF\u03BD\u03C4\u03AD\u03BB\u03BF \u0394\u0395\u039D \u03C0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03CC\u03B6\u03B5\u03C4\u03B1\u03B9 \u03C3\u03C4\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2 (Vc 14.3 L \u03B3\u03B9\u03B1 \u03CC\u03BB\u03BF\u03C5\u03C2).",
+    rangeEn: "Age 12 years and over. The model is NOT weight-adjusted (Vc 14.3 L for everyone).",
+    valid: (c) => !c.a || c.a >= 12
   },
   {
     id: "maitre",
@@ -143,7 +155,8 @@ const TCI_MODELS = [
     targetType: "Cp (plasma)",
     targetsEl: "\u0394\u03B9\u03B5\u03B3\u03C7\u03B5\u03B9\u03C1\u03B7\u03C4\u03B9\u03BA\u03AC 50\u2013200 ng/mL \xB7 \u0391\u03BD\u03B1\u03BB\u03B3\u03B7\u03C3\u03AF\u03B1 30\u2013100 ng/mL",
     targetsEn: "Intraop 50\u2013200 ng/mL \xB7 Analgesia 30\u2013100 ng/mL",
-    v1k: 0.111,
+    v1Fn: (c) => (c.s === "F" ? 0.128 : 0.111) * c.w,
+    // Maitre 1987: V1 0.111 L/kg, x1.15 in women
     rangeEl: "\u0395\u03BD\u03AE\u03BB\u03B9\u03BA\u03B5\u03C2. \u03A0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B3\u03B9\u03B1 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 & \u03C6\u03CD\u03BB\u03BF.",
     rangeEn: "Adults. Adjusts for age & sex.",
     valid: (c) => c.w >= 20
@@ -156,9 +169,11 @@ const TCI_MODELS = [
     targetType: "Cp (plasma)",
     targetsEl: "\u039A\u03B1\u03C4\u03B1\u03C3\u03C4\u03BF\u03BB\u03AE 0.4\u20131.2 ng/mL \xB7 \u0392\u03B1\u03B8\u03CD\u03C4\u03B5\u03C1\u03B7 1.2\u20132 ng/mL (\u03C0\u03B1\u03C1\u03B1\u03BA\u03BF\u03BB\u03BF\u03CD\u03B8\u03B7\u03C3\u03B7 \u03B2\u03C1\u03B1\u03B4\u03C5\u03BA\u03B1\u03C1\u03B4\u03AF\u03B1\u03C2)",
     targetsEn: "Sedation 0.4\u20131.2 ng/mL \xB7 Deeper 1.2\u20132 ng/mL (watch bradycardia)",
-    v1k: 0.0934,
-    rangeEl: "\u03A6\u03CC\u03C1\u03C4\u03B9\u03C3\u03B7 \u03C3\u03B5 10 min \u03B3\u03B9\u03B1 \u03B1\u03C0\u03BF\u03C6\u03C5\u03B3\u03AE \u03C5\u03C0\u03B5\u03C1\u03C4\u03B1\u03C3\u03B9\u03BA\u03AE\u03C2/\u03B2\u03C1\u03B1\u03B4\u03C5\u03BA\u03B1\u03C1\u03B4\u03B9\u03BA\u03AE\u03C2 \u03B1\u03C0\u03AC\u03BD\u03C4\u03B7\u03C3\u03B7\u03C2. ICU/\u03C0\u03B5\u03C1\u03B9\u03B5\u03C0\u03B5\u03BC\u03B2\u03B1\u03C4\u03B9\u03BA\u03AE \u03BA\u03B1\u03C4\u03B1\u03C3\u03C4\u03BF\u03BB\u03AE.",
-    rangeEn: "Load over 10 min to avoid hyper-/brady response. ICU/procedural sedation.",
+    v1k: 0.0254,
+    // Hannivoort 2015: V1 1.78 L per 70 kg (allometric, total body weight)
+    noBolus: true,
+    rangeEl: "\u03A5\u03B3\u03B9\u03B5\u03AF\u03C2 \u03B5\u03B8\u03B5\u03BB\u03BF\u03BD\u03C4\u03AD\u03C2. \u03A0\u03BF\u03BB\u03CD \u03BC\u03B9\u03BA\u03C1\u03CC V1 (1.78 L/70 kg) \u2014 \u03B7 \u03B1\u03C1\u03C7\u03B9\u03BA\u03AE \u03C0\u03BF\u03C3\u03CC\u03C4\u03B7\u03C4\u03B1 \u03B4\u03B5\u03BD \u03B1\u03BD\u03C4\u03B9\u03C3\u03C4\u03BF\u03B9\u03C7\u03B5\u03AF \u03C3\u03B5 \u03B4\u03CC\u03C3\u03B7 \u03C6\u03CC\u03C1\u03C4\u03B9\u03C3\u03B7\u03C2, \u03B3\u03B9\u2019 \u03B1\u03C5\u03C4\u03CC \u03B4\u03B5\u03BD \u03B5\u03BC\u03C6\u03B1\u03BD\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9. \u03A6\u03CC\u03C1\u03C4\u03B9\u03C3\u03B7 \u03C3\u03B5 10 min \u03B3\u03B9\u03B1 \u03B1\u03C0\u03BF\u03C6\u03C5\u03B3\u03AE \u03C5\u03C0\u03B5\u03C1\u03C4\u03B1\u03C3\u03B9\u03BA\u03AE\u03C2/\u03B2\u03C1\u03B1\u03B4\u03C5\u03BA\u03B1\u03C1\u03B4\u03B9\u03BA\u03AE\u03C2 \u03B1\u03C0\u03AC\u03BD\u03C4\u03B7\u03C3\u03B7\u03C2. \u03A0\u03B5\u03C1\u03B9\u03B5\u03C0\u03B5\u03BC\u03B2\u03B1\u03C4\u03B9\u03BA\u03AE \u03BA\u03B1\u03C4\u03B1\u03C3\u03C4\u03BF\u03BB\u03AE.",
+    rangeEn: "Healthy volunteers. Very small V1 (1.78 L/70 kg) \u2014 the initial amount is not a loading dose, so it is not shown. Load over 10 min to avoid a hypertensive/bradycardic response. Procedural sedation.",
     valid: (c) => c.w >= 30
   }
 ];
