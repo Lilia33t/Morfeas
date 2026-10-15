@@ -1,6 +1,6 @@
 // Morfeas — service worker
 // Bump CACHE whenever anything in APP_SHELL changes, to force an update.
-const CACHE = "anesthesia-v283";
+const CACHE = "anesthesia-v326";
 
 const APP_SHELL = [
   "./",
@@ -16,13 +16,13 @@ const APP_SHELL = [
   "./icon-192.png",
   "./icon-512.png",
   "./icon-512-maskable.png",
+  "./fonts/commissioner.woff",
 ];
 
 // Remote assets are best-effort: they must never block install.
 const REMOTE = [
   "https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js",
-  "https://fonts.googleapis.com/css2?family=Commissioner:wght@400;600;700;800&display=swap&subset=greek,latin",
 ];
 
 // Cross-origin CDN responses often carry a Vary header. Without ignoreVary a

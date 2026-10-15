@@ -256,7 +256,7 @@ check("every checklist's category has a matching filter",
 // --- Tramadol ----------------------------------------------------------------
 check("tramadol: filed under opioids", run('DRUGS.find(d => d.id === "tramadol").cat'), "opioid");
 check("tramadol: CrCl<30 capped at 200 mg/24h",
-  run('/max 200 mg\\/24h/.test(DRUGS.find(d => d.id === "tramadol").doses[3].fixedEn)'), true);
+  run('DRUGS.find(d => d.id === "tramadol").doses.some(x => /CrCl <30/.test(x.en) && /max 200 mg\\/24 ?h/.test(x.fixedEn))'), true);
 check("tramadol: seizure risk documented",
   run('/seizure/i.test(DRUGS.find(d => d.id === "tramadol").notesEn)'), true);
 // The drug entry quotes the same ratio the converter uses; if one changes the
@@ -364,7 +364,7 @@ check("PCC capped at 2500 IU for INR 2-4",
     return String(typeof r === "string" ? r : r.calc);
   })()`).includes("2500"), true);
 check("neostigmine capped at 5 mg",
-  run('DRUGS.find(d => d.id === "neostigmine").doses[0].max'), 5);
+  run('DRUGS.find(d => d.id === "neostigmine").doses[1].max'), 5);
 
 // --- MAC age adjustment -------------------------------------------------------
 // MAC = MAC40 x 10^(-0.00269 x (age - 40)), i.e. about 6% lower per decade.
@@ -587,6 +587,120 @@ check("sedation: ketamine contraindicated under 3 months, remifentanil not given
   run("!!SED_DRUGS.filter(function(d){return d.id==='ket';})[0].peds(0.1).noneEl && !!SED_DRUGS.filter(function(d){return d.id==='remi';})[0].peds(8).noneEl"), true);
 check("sedation: midazolam 6 m-5 yr 0.05-0.1 mg/kg, 6-12 yr 0.025-0.05 mg/kg",
   run("(function(){var m=SED_DRUGS.filter(function(d){return d.id==='mdz';})[0];var a=m.peds(3).items[0],b=m.peds(8).items[0];return [a.lo,a.hi,b.lo,b.hi].join(',');})()"), "0.05,0.1,0.025,0.05");
+
+check("propofol (SmPC): paediatric induction 2.5 mg/kg >8 yr and 2.5-4 mg/kg 1 month-3 yr, ICU 0.3-4 mg/kg/h",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='propofol';})[0];var f=function(re){return d.doses.filter(function(x){return re.test(x.en);})[0];};var a=f(/>8 yr/),b=f(/1 month/),c=f(/^ICU/);return [a.lo,a.hi,b.lo,b.hi,c.lo,c.hi].join(',')+'|'+/16/.test(d.ciEn);})()"), "2.5,2.5,2.5,4,0.3,4|true");
+
+check("etomidate (SmPC): 0.3 mg/kg, elderly 0.15-0.2, max 60 mg",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='etomidate';})[0];return [d.doses[0].lo,d.doses[0].hi,d.doses[1].lo,d.doses[1].hi,d.doses[0].max].join(',');})()"), "0.3,0.3,0.15,0.2,60");
+
+check("ketamine (SmPC): IV 1-4.5, IM 6.5-13 mg/kg, infusion 10-45 mcg/kg/min, pre-eclampsia contraindicated",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='ketamine';})[0];return [d.doses[0].lo,d.doses[0].hi,d.doses[1].lo,d.doses[1].hi,d.doses[5].lo,d.doses[5].hi].join(',')+'|'+/pre-eclampsia/.test(d.ciEn);})()"), "1,4.5,6.5,13,10,45|true");
+
+check("midazolam (SmPC): child PO 0.25-0.5 mg/kg max 20, ICU 0.03-0.2 mg/kg/h, no glaucoma contraindication",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='midazolam';})[0];var f=function(re){return d.doses.filter(function(x){return re.test(x.en);})[0];};var a=f(/PO premed/),b=f(/^ICU \\u2014 maintenance/);return [a.lo,a.hi,a.max,b.lo,b.hi].join(',')+'|'+/glaucoma/i.test(d.ciEn);})()"), "0.25,0.5,20,0.03,0.2|false");
+
+check("remimazolam (SmPC): fixed doses only, unstable myasthenia contraindicated, no heart-failure contraindication",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='remimazolam';})[0];return d.doses.every(function(x){return !!x.fixed;})+'|'+/myasthenia/.test(d.ciEn)+'|'+/HF|heart failure/.test(d.ciEn);})()"), "true|true|false");
+
+check("thiopental (SmPC): adult 4-6 mg/kg, infants 5-8 mg/kg, myotonic dystrophy contraindicated",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='thiopental';})[0];return [d.doses[0].lo,d.doses[0].hi,d.doses[6].lo,d.doses[6].hi].join(',')+'|'+/myotonica/.test(d.ciEn);})()"), "4,6,5,8|true");
+
+check("volatiles (SmPC): sevo maintenance 0.5-3%, des with N2O 2-6%, iso with N2O 1.0-2.5%, N2O not in early-pregnancy CI",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return [g('sevoflurane').doses[3].fixedEn,g('desflurane').doses[1].fixedEn,g('isoflurane').doses[1].fixedEn].join('|')+'|'+/pregnan/i.test(g('n2o').ciEn);})()"), "0.5\u20133%|2\u20136%|1.0\u20132.5%|false");
+
+check("fentanyl (SmPC): spontaneous 50-200 mcg, children 1-3 mcg/kg, MAOI contraindication",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='fentanyl';})[0];return d.doses[0].fixedEn+'|'+d.doses[10].lo+'-'+d.doses[10].hi+'|'+/MAOI/.test(d.ciEn);})()"), "50\u2013200 mcg|1-3|true");
+
+check("sufentanil (SmPC): induction 0.5-1 mcg/kg, children 0.2-0.5, myasthenia contraindicated",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='sufentanil';})[0];return [d.doses[0].lo,d.doses[0].hi,d.doses[6].lo,d.doses[6].hi].join(',')+'|'+/myasthenia/.test(d.ciEn);})()"), "0.5,1,0.2,0.5|true");
+
+check("alfentanil (SmPC): ventilated 30-50 mcg/kg, infusion 0.5-1 mcg/kg/min, labour contraindicated",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='alfentanil';})[0];return [d.doses[2].lo,d.doses[2].hi,d.doses[5].lo,d.doses[5].hi].join(',')+'|'+/labour/.test(d.ciEn);})()"), "30,50,0.5,1|true");
+
+check("remifentanil (SmPC): induction 0.5-1 mcg/kg/min, sole-agent induction contraindicated; morphine IV 2.5-15 mg, phaeochromocytoma contraindicated",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};var r=g('remifentanil'),m=g('morphine');return [r.doses[0].lo,r.doses[0].hi].join(',')+'|'+/sole agent/.test(r.ciEn)+'|'+m.doses[0].fixedEn+'|'+/phaeochromocytoma/.test(m.ciEn);})()"), "0.5,1|true|2.5\u201315 mg, titrated|true");
+
+check("rocuronium (SmPC): RSI 1.0, caesarean 0.6, maintenance 0.15 mg/kg",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='rocuronium';})[0];return [d.doses[1].lo,d.doses[3].lo,d.doses[4].lo].join(',');})()"), "1,0.6,0.15");
+
+check("succinylcholine (SmPC): 1 mg/kg, neonates 2 mg/kg, IM max 150 mg, myotonia contraindicated",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='succinylcholine';})[0];return [d.doses[0].lo,d.doses[4].lo,d.doses[5].max].join(',')+'|'+/myotonia/.test(d.ciEn);})()"), "1,2,150|true");
+
+check("cisatracurium (SmPC): intubation 0.15, infusion 1-2 mcg/kg/min, atracurium hypersensitivity contraindicated",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='cisatracurium';})[0];return [d.doses[0].lo,d.doses[0].hi,d.doses[3].lo,d.doses[3].hi].join(',')+'|'+/atracurium/.test(d.ciEn);})()"), "0.15,0.15,1,2|true");
+
+check("reversal (SmPC): sugammadex CI hypersensitivity only; neostigmine 0.05 max 5; glycopyrrolate child max 0.2 mg",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return /renal/i.test(g('sugammadex').ciEn)+'|'+g('neostigmine').doses[1].lo+','+g('neostigmine').doses[1].max+'|'+g('glycopyrrolate').doses[3].max;})()"), "false|0.05,5|0.2");
+
+check("tramadol: no paediatric rows (not under 12), uncontrolled epilepsy contraindicated",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='tramadol';})[0];return d.doses.some(function(x){return /CHILDREN/.test(x.en);})+'|'+/NOT under 12/.test(d.notesEn)+'|'+/epilepsy/.test(d.ciEn);})()"), "false|true|true");
+
+check("amiodarone (SmPC): loading 5 mg/kg, maintenance max 1200 mg, thyroid contraindication with CPR exception",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='amiodarone';})[0];return [d.doses[1].lo,d.doses[2].max].join(',')+'|'+/thyroid/.test(d.ciEn)+'|'+/CPR/.test(d.ciEn);})()"), "5,1200|true|true");
+
+check("adenosine (SmPC): child 0.1 mg/kg max 6 then max 12, long QT contraindicated",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='adenosine';})[0];return [d.doses[2].lo,d.doses[2].max,d.doses[3].max].join(',')+'|'+/long QT/.test(d.ciEn);})()"), "0.1,6,12|true");
+
+check("vasopressin (SmPC): max 0.03 U/min, 0.75 mL/h at 0.01 with 0.8 U/mL",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='vasopressin';})[0];return /max 0.03 U\\/min/.test(d.doses[0].fixedEn)+'|'+/0.75/.test(d.doses[1].fixedEn);})()"), "true|true");
+
+check("dopamine (SmPC): start 2-5 mcg/kg/min, hyperthyroidism contraindicated",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='dopamine';})[0];return [d.doses[0].lo,d.doses[0].hi].join(',')+'|'+/hyperthyroidism/.test(d.ciEn);})()"), "2,5|true");
+
+check("calcium (SmPC): child gluconate 0.5 mL/kg max 20 mL, glycoside contraindication",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='calcium';})[0];return [d.doses[6].lo,d.doses[6].max].join(',')+'|'+/glycoside/.test(d.ciEn);})()"), "0.5,20|true");
+
+check("bicarbonate (SmPC) 1 then 0.5 mmol/kg; insulin glucose UKKA monitoring to 360 min",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return g('bicarbonate').doses[1].lo+'|'+/360 min/.test(g('insulin_glucose').notesEn)+'|'+/hypoventilation/.test(g('bicarbonate').ciEn);})()"), "0.5|true|true");
+
+check("salbutamol IV 3-20 ug/min; hydrocortisone 100 mg minor cover; pethidine child IM 0.5-2 mg/kg",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};var p=g('pethidine').doses[7];return /3\u201320/.test(g('salbutamol').doses[2].fixedEn)+'|'+/^100 mg/.test(g('hydrocortisone').doses[2].fixedEn)+'|'+p.lo+','+p.hi+'|'+/ritonavir/.test(g('pethidine').ciEn);})()"), "true|true|0.5,2|true");
+
+check("oxytocin consensus 1 IU elective / 7.5-15 IU/h intrapartum; carbetocin single 100; methergin max 5/24h",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return /^1 IU/.test(g('oxytocin').doses[0].fixedEn)+'|'+g('oxytocin').doses[3].fixedEn+'|'+/SINGLE/.test(g('carbetocin').doses[0].fixedEn)+'|'+/max 5 doses/.test(g('ergometrine').doses[3].fixedEn)+'|'+/triptans/.test(g('ergometrine').ciEn);})()"), "true|7.5\u201315 IU/h|true|true|true");
+
+check("protamine (SmPC): max 50 mg, enoxaparin 8 h rule, hypersensitivity only CI",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='protamine';})[0];return /max 50 mg/.test(d.doses[6].fixedEn)+'|'+/within 8 h/.test(d.doses[7].fixedEn)+'|'+/^Hypersensitivity/.test(d.ciEn);})()"), "true|true|true");
+
+check("naloxone SmPC 100-200 postop, peds 0.01-0.02 mg/kg; flumazenil anaesthesia max 1 mg, peds 0.01 max 0.2",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};var n=g('naloxone'),f=g('flumazenil');return /^100\u2013200/.test(n.doses[0].fixedEn)+'|'+n.doses[4].hi+'|'+/max 1 mg/.test(f.doses[0].fixedEn)+'|'+f.doses[3].max+'|'+/status epilepticus/.test(f.ciEn);})()"), "true|0.02|true|0.2|true");
+
+check("atropine peds 0.02 mg/kg max 0.5 no minimum; adrenaline IM by age 300/150, arrest 0.01 max 1",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};var a=g('atropine'),d=g('adrenaline');return a.doses[6].max+'|'+(a.doses[6].minAbs===undefined)+'|'+/^300/.test(d.doses[3].fixedEn)+'|'+/^150/.test(d.doses[4].fixedEn)+'|'+d.doses[1].max+'|'+/metabisulfite/.test(d.ciEn);})()"), "0.5|true|true|true|1|true");
+
+check("ephedrine SmPC max 9 mg/dose 30 mg total; phenylephrine bolus max 100, infusion 25-100 ug/min, MAOI CI",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};var e=g('ephedrine'),p=g('phenylephrine');return /max 9 mg per dose/.test(e.doses[0].fixedEn)+'|'+/max 30 mg/.test(e.doses[0].fixedEn)+'|'+/max 100 \u00b5g per bolus/.test(p.doses[0].fixedEn)+'|'+/100 \u00b5g.min/.test(p.doses[1].fixedEn)+'|'+p.doses[4].max+'|'+/MAOIs/.test(p.ciEn);})()"), "true|true|true|true|100|true");
+
+check("noradrenaline SmPC titration 0.05-1, base/tartrate note, SSC vasopressin threshold",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='noradrenaline';})[0];return d.doses[1].lo+','+d.doses[1].hi+'|'+/2 mg tartrate = 1 mg base/.test(d.notesEn)+'|'+/vasopressin at 0.25/.test(d.doses[4].fixedEn);})()"), "0.05,1|true|true");
+
+check("dobutamine SmPC adults 2.5-10, children 2-20, phaeochromocytoma and hypovolaemia CI",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='dobutamine';})[0];return d.doses[0].lo+','+d.doses[0].hi+'|'+d.doses[3].lo+','+d.doses[3].hi+'|'+/phaeochromocytoma/.test(d.ciEn)+'|'+/hypovolaemia/.test(d.ciEn);})()"), "2.5,10|2,20|true|true");
+
+check("labetalol SmPC bolus max 200, pregnancy infusion to 160 mg/h, asthma CI",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='labetalol';})[0];return /max 200 mg/.test(d.doses[0].fixedEn)+'|'+/160 mg.h/.test(d.doses[5].fixedEn)+'|'+/asthma/.test(d.ciEn);})()"), "true|true|true");
+
+check("esmolol SmPC 80 mg bolus, maintenance 50-200, verapamil 48 h CI",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='esmolol';})[0];return /^80 mg bolus/.test(d.doses[0].fixedEn)+'|'+d.doses[5].lo+','+d.doses[5].hi+'|'+/verapamil concurrently or within 48 h/.test(d.ciEn);})()"), "true|50,200|true");
+
+check("metoprolol SmPC anaesthesia max 10 mg, MI max 15 mg, beta-agonist inotrope CI",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='metoprolol';})[0];return /max 10 mg/.test(d.doses[0].fixedEn)+'|'+/max 15 mg/.test(d.doses[2].fixedEn)+'|'+/beta-agonist/.test(d.ciEn);})()"), "true|true|true");
+
+check("urapidil SmPC periop 25-25-50, max 4 mg/mL, coarctation CI",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='urapidil';})[0];return /^25 mg slow IV/.test(d.doses[0].fixedEn)+'|'+/max 4 mg.mL/.test(d.doses[3].fixedEn)+'|'+/coarctation/.test(d.ciEn);})()"), "true|true|true");
+
+check("hydralazine SmPC 5-10 mg every 20-30 min, infusion 50-150, SLE and porphyria CI",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='hydralazine';})[0];return /^5\u201310 mg slowly/.test(d.doses[0].fixedEn)+'|'+/50\u2013150/.test(d.doses[1].fixedEn)+'|'+/SLE/.test(d.ciEn)+'|'+/porphyria/.test(d.ciEn);})()"), "true|true|true|true");
+
+check("nicardipine SmPC start 3-5 mg/h max 15, children 0.5-5 ug/kg/min, unstable angina CI",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='nicardipine';})[0];return /^start 3\u20135 mg.h/.test(d.doses[0].fixedEn)+'|'+d.doses[5].lo+','+d.doses[5].hi+'|'+/unstable angina/.test(d.ciEn);})()"), "true|0.5,5|true");
+
+check("GTN SmPC surgery start 25 ug/min up to 400, PDE-5 and raised ICP CI",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='gtn';})[0];return /^start 25/.test(d.doses[0].fixedEn)+'|'+/up to 400/.test(d.doses[0].fixedEn)+'|'+/tadalafil within 48 h/.test(d.ciEn)+'|'+/raised intracranial pressure/.test(d.ciEn);})()"), "true|true|true|true");
+
+check("SNP SmPC start 0.2 range 0.2-10, surgery 1-1.5 mg/kg, B12 CI",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='snp';})[0];return d.doses[1].lo+','+d.doses[1].hi+'|'+/1\u20131.5 mg.kg per case/.test(d.doses[2].fixedEn)+'|'+/B12/.test(d.ciEn);})()"), "0.2,10|true|true");
 
 // --- Report -----------------------------------------------------------------
 console.log(`\n${pass} passed, ${fail} failed (${pass + fail} total)`);

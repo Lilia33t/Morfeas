@@ -44,3 +44,8 @@ All 83 drug entries now carry a source line in both languages, enforced by a
 test. The depth of checking varies: dose ranges, ceilings and the major
 warnings were verified against the SmPC or the named guideline, but not every
 secondary detail in the notes was re-derived from source.
+
+
+## Typeface
+
+Commissioner (SIL Open Font License, `fonts/OFL-Commissioner.txt`) is self-hosted in `fonts/commissioner.woff` as a variable-weight (300–800) Latin + Greek subset, under the family name "Morfeas Sans" so that a locally installed font or a failed Google Fonts download cannot replace it.

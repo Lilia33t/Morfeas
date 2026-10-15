@@ -2,6 +2,7 @@
 <html lang="el">
 <head>
 <meta charset="UTF-8" />
+<link rel="preload" href="fonts/commissioner.woff" as="font" type="font/woff" crossorigin>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
 <title>Morfeas — Anesthesia Assistant</title>
 
@@ -22,13 +23,23 @@
 <link rel="icon" type="image/png" href="icon-180.png" />
 
 <style>
+  /* Commissioner (SIL OFL), self-hosted under its own family name so a font
+     installed on the phone, or a failed Google Fonts download, can never
+     replace it. Variable weight 300-800, Latin + Greek subset. */
+  @font-face {
+    font-family: "Morfeas Sans";
+    src: url("fonts/commissioner.woff") format("woff");
+    font-weight: 300 800;
+    font-style: normal;
+    font-display: swap;
+  }
   html, body {
     margin: 0; padding: 0;
     background: #F4F6F9;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: none;
-    font-family: Commissioner, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: "Morfeas Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
   * { -webkit-user-select: none; user-select: none; }
   input, textarea { -webkit-user-select: text; user-select: text; }
@@ -97,7 +108,7 @@
           b.id = "upd-banner";
           b.innerHTML = "⬆️ Νέα έκδοση διαθέσιμη — <b>πατήστε για ανανέωση</b> / New version — <b>tap to refresh</b>";
           b.style.cssText = "position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:99999;" +
-            "background:#1E3A5F;color:#fff;padding:12px 16px;border-radius:14px;font:600 13.5px/1.4 Commissioner,system-ui,sans-serif;" +
+            "background:#1E3A5F;color:#fff;padding:12px 16px;border-radius:14px;font:600 13.5px/1.4 'Morfeas Sans',system-ui,sans-serif;" +
             "text-align:center;box-shadow:0 6px 20px rgba(20,37,63,.35);cursor:pointer";
           b.onclick = function () { location.reload(); };
           document.body.appendChild(b);
