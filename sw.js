@@ -1,6 +1,6 @@
 // Morfeas — service worker
 // Bump CACHE whenever anything in APP_SHELL changes, to force an update.
-const CACHE = "anesthesia-v386";
+const CACHE = "anesthesia-v389";
 
 const APP_SHELL = [
   "./",
@@ -12,10 +12,12 @@ const APP_SHELL = [
   "./src/root.js",
   "./manifest.webmanifest",
   "./LICENSE",
-  "./icon-180.png",
-  "./icon-192.png",
-  "./icon-512.png",
-  "./icon-512-maskable.png",
+  "./icons/favicon-32.png",
+  "./icons/apple-touch-icon.png",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png",
+  "./icons/icon-maskable-192.png",
+  "./icons/icon-maskable-512.png",
   "./fonts/commissioner.woff",
 ];
 

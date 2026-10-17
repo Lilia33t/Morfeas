@@ -924,6 +924,18 @@ check("v386: GCS tool with GCS-P and sources",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
     return String(/GCS_PARTS/.test(T) && /GCS_PUPILS/.test(T) && /J Neurosurg 2018;128.6.:1612/.test(T)); })(), "true");
 
+check("v387: no '\u03c5\u03c0\u03bd\u03c9\u03c4\u03b9\u03ba' in Greek text",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(!/.u03C5.u03C0.u03BD.u03C9.u03C4.u03B9.u03BA/i.test(T) && !/.u03C5.u03C0.u03BD.u03C9.u03C4.u03B9.u03BA/i.test(require('fs').readFileSync(require('path').join(__dirname,'..','src','data.js'),'utf8').replace(/const CHANGELOG[\s\S]*?\n\];/,''))); })(), "true");
+
+check("v388: low-flow how-it-works text",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/How it works: vapour .mL.min. = flow/.test(T) && /How it works: T = system volume/.test(T)); })(), "true");
+
+check("v389: new icon set wired in manifest, index and service worker",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){var fs=require('fs'),path=require('path'),R=function(f){return fs.readFileSync(path.join(__dirname,'..',f),'utf8')};var m=JSON.parse(R('manifest.webmanifest'));var ok=m.icons.length===4&&m.icons.every(function(i){return /^icons\//.test(i.src)&&fs.existsSync(path.join(__dirname,'..',i.src))});var ix=R('index.html');var sw=R('sw.js');return ok&&/icons\/favicon-32.png/.test(ix)&&/icons\/apple-touch-icon.png/.test(ix)&&/icons\/icon-512.png/.test(ix)&&!/"\.\/icon-180.png"/.test(sw)&&/Houdon/.test(T);})()); })(), "true");
+
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
 (function () {
