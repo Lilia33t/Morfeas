@@ -99,16 +99,19 @@ check("pedsCalc(5): estimated weight (Advanced Paeds Life Support formula)", ped
 check("pedsCalc(5): flagged as estimated (no weight given)", peds5.est, true);
 check("pedsCalc(5): uncuffed ETT size", peds5.ettUncuffed, 5.25);
 check("pedsCalc(5): cuffed ETT size", peds5.ettCuffed, 4.75);
+check("pedsCalc(0.25, 6 kg): cuffed ETT 3.0 (Microcuff)", run("pedsCalc(0.25, 6)").ettCuffed, 3);
+check("pedsCalc(1, 10 kg): cuffed ETT 3.5 (Microcuff)", run("pedsCalc(1, 10)").ettCuffed, 3.5);
+check("pedsCalc(0, 2 kg): no cuffed size <3 kg", run("pedsCalc(0, 2)").ettCuffed, null);
 check("pedsCalc(5): ETT insertion depth (cm at lip)", peds5.depth, 14.5);
 check("pedsCalc(5): LMA size", peds5.lma, "2");
-check("pedsCalc(5): laryngoscope blade", peds5.blade, "Mac 2");
+check("pedsCalc(5): laryngoscope blade (Merck: Miller 2 for 3-9 y)", peds5.blade, "Miller 2");
 check("pedsCalc(5): minimum acceptable SBP", peds5.minSBP, 80);
 
 const pedsInfant = run("pedsCalc(0.5, null)");
 check("pedsCalc(0.5): estimated weight (infant formula)", pedsInfant.w, 7);
-check("pedsCalc(0.5): uncuffed ETT size (age<1)", pedsInfant.ettUncuffed, 4);
+check("pedsCalc(0.5): uncuffed ETT size (age<1, Merck 3.5)", pedsInfant.ettUncuffed, 3.5);
 check("pedsCalc(0.5): LMA size", pedsInfant.lma, "1.5");
-check("pedsCalc(0.5): laryngoscope blade", pedsInfant.blade, "Miller 0\u20131");
+check("pedsCalc(0.5): laryngoscope blade (Merck: Miller 1)", pedsInfant.blade, "Miller 1");
 
 const pedsGivenWeight = run("pedsCalc(5, 22)");
 check("pedsCalc(5, 22kg given): uses given weight, not estimate", pedsGivenWeight.w, 22);
@@ -122,11 +125,6 @@ check("maint421(20kg) -> boundary of second band", run("maint421(20)"), 60);
 check("maint421(25kg) -> 1 mL/kg/h band", run("maint421(25)"), 65);
 
 // --- Context-sensitive half-time (CSHT) interpolation -----------------------
-check("cshtAt(Propofol, 30) -> exact data point", run('cshtAt("Propofol", 30)'), 5);
-check("cshtAt(Propofol, 60) -> exact data point", run('cshtAt("Propofol", 60)'), 10);
-check("cshtAt(Propofol, 45) -> linear interpolation midpoint", run('cshtAt("Propofol", 45)'), 7.5);
-check("cshtAt(Propofol, 700) -> clamps to last known point (600min)", run('cshtAt("Propofol", 700)'), 32);
-check("cshtAt(Propofol, 0) -> clamps to first known point", run('cshtAt("Propofol", 0)'), 5);
 
 // --- Nalbuphine --------------------------------------------------------------
 // Mixed kappa-agonist/mu-antagonist with an analgesic and respiratory-depression
@@ -270,17 +268,23 @@ const opioidF = (id) => run(`OPIOIDS.find(o => o.id === ${JSON.stringify(id)}).f
 check("morphine PO 30 mg -> OME 30", 30 * opioidF("morph-po"), 30);
 check("morphine IV 10 mg -> OME 30", 10 * opioidF("morph-iv"), 30);
 check("oxycodone PO 20 mg -> OME 30", 20 * opioidF("oxy-po"), 30);
-check("hydromorphone PO 7.5 mg -> OME 30", 7.5 * opioidF("hydro-po"), 30);
-check("hydromorphone IV 1.5 mg -> OME 30", 1.5 * opioidF("hydro-iv"), 30);
+check("hydromorphone PO 6 mg -> OME 30", 6 * opioidF("hydro-po"), 30);
+check("hydromorphone IV 2 mg -> OME 30", 2 * opioidF("hydro-iv"), 30);
+check("oxycodone IV 10 mg -> OME 30", 10 * opioidF("oxy-iv"), 30);
+check("tramadol IV 100 mg -> OME 30", 100 * opioidF("tramadol-iv"), 30, 0.001);
+check("pethidine IV 75 mg -> OME 30", 75 * opioidF("pethidine-iv"), 30, 0.001);
+check("fentanyl IV 150 mcg/24h -> OME 30", 150 * opioidF("fent-iv"), 30, 0.001);
+check("sufentanil IV 15 mcg/24h -> OME 30", 15 * opioidF("sufent-iv"), 30);
 check("fentanyl patch 25 mcg/h -> OME 60", 25 * opioidF("fent-tts"), 60);
-check("codeine PO 200 mg -> OME 30", 200 * opioidF("codeine"), 30);
+check("codeine PO 300 mg -> OME 30", 300 * opioidF("codeine"), 30, 0.001);
 check("tramadol PO 300 mg -> OME 30", 300 * opioidF("tramadol"), 30);
 check("tapentadol PO 75 mg -> OME 30", 75 * opioidF("tapent"), 30);
 check("OME 60 -> oxycodone PO 40 mg", 60 / opioidF("oxy-po"), 40);
 check("OME 60 -> fentanyl patch 25 mcg/h", 60 / opioidF("fent-tts"), 25);
 // Methadone and buprenorphine must stay OUT: conversion is non-linear.
 check("methadone & buprenorphine excluded from converter",
-  run("OPIOIDS.filter(o => /methadone|buprenorph/i.test(o.id + o.en)).length"), 0);
+  run("OPIOIDS.filter(o => /methadone|buprenorph/i.test(o.id + o.en) && o.grp !== \"td\").length"), 0);
+check("buprenorphine patch 35 mcg/h -> OME 84", 35 * opioidF("bup-tts"), 84);
 check("nalbuphine stays out of the converter (ceiling effect)",
   run("OPIOIDS.some(o => /nalb/i.test(o.id + o.en))"), false);
 check("tramadol: drug entry agrees with the converter (300 mg = 30 mg OME)",
@@ -702,6 +706,234 @@ check("GTN SmPC surgery start 25 ug/min up to 400, PDE-5 and raised ICP CI",
 check("SNP SmPC start 0.2 range 0.2-10, surgery 1-1.5 mg/kg, B12 CI",
   run("(function(){var d=DRUGS.filter(function(x){return x.id==='snp';})[0];return d.doses[1].lo+','+d.doses[1].hi+'|'+/1\u20131.5 mg.kg per case/.test(d.doses[2].fixedEn)+'|'+/B12/.test(d.ciEn);})()"), "0.2,10|true|true");
 
+check("clonidine SmPC 150-300 ug max 750/24h, periop per-kg marked outside SmPC",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='clonidine';})[0];return /max 750/.test(d.doses[0].fixedEn)+'|'+/outside SmPC/.test(d.doses[1].en)+'|'+d.doses[1].max;})()"), "true|true|150");
+
+check("LA SmPC: lidocaine plain 4.5 mg/kg max 200, bupivacaine 2 mg/kg max 150, ropivacaine caudal 2 mg/kg",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};var l=g('lidocaine').doses[0],b=g('bupivacaine').doses[0],r=g('ropivacaine').doses[7];return l.lo+','+l.max+'|'+b.lo+','+b.max+'|'+r.lo+','+r.max+'|'+/paracervical/.test(g('ropivacaine').ciEn);})()"), "4.5,200|2,150|2,50|true");
+
+check("prilocaine added: max 400, children 5 mg/kg, spinal max 80, methaemoglobinaemia CI",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='prilocaine';})[0];return d.cat+'|'+d.doses[2].lo+'|'+/max 80 mg/.test(d.doses[3].fixedEn)+'|'+/methaemoglobinaemia/.test(d.ciEn);})()"), "local|5|true|true");
+
+check("dexamethasone SmPC PONV 3.3-6.6 base, children 0.12 mg/kg max 4.13, base note",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='dexamethasone';})[0];return /^3.3\u20136.6 mg base/.test(d.doses[0].fixedEn)+'|'+d.doses[2].lo+','+d.doses[2].max+'|'+/BASE/.test(d.notesEn);})()"), "true|0.12,4.13|true");
+
+check("analgesics SmPC: paracetamol 10-33 kg cap 500 mg, ketorolac up to 2 days, parecoxib max 80",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return g('paracetamol').doses[2].max+'|'+/up to 2 days/.test(g('ketorolac').doses[0].fixedEn)+'|'+/max 80 mg/.test(g('parecoxib').doses[0].fixedEn)+'|'+/intraoperatively/.test(g('ketorolac').ciEn);})()"), "500|true|true|true");
+
+check("NSAIDs SmPC: diclofenac no bolus/2 days, ibuprofen IV max 2400, lornoxicam max 16",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return /NO IV bolus/.test(g('diclofenac_ad').notesEn)+'|'+/max 2400/.test(g('ibuprofen_ad').doses[0].fixedEn)+'|'+/max 16 mg/.test(g('lornoxicam').doses[0].fixedEn)+'|'+g('ibuprofen_ad').doses[2].max;})()"), "true|true|true|400");
+
+check("magnesium SmPC eclampsia 4 g load, 1 g/h, peds asthma 40 mg/kg max 2 g",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='magnesium';})[0];return /^4 g/.test(d.doses[0].fixedEn)+'|'+/^1 g.h/.test(d.doses[1].fixedEn)+'|'+d.doses[7].lo+','+d.doses[7].max;})()"), "true|true|40,2000");
+
+check("lidocaine IV infusion <=1.5 mg/kg/h; TXA renal table, seizure CI; ketamine analgesic outside SmPC",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return /\u22641.5 mg.kg.h/.test(g('lidocaine_iv').doses[1].fixedEn)+'|'+/5 mg.kg every 24 h/.test(g('txa').doses[4].fixedEn)+'|'+/seizures/.test(g('txa').ciEn)+'|'+/outside the SmPC/.test(g('ketamine_analgesic').notesEn);})()"), "true|true|true|true");
+
+check("dantrolene 2.5 mg/kg + 60 mL per vial; intralipid >70 kg 100 mL; fibrinogen 70 mg/kg if unknown",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return g('dantrolene').doses[0].lo+'|'+/60 mL/.test(g('dantrolene').doses[3].fixedEn)+'|'+/^bolus 100 mL/.test(g('intralipid').doses[2].fixedEn)+'|'+g('fibrinogen').doses[1].lo;})()"), "2.5|true|true|70");
+
+check("PCC SmPC bands and HIT CI; desmopressin SmPC 0.4 and practice 0.3 max 20",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return g('pcc').doses[0].en+'|'+/HIT/.test(g('pcc').ciEn)+'|'+g('desmopressin').doses[0].lo+'|'+g('desmopressin').doses[1].max;})()"), "INR 2.0\u20133.9 (SmPC)|true|0.4|20");
+
+check("milrinone renal table and peds 0.25-0.75; levosimendan CrCl<30 and torsades CI",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return /CrCl 50: 0.43/.test(g('milrinone').doses[3].fixedEn)+'|'+g('milrinone').doses[5].lo+'|'+/CrCl <30/.test(g('levosimendan').ciEn)+'|'+/torsades/.test(g('levosimendan').ciEn);})()"), "true|0.25|true|true");
+
+check("antiemetics/reversal SmPC: ondansetron apomorphine CI, metoclopramide <1 yr CI, droperidol QTc, andexanet heparin warning; lidocaine LA cap 200",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return /apomorphine/.test(g('ondansetron').ciEn)+'|'+/children <1 year/.test(g('metoclopramide').ciEn)+'|'+/QTc >450/.test(g('droperidol').ciEn)+'|'+/heparinisation/.test(g('andexanet').notesEn)+'|'+LA_LIST.find(function(x){return x.id==='lido';}).abs;})()"), "true|true|true|true|200");
+
+check("cipepofol added: induction 0.4/0.3, egg/soy CI, FDA-only note",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='cipepofol';})[0];return d.cat+'|'+d.doses[0].lo+','+d.doses[1].lo+'|'+/soy/.test(d.ciEn)+'|'+/NOT approved by the EMA/.test(d.notesEn);})()"), "induction|0.4,0.3|true|true");
+
+check("v341: steroid cover per Woodcock 2020 (100 mg at induction), no old 25-50 mg regimen",
+  String(/hydrocortisone 100 mg/.test(src) && !/hydrocortisone 25\\u201350 mg/.test(src) && /Woodcock T, et al. Anaesthesia 2020;75:654/.test(src)), "true");
+
+check("v341: lidocaine 3 mg/kg in LA tool labelled clinical practice (SmPC 4.5 mg/kg)",
+  run("(function(){var l=LA_LIST.filter(function(x){return x.id==='lido';})[0];return l.perKg+','+l.abs+'|'+/Clinical practice/.test(l.noteEn)+'|'+/4.5 mg.kg/.test(l.noteEn);})()"), "3,200|true|true");
+
+check("v342: steroid cover threshold >=4 weeks any route (Woodcock 2020)",
+  String(/for ", \/\* @__PURE__ \*\/ React.createElement\(Hi, null, "\\u2265 4 weeks"\)/.test(src) && !/for \\u2265 3 weeks, or Cushingoid/.test(src)), "true");
+
+check("v343: GLP-1 continue, SGLT2 UK day-before/day-of + FDA, metformin CPOC, no 'sliding scale'",
+  String(/"Continue"\), " perioperatively, with the usual fasting times/.test(src) && /the day before and the day"\), " of surgery/.test(src) && /the lunchtime dose only/.test(src) && !/sliding scale/.test(src) && !/ADA 2023/.test(src)), "true");
+
+check("v344: glucagon 1 mg / peds 0.5 mg <25 kg, phaeochromocytoma CI; methylene blue 1-2 mg/kg max 7, G6PD CI, saline warning",
+  run("(function(){var g=DRUGS.filter(function(x){return x.id==='glucagon';})[0],m=DRUGS.filter(function(x){return x.id==='methylene_blue';})[0];return /^1 mg SC or IM/.test(g.doses[0].fixedEn)+'|'+/<25 kg or <6.8 years: 0.5 mg/.test(g.doses[1].fixedEn)+'|'+/phaeochromocytoma/.test(g.ciEn)+'|'+m.doses[0].lo+','+m.doses[0].hi+'|'+/max cumulative 7 mg.kg/.test(m.doses[1].fixedEn)+'|'+/G6PD/.test(m.ciEn)+'|'+/NOT in NaCl/.test(m.notesEn);})()"), "true|true|true|1,2|true|true|true");
+
+check("v346: g/kg dose calculation gives grams",
+  run("(function(){var r=doseText({lo:0.25,hi:1,unit:'g/kg'},70,'en');return r.calc;})()"), "17.5\u201370 g");
+
+check("v348: PCI after ACS >=12 months, balloon >=14 days; no unsourced dabigatran/FDA SGLT2 lines",
+  (function(){var S=src.replace(/const CHANGELOG[\s\S]*?\n\];/,'');return String(/After PCI for ACS.STEMI: ", .{0,60}\\u2265 12 months/.test(S) && /without stent: ", .{0,60}\\u2265 14 days/.test(S) && !/\\u2265 96h/.test(S) && !/Steffel|Kindel|Bailey B|Lieberman P|Hosseinian|Spasovski/.test(S));})(), "true");
+
+check("v348: heparin bypass 300-400 IU/kg, peds 50 + 15-25 IU/kg/h, no vascular row",
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='heparin';})[0];return d.doses[0].lo+'-'+d.doses[0].hi+'|'+d.doses[3].lo+'|'+d.doses[4].lo+','+d.doses[4].hi+'|'+d.doses.length+'|'+/HIT/.test(d.ciEn);})()"), "300-400|50|15,25|6|true");
+
+check("v348: glucagon, methylene blue, mannitol, carboprost, isoprenaline, furosemide — SmPC rows only",
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return [g('glucagon').doses.length,g('methylene_blue').doses.length,g('mannitol').doses.length,g('carboprost').doses.length,g('isoprenaline').doses.length,g('furosemide').doses.length,g('magnesium').doses.length].join(',')+'|'+/OUTSIDE SmPC .AHA 2023/.test(g('glucagon').doses.map(function(x){return x.en;}).join())+'|'+g('mannitol').doses[0].lo+','+g('mannitol').doses[0].unit;})()"), "5,5,6,3,5,4,9|true|1.5,g/kg");
+
+check("v348: hypertonic saline from Society for Endocrinology only; electrolytes card 150 mL over 20 min",
+  run("(function(){var h=DRUGS.filter(function(x){return x.id==='hypertonic_saline';})[0];return h.doses.length+'|'+/^150 mL NaCl 3% IV over 20 min/.test(h.doses[0].fixedEn)+'|'+/Society for Endocrinology/.test(h.notesEn)+'|'+h.ciEn;})()")+'|'+/over 20 min, .u00D72 or until .5 mmol.L/.test(src), "5|true|true|\u2014|true");
+
+check("v348: references — SmPCs, Society for Endocrinology 2022, ASA GLP-1 announcement, CPOC March 2021",
+  String(/Konakion MM 10 mg.mL .Neon/.test(src) && /Furosemide 10 mg.mL .hameln/.test(src) && /Isoprenaline Hydrochloride 1 mg.5 mL .Synchrony/.test(src) && /Heparin sodium 5000 IU.mL .Wockhardt/.test(src) && /Ball S, Barth J, Levy M/.test(src) && /ASA news release, 29 October 2024/.test(src) && /emergency surgery. March 2021\./.test(src)), "true");
+
+check("v349: bridging card from ACCP 2022/PAUSE — DOAC 1/2 days, dabigatran CrCl<50 2/4 days, restart 24h/48-72h; refs present",
+  String(/Dabigatran with CrCl <50: ", .{0,60}2 days.{0,80}4 days/.test(src) && /half the daily dose 24h before/.test(src) && /Chest 2022;162\(5\):e207/.test(src) && /JAMA Intern Med 2019;179\(11\):1469/.test(src) && /Am Fam Physician 2023;108\(2\):208/.test(src)), "true");
+
+check("v349: vascular heparin 5000 IU or 100 IU/kg (ACTION 2025), CPB isoprenaline 0.01-0.15, mannitol BTF row with Carney 2017",
+  String(/5000 IU or 100 IU.kg/.test(src) && /EJVES Vasc Forum 2025;64:8/.test(src) && /v: "0.01\\u20130.15 \\xB5g.kg.min", hint: el \? "[^"]*" : "chronotrope/.test(src) && !/50\\u2013100 U.kg|70\\u2013100 U.kg/.test(src) && /Neurosurgery 2017;80\(1\):6/.test(src)) + "|" + run("(function(){var m=DRUGS.filter(function(x){return x.id==='mannitol';})[0];return m.doses[1].lo+','+m.doses[1].hi+'|'+/Carney/.test(m.notesEn);})()"), "true|0.25,1|true");
+
+check("v350: STOP-Bang combination rule, Apfel per Gan 2020, Child-Pugh 10/31/76, CFS Rockwood labels, Aldrete/PADSS sources",
+  run("(function(){var g=function(id){return SCORES.filter(function(x){return x.id===id;})[0];};var sb=g('stopbang');return sb.interp(3,'en',[true,true,false,false,false,false,false,true]).lvl+','+sb.interp(3,'en',[true,false,false,false,false,true,false,true]).lvl+'|'+/at least 2 antiemetics/.test(g('apfel').interp(1,'en').en)+'|'+/3.4 antiemetics/.test(g('apfel').interp(3,'en').en)+'|'+/76%/.test(g('childpugh').interp(12,'en').en)+'|'+g('cfs').interp(5,'en').en.indexOf('Living with mild frailty')+'|'+/Aldrete JA/.test(MULTI_SCORES[0].src)+'|'+/Chung F, Chan/.test(MULTI_SCORES[1].src);})()"), "high,mid|true|true|true|0|true|true");
+
+check("v351: RCRI biomarker text per AHA/ACC 2024, STOP-Bang SASM 2016, ARISCAT without unsourced advice",
+  run("(function(){var g=function(id){return SCORES.filter(function(x){return x.id===id;})[0];};return /AHA.ACC 2024/.test(g('rcri').interp(2,'en').en)+'|'+/SASM 2016/.test(g('stopbang').interp(6,'en',[1,1,1,1,1,1,0,0]).en)+'|'+g('ariscat').interp(30,'en').en.split(' \u00B7 ')[0];})()"), "true|true|Postop pulmonary complication risk \u2248 13.3% \u2014 intermediate risk");
+
+check("v352: MAC40 Nickalls & Mapleson + SmPC tables; ventilation limits per sources",
+  String(/mac40: 1.8, key: "sevo"/.test(src) && /mac40: 6.6, key: "des"/.test(src) && /mac40: 1.17, key: "iso"/.test(src) && /40 y 2.1%/.test(src) && !/MAC-intubation/.test(src) && /ageN \/ 4 \+ 4/.test(src) && /pplatN > 30/.test(src) && !/normal 50.u2013100/.test(src) && /normal 20.u201335%/.test(src)), "true");
+
+check("v353: fluids — no hourly ½/¼ plan or third-space rates; Mladinov 2025 reference",
+  String(!/Hourly plan/.test(src) && !/Surgical losses \\(third space\\)/.test(src) && /Clin Geriatr Med 2025;41:83/.test(src) && /suggests 1.5:1/.test(src)), "true");
+
+check("v354: pedsCalc minSBP by age band, infant ETT per Merck, Miller blades",
+  run("(function(){return [pedsCalc(0.02,3.5).minSBP,pedsCalc(0.5,7).minSBP,pedsCalc(5,18).minSBP,pedsCalc(14,50).minSBP,pedsCalc(0.02,3.5).ettUncuffed,pedsCalc(0.5,7).ettUncuffed,String(pedsCalc(0.5,7).ettCuffed),pedsCalc(5,18).blade,pedsCalc(12,40).blade].join(',');})()"), "60,70,80,90,3,3.5,3,Miller 2,Miller 3");
+
+check("v354: airway card — Guedel per UNICEF, Portex 6/7, no unsourced half-volume claim",
+  String(/Size 00", v: "\\u224840 mm"/.test(src) && /Size 4", v: "\\u224890 mm"/.test(src) && /Portex 6/.test(src) && !/At half the maximum volume/.test(src) && !/nostril to the tragus/.test(src)), "true");
+
+check("v355: CSHT numeric curves removed; bariatric Janmahasatian + AAGBI scalars",
+  String(typeof run('typeof CSHT_DATA') === "string" && run('typeof CSHT_DATA') === "undefined" && /ffmJan\(w, h, sex\)/.test(src) && /AAGBI\/SOBA 2015\)/.test(src) && !/SOBA UK 2022 single sheet/.test(src) && /rocuronium, atracurium, vecuronium/.test(src)), "true");
+
+check("v355: TCI targets per SmPC; Kataria 3-16 y; quick-calc Mg rate",
+  String(/Procedural sedation 0.5.u20132.5/.test(src) && /over 65 years initially 1.5.u20134 ng\/mL/.test(src) && !/Spont. breathing 1/.test(src) && /c.a <= 16 && c.w >= 15/.test(src) && /max 2 g\/h/.test(src) && !/prefer central/.test(src)), "true");
+
+check("v356: special situations per SAGES/FDA/AHA 2024; unsourced items removed",
+  String(/CO\\u2082 insufflation 10.u201315 mmHg/.test(src) && /from 30 weeks also premature closure/.test(src) && !/24.u201334 weeks with risk/.test(src) && /increases K\\u207A by \\u22480.5 mmol\/L/.test(src) && /C 76.u201382% mortality/.test(src) && !/start at 10.u201320% of the dose/.test(src) && /balloon \\u226514 days \\u00B7 BMS/.test(src)), "true");
+
+check("v357: Fick ScvO2 direction, transplant neostigmine, FLACC bands",
+  String(/~2.u20133% LOWER than SvO/.test(src) && !/runs a few percent above true SvO/.test(src) && /normal 22.u201330%/.test(src) && /bradycardia and asystole/.test(src) && !/atropine and neostigmine have no effect/.test(src) && !/action threshold: \\u2265 4/.test(src) && !/LaFarge/.test(src) && /v: el \? "\\u03AE\\u03C0\\u03B9\\u03BF\\u03C2" : "mild"/.test(src)), "true");
+
+check("v359: anticoagulant restart wording per ESAIC/ESRA 2022",
+  String(!/NSAIDs or tricyclics/.test(src) && !/Not covered by the 2022 ESAIC/.test(src) && /48.u201372 h after a high-bleeding-risk procedure/.test(src) && /usually ~6 h postoperatively\) \\u00B7 only after catheter removal/.test(src)), "true");
+
+check("v360: neuraxial/regional per SmPC and NYSORA",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8");
+    return String(/Urological \(e.g. TURP\)", v: "7.5.u201315 mg"/.test(T) && !/phrenic 100%/.test(T) && !/15.u201322.5 mg/.test(T) && !/100.u2013150 .u00B5g/.test(T) && /en: "Interscalene", v: "7.u201315 mL"/.test(T) && /6.u201314 mL\/h/.test(T) && !/J.u00E6ger/.test(T)); })(), "true");
+
+check("v361: postop analgesia aligned with drug cards",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8");
+    return String(!/1.u20132 mg\/kg\/h/.test(T) && !/4-h limit per protocol/.test(T) && /every 3.u20136 h .u00B7 max 20 mg\/dose/.test(T) && /1 g every .u22654 h/.test(T)); })(), "true");
+
+check("v362: antibiotic prophylaxis per Bratzler 2013",
+  String(run("ABX.every(a => !/[\\u0370-\\u03FF]/.test(a.redose)) && ABX.some(a => /low-risk laparoscopic cholecystectomy: none/.test(a.regEn)) && !ABX.some(a => /per urine culture/.test(a.regEn))")), "true");
+
+check("v363: ROTEM algorithm per ESAIC 2022 / trauma 2023",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8");
+    return String(!/Li30 &lt; 94|Li30 < 94/.test(T) && !/PCC 20.u201325 U\/kg/.test(T) && !/target >50, >100/.test(T) && /iCa.u00B2.u207A >0.9 mmol\/L/.test(T) && /Clauss .u22641.5 g\/L/.test(T)); })(), "true");
+
+check("v364: PSSS, PONV, fasting, NMB guideline corrections",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/"Shallow: TOFr < 0.4"/.test(T) && !/Shallow: TOF count 4/.test(T) && !/post-induction hypotension/.test(T) && /3.u20134 antiemetics/.test(T) && !/states 2.u20133 are the target/.test(P) && !/Cravero/.test(P)); })(), "true");
+
+check("v365: PONV items restored per full 5th consensus report",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8");
+    return String(/"Aprepitant 40 mg PO preop \(FDA\) or 32 mg IV/.test(T) && /Scopolamine patch .u2014 onset 2.u20134 h/.test(T) && /Do NOT re-dose long-acting agents/.test(T) && /Amisulpride 10 mg IV as rescue/.test(T) && /ANE.0000000000007816/.test(T)); })(), "true");
+
+check("v366: paediatric fasting/SBP line restored per ESAIC 2022",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/lower SBP during anaesthesia .>8 h/.test(T) && /EJA.0000000000001599/.test(T)); })(), "true");
+
+check("v367: ROTEM platelets/fibrinogen restored per European trauma 2023",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/>100 .u00D710.u2079\/L in TBI/.test(T) && /trauma: initial 3.u20134 g/.test(T) && /25.u201350 IU FIX\/kg/.test(T) && !/Li30 < 94/.test(T)); })(), "true");
+
+check("v368: interscalene phrenic paresis restored with Urmey 1991",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/hemidiaphragmatic paresis 100% with 34.u201352 mL .Urmey 1991/.test(T) && /00000539-199104000-00014/.test(T)); })(), "true");
+
+check("v369: nalbuphine 160 mg/24h restored per US label",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/max 160 mg\/24h .US label, Pfizer/.test(T)); })(), "true");
+
+check("v370: thrombolytics row per ASRA 2025",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/No needle placement for .u226548 h after thrombolysis/.test(P) && !/NSAIDs or tricyclics/.test(P)); })(), "true");
+
+check("v371: transplant & FLACC lines restored with sources",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/no cough reflex below the tracheal anastomosis/.test(T) && /hypomagnesaemia, tremor/.test(T) && /Validated in children 2 months .u2013 7 years/.test(T) && !/action threshold: .u2265 4/.test(T)); })(), "true");
+
+check("v372: pregnancy steroids & myasthenia dosing restored with sources",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/24 0\/7 .u2013 33 6\/7 weeks at high risk of preterm delivery/.test(T) && /reduce the dose 2.u20138-fold/.test(T) && /ezt641/.test(T) && !/start at 10.u201320% of the dose/.test(T)); })(), "true");
+
+check("v373: renal/dialysis lines restored with sources",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/draining the abdomen before induction/.test(T) && /high-flux haemodialysis lowers levels by ~70%/.test(T) && /0.u0025 vs 19.u0025|0% vs 19%/.test(T) && !/defer elective surgery above ~6.0 mmol/.test(T)); })(), "true");
+
+check("v374: hepatic lines restored with sources",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/INR\/aPTT do NOT predict post-procedural bleeding/.test(T) && /reduced dose 2.u20133 g\/24h/.test(T) && /jhep.2021.09.003/.test(T)); })(), "true");
+
+check("v375: Schnider Ce targets per NHS Lothian",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/Ce .NHS Lothian local guide, not SmPC/.test(require('fs').readFileSync(require('path').join(__dirname,'..','src','formulas.js'),'utf8'))); })(), "true");
+
+check("v376: cuffed ETT <2 y per Microcuff chart",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/a >= 2 \? a \/ 4 \+ 3.5 : a \* 12 >= 8 \? 3.5 : w >= 3 \? 3 : null/.test(P) && /LIT-20479-C1/.test(T) && (function(){var vm=require("vm"),fs=require("fs"),path=require("path");var c={React:{}};vm.createContext(c);["data","formulas","primitives"].forEach(function(f){try{vm.runInContext(fs.readFileSync(path.join(__dirname,"..","src",f+".js"),"utf8"),c)}catch(e){}});return true;})()); })(), "true");
+
+check("v377: Furman scheme described with source",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/Furman.u2019s 1975 hourly scheme .50% in the first hour/.test(T) && /Anesthesiology 1975;42.2.:187/.test(T)); })(), "true");
+
+check("v378: Cstat normal and MAC-EI with sources",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/healthy ventilated ~50.u201360 mL\/cmH.u2082O/.test(T) && /4.52% .u2248 2.86 .u00D7 MAC/.test(T)); })(), "true");
+
+check("v379: ARISCAT protective ventilation per Young 2019",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/Lung-protective ventilation for all: Vt 6.u20138 mL\/kg PBW/.test(P) && /bja.2019.08.017/.test(T)); })(), "true");
+
+check("v380: v348 items restored with sources",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/ertugliflozin .u22654 days/.test(T) && /PCC.0000000000001735/.test(T) && /CIR.0000000000001161/.test(T)); })(), "true");
+
+check("v381: cardnc valve goals and CHD lines restored",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/Aortic regurgitation: HR 80.u2013100\/min/.test(T) && /insufflate .u226410 mmHg/.test(T) && /Repaired tetralogy of Fallot: pulmonary regurgitation/.test(T)); })(), "true");
+
+check("v382: dystrophy volatile wording per MHAUS/PPMD",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/Avoid or limit volatiles .u2014 prefer intravenous\/TIVA/.test(T)); })(), "true");
+
+check("v383: no unsourced Na 145-155 target",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(!/target Na 145/.test(T) && /BTF 2019 .u00B7 10.u201320 min/.test(T)); })(), "true");
+
+check("v384: recruitment tool present with protocol sources",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/RM_PROTOCOLS/.test(T) && /Trials 2017;18:202/.test(T) && /jama.2025.23373/.test(T) && /Trials 2020;21:198/.test(T)); })(), "true");
+
+check("v385: low-flow tool present with sources",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/LF_AGENTS/.test(T) && /Statement on the use of low gas flows for sevoflurane/.test(T) && /Acta Anaesthesiol Scand 2014;58/.test(T)); })(), "true");
+
+check("v386: GCS tool with GCS-P and sources",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/GCS_PARTS/.test(T) && /GCS_PUPILS/.test(T) && /J Neurosurg 2018;128.6.:1612/.test(T)); })(), "true");
+
+// Audit registry: every tool, drug, checklist, score and guideline in the app
+// must have an entry in audit/audit-registry.json (pending items are allowed).
+(function () {
+  const cov = require("./audit-check.js").coverage();
+  check("audit registry covers every app item (missing: " + (cov.missing.join(", ") || "none") + ")", String(cov.missing.length), "0");
+  check("audit registry has no entries for removed items (orphan: " + (cov.orphan.join(", ") || "none") + ")", String(cov.orphan.length), "0");
+  check("audit registry appVersion matches APP_VERSION", String(cov.reg.appVersion), String(cov.inv.appVersion));
+  console.log("  audit: " + cov.reviewed.length + " reviewed, " + cov.kept.length + " kept by decision, " + cov.pending.length + " pending");
+})();
+
 // --- Report -----------------------------------------------------------------
 console.log(`\n${pass} passed, ${fail} failed (${pass + fail} total)`);
 if (failures.length) {
@@ -710,3 +942,4 @@ if (failures.length) {
   process.exit(1);
 }
 process.exit(0);
+
