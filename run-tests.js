@@ -924,6 +924,38 @@ check("v386: GCS tool with GCS-P and sources",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
     return String(/GCS_PARTS/.test(T) && /GCS_PUPILS/.test(T) && /J Neurosurg 2018;128.6.:1612/.test(T)); })(), "true");
 
+check("v387: no '\u03c5\u03c0\u03bd\u03c9\u03c4\u03b9\u03ba' in Greek text",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(!/.u03C5.u03C0.u03BD.u03C9.u03C4.u03B9.u03BA/i.test(T) && !/.u03C5.u03C0.u03BD.u03C9.u03C4.u03B9.u03BA/i.test(require('fs').readFileSync(require('path').join(__dirname,'..','src','data.js'),'utf8').replace(/const CHANGELOG[\s\S]*?\n\];/,''))); })(), "true");
+
+check("v388: low-flow how-it-works text",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/How it works: vapour .mL.min. = flow/.test(T) && /How it works: T = system volume/.test(T)); })(), "true");
+
+check("v389: new icon set wired in manifest, index and service worker",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){var fs=require('fs'),path=require('path'),R=function(f){return fs.readFileSync(path.join(__dirname,'..',f),'utf8')};var m=JSON.parse(R('manifest.webmanifest'));var ok=m.icons.length===4&&m.icons.every(function(i){return /^icons\//.test(i.src)&&fs.existsSync(path.join(__dirname,'..',i.src))});var ix=R('index.html');var sw=R('sw.js');return ok&&/icons\/favicon-32.png/.test(ix)&&/icons\/apple-touch-icon.png/.test(ix)&&/icons\/icon-512.png/.test(ix)&&!/"\.\/icon-180.png"/.test(sw)&&/Houdon/.test(T);})()); })(), "true");
+
+check("v390: in-app logo replaced",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){var s=require('fs').readFileSync(require('path').join(__dirname,'..','src','data.js'),'utf8');var m=s.match(/const LOGO_DATA = "data:image\/jpeg;base64,([^"]+)"/);return !!m && m[1].length>1000 && !/^\/9j\/4AAQSkZJRgABAQAAAQABAAD\/2wBDAAQDAwQDAwQEBAQFBQQFBwsHBwYGBw4KCggLEA4RERAOEA8SFBoWEhMYEw8QFh8XGBsbHR0dERYgIh8cIhocHRz/.test(m[1]);})()); })(), "true");
+
+check("v391: icon attribution in About and own References group",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/ABOUT_TEXT = \{ el: \[[^\]]*Houdon/.test(T) && /title: el \? "[^"]*" : "App icon"/.test(T)); })(), "true");
+
+check("v392: no '\u03b1\u03bd\u03b1\u03c0\u03b7\u03b4' outside changelog",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(!/.u03B1.u03BD.u03B1.u03C0.u03B7.u03B4/i.test(require('fs').readFileSync(require('path').join(__dirname,'..','src','data.js'),'utf8').replace(/const CHANGELOG[\s\S]*?\n\];/,'')) && !/.u03B1.u03BD.u03B1.u03C0.u03B7.u03B4/i.test(T)); })(), "true");
+
+check("v393: postoperative NIV tool with algorithm attribution and sources",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/function NIVCard/.test(T) && /NIV_SETTINGS/.test(T) && /1602426/.test(T) && /2101574/.test(T) && /315\(13\):1345/.test(T) && /PAGNI/.test(T) && require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8').includes('id: "niv"')); })(), "true");
+
+check("v394: growth charts and paediatric IBW methods",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/CDC_GROWTH/.test(P) && /growthCalc/.test(P) && /function GrowthPane/.test(T) && /24\(5\):421/.test(T) && (function(){ const vm=require('vm'); const c={}; vm.createContext(c); vm.runInContext(P.slice(P.indexOf('const CDC_GROWTH'), P.indexOf('const pedsCalc'))+';this.g=growthCalc(72.2,"M",115.6,20.8);',c); return Math.abs(c.g.hp-49.5)<1 && Math.abs(c.g.traub-20.64)<0.05 && Math.abs(c.g.moore-20.74)<0.05; })()); })(), "true");
+
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
 (function () {
