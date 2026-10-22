@@ -172,7 +172,7 @@ const LINE_ICONS = {
   info: [["circle", { cx: 12, cy: 12, r: 9 }], ["path", { d: "M12 11v6" }], ["path", { d: "M12 7.6h.01", strokeWidth: 2.6 }]]
 };
 const TOOL_ICON_PATHS = {
-  airway: [["rect",{x:4,y:3,width:4.5,height:12,rx:1.6}],["path",{d:"M8.5 5h2.5c4.5 0 8 3.5 8.5 9"}],["path",{d:"M6.25 15v5"}]],
+  airway: [["path",{d:"M14.5 3.5c-2.5 0-5 1.5-6 4L7 11l-2 1.5 2 1v2.5a2.5 2.5 0 0 0 2.5 2.5H11v3"}],["path",{d:"M14.5 3.5c3.5 0 6 2.5 6 6 0 2.5-1.5 4.5-3.5 5.5V21"}],["path",{d:"M13 13v8"}]],
   chart: [["path",{d:"M4 20h16"}],["rect",{x:6,y:11,width:3,height:7,rx:.6}],["rect",{x:11,y:7,width:3,height:11,rx:.6}],["rect",{x:16,y:4,width:3,height:14,rx:.6}]],
   brain: [["path",{d:"M12 5.5a3 3 0 0 0-5.6-1.2A3 3 0 0 0 4 8a3 3 0 0 0 .3 4.9A3.2 3.2 0 0 0 7.6 18 3 3 0 0 0 12 19.5z"}],["path",{d:"M12 5.5a3 3 0 0 1 5.6-1.2A3 3 0 0 1 20 8a3 3 0 0 1-.3 4.9 3.2 3.2 0 0 1-3.3 5.1A3 3 0 0 1 12 19.5z"}],["path",{d:"M12 5.5v14"}]],
   tag: [["path",{d:"M3.5 12.5V4.5h8l9 9-8 8z"}],["circle",{cx:8,cy:9,r:1.4}]],
@@ -208,10 +208,22 @@ const TOOL_ICON_PATHS = {
   bacteria: [["rect",{x:5,y:8,width:14,height:8,rx:4,transform:"rotate(-20 12 12)"}],["path",{d:"M4 7 2.5 5.5M20 17l1.5 1.5M8 4.5 7.5 2.5M16 19.5l.5 2"}],["path",{d:"M10 12h.01M13.5 11h.01",strokeWidth:2.4}]],
   bag: [["path",{d:"M7 3.5h10v10a5 5 0 0 1-10 0z"}],["path",{d:"M7 8h10"}],["path",{d:"M12 18.5v3"}]],
   gauge: [["path",{d:"M3.5 16a8.5 8.5 0 0 1 17 0"}],["path",{d:"M12 16l4-5"}],["path",{d:"M3.5 19.5h17"}],["circle",{cx:12,cy:16,r:1}]],
+  nivmask: [["path",{d:"M14.5 3.5c-2.5 0-5 1.5-6 4L7 11l-2 1.5 2 1v2.5a2.5 2.5 0 0 0 2.5 2.5H11v3"}],["path",{d:"M14.5 3.5c3.5 0 6 2.5 6 6 0 2.5-1.5 4.5-3.5 5.5V21"}],["path",{d:"M8.5 7.5 3.5 10v6l4 1.5"}],["path",{d:"M3.5 13H1.5"}]],
+  pca: [["rect",{x:4,y:3.5,width:11,height:14,rx:2}],["rect",{x:6.5,y:6,width:6,height:3.5,rx:.6}],["circle",{cx:9.5,cy:13.5,r:1.6}],["path",{d:"M15 12h2.5c1.5 0 2.5 1 2.5 2.5V21"}],["path",{d:"M8 17.5V21"}]],
+  pump: [["rect",{x:2.5,y:8,width:19,height:9,rx:2}],["rect",{x:5,y:10.5,width:9,height:4,rx:1}],["path",{d:"M14 12.5h3.5M17.5 11v3"}],["path",{d:"M19.5 17v3.5"}]],
+  patient: [["circle",{cx:9,cy:7,r:3}],["path",{d:"M3.5 20v-1.5a5.5 5.5 0 0 1 11 0V20"}],["rect",{x:15,y:9,width:6,height:8,rx:1.2}],["path",{d:"M16.8 12h2.4M16.8 14.5h2.4"}]],
+  abxvial: [["path",{d:"M9 3.5h6"}],["path",{d:"M10 3.5v3.5h4V3.5"}],["rect",{x:8,y:7,width:8,height:13.5,rx:2}],["path",{d:"M8 11h8"}],["path",{d:"M10.5 15h3M12 13.5v3"}]],
+  aorta: [["path",{d:"M6 21V11a6 6 0 0 1 12 0v4"}],["path",{d:"M9.5 21V11a2.5 2.5 0 0 1 5 0v4"}],["path",{d:"M9 6.3V3M12 5V2.5M15 6.3V3"}]],
+  stroke: [["path",{d:"M12 5.5a3 3 0 0 0-5.6-1.2A3 3 0 0 0 4 8a3 3 0 0 0 .3 4.9A3.2 3.2 0 0 0 7.6 18 3 3 0 0 0 12 19.5z"}],["path",{d:"M12 5.5a3 3 0 0 1 5.6-1.2A3 3 0 0 1 20 8a3 3 0 0 1-.3 4.9 3.2 3.2 0 0 1-3.3 5.1A3 3 0 0 1 12 19.5z"}],["path",{d:"M14 10l2-1.5M14 10l-1 3 3 1.5"}],["circle",{cx:14,cy:10,r:.9,fill:"currentColor"}]],
+  eye: [["path",{d:"M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"}],["circle",{cx:12,cy:12,r:3}],["circle",{cx:12,cy:12,r:.9,fill:"currentColor"}]],
+  rotem: [["path",{d:"M2.5 12h4c2.5 0 3.5-5.5 7-5.5 3 0 5 2 8 2.5"}],["path",{d:"M2.5 12h4c2.5 0 3.5 5.5 7 5.5 3 0 5-2 8-2.5"}]],
+  ventwave: [["path",{d:"M3 4v16h18"}],["path",{d:"M5 17h1.5l1-8h4l1 8h1.5l1-8h4l1 8"}]],
+  lungsopen: [["path",{d:"M12 6v6"}],["path",{d:"M10 7.5c-2.5.5-4 3.5-4 7 0 1.5.8 2.5 2 2.5s2-1 2-2z"}],["path",{d:"M14 7.5c2.5.5 4 3.5 4 7 0 1.5-.8 2.5-2 2.5s-2-1-2-2z"}],["path",{d:"M3.5 12H1.5M22.5 12h-2M4.5 6.5 3 5M19.5 6.5 21 5M4.5 18 3 19.5M19.5 18l1.5 1.5"}]],
+  heartecg: [["path",{d:"M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"}],["path",{d:"M6.5 12.5h3l1.2-2.5 2 5 1.3-2.5h3.5"}]],
   alert: [["path",{d:"M12 3.5 21.5 20h-19z"}],["path",{d:"M12 10v4.5"}],["path",{d:"M12 17.3h.01",strokeWidth:2.6}]],
   timer: [["circle",{cx:12,cy:13.5,r:7.5}],["path",{d:"M12 13.5V10M10 2.5h4M18.5 6.5l1.5-1.5"}]]
 };
-const TOOL_ICON_OF = { crisis:"alert", airwaysizes:"airway", scores:"chart", gcs:"brain", asaps:"tag", rotem:"drop", cardiac:"heart", cardnc:"heart", obstetric:"fetus", thoracic:"lungs", neuro:"brain", thrombectomy:"clock", giendo:"scope", vascular:"vessel", renal:"kidney", hepatic:"liver", immuno:"dna", neuromuscular:"muscle", pregnonob:"pregnant", bariatric:"scale", postop:"syringe", painscales:"face", neuraxial:"target", la:"gauge", anticoag:"drop", tci:"trend", quickcalc:"calc", renalcalc:"flask", mac:"wind", vaso:"syringe", sedcalc:"moon", vent:"lungs", recruit:"lungs", lowflow:"recycle", niv:"mask", fickco:"pulse", spiro:"wave", tof:"bolt", opioid:"pill", fluids:"bag", csht:"timer", periop:"clipboard", abx:"bacteria" };
+const TOOL_ICON_OF = { crisis:"alert", airwaysizes:"airway", scores:"chart", gcs:"eye", asaps:"patient", rotem:"rotem", cardiac:"heart", cardnc:"heartecg", obstetric:"fetus", thoracic:"lungs", neuro:"brain", thrombectomy:"stroke", giendo:"scope", vascular:"aorta", renal:"kidney", hepatic:"liver", immuno:"dna", neuromuscular:"muscle", pregnonob:"pregnant", bariatric:"scale", postop:"pca", painscales:"face", neuraxial:"target", la:"gauge", anticoag:"drop", tci:"trend", quickcalc:"calc", renalcalc:"flask", mac:"wind", vaso:"pump", sedcalc:"moon", vent:"ventwave", recruit:"lungsopen", lowflow:"recycle", niv:"nivmask", fickco:"pulse", spiro:"wave", tof:"bolt", opioid:"pill", fluids:"bag", csht:"timer", periop:"clipboard", abx:"abxvial" };
 function LineIcon({ name, size }) {
   const parts = LINE_ICONS[name] || TOOL_ICON_PATHS[name] || [];
   return /* @__PURE__ */ React.createElement("svg", { width: size || 24, height: size || 24, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true" }, parts.map(([tag, props], i) => React.createElement(tag, { key: i, ...props })));

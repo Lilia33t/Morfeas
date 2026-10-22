@@ -980,6 +980,18 @@ check("v400: liver and endoscope icons",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
     return String((function(){ const s=require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8'); return /  liver: \[\["path",\{d:"M3\.5 9\.5C/.test(s) && /  scope: \[\["rect",\{x:3,y:3\.5/.test(s); })()); })(), "true");
 
+check("v401: airway, NIV, PCA and pump icons",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const s=require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8'); return /niv:"nivmask"/.test(s) && /postop:"pca"/.test(s) && /vaso:"pump"/.test(s) && /  airway: \[\["path",\{d:"M14\.5 3\.5c/.test(s); })()); })(), "true");
+
+check("v402: ASA, antibiotic, vascular and thrombectomy icons",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const s=require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8'); return /asaps:"patient"/.test(s) && /abx:"abxvial"/.test(s) && /vascular:"aorta"/.test(s) && /thrombectomy:"stroke"/.test(s); })()); })(), "true");
+
+check("v403: no repeated icons for GCS/ROTEM/vent/recruit/cardnc",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const s=require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8'); return /gcs:"eye"/.test(s) && /rotem:"rotem"/.test(s) && /vent:"ventwave"/.test(s) && /recruit:"lungsopen"/.test(s) && /cardnc:"heartecg"/.test(s); })()); })(), "true");
+
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
 (function () {
