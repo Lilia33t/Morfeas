@@ -67,15 +67,11 @@ const TOOLS_SHOWN = TOOL_SECTIONS.filter((s) => toolVisible(s.id));
 
 
 function ToolsTab({ lang, weight, age, height, sex, focus, onUse }) {
-  const [open, setOpen] = useState("scores");
-  // 26 tools in one scroll is a lot to skim, so groups collapse. The group
-  // holding the currently open tool starts expanded; a local search or a
-  // global-search jump expands whatever it needs to reveal.
+  // Nothing is open on arrival: every group starts collapsed and no tool is expanded. A local
+  // search or a global-search jump expands whatever it needs to reveal.
+  const [open, setOpen] = useState(null);
   const groupOf = (id) => (TOOL_SECTIONS.find((s) => s.id === id) || {}).group;
-  const [openGroups, setOpenGroups] = useState(() => {
-    const g = groupOf("scores");
-    return g ? [g] : [];
-  });
+  const [openGroups, setOpenGroups] = useState([]);
   const toggleGroup = (id) =>
     setOpenGroups((gs) => gs.includes(id) ? gs.filter((x) => x !== id) : gs.concat(id));
   useEffect(() => {

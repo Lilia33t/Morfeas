@@ -934,7 +934,7 @@ check("v388: low-flow how-it-works text",
 
 check("v389: new icon set wired in manifest, index and service worker",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String((function(){var fs=require('fs'),path=require('path'),R=function(f){return fs.readFileSync(path.join(__dirname,'..',f),'utf8')};var m=JSON.parse(R('manifest.webmanifest'));var ok=m.icons.length===4&&m.icons.every(function(i){return /^icons\//.test(i.src)&&fs.existsSync(path.join(__dirname,'..',i.src))});var ix=R('index.html');var sw=R('sw.js');return ok&&/icons\/favicon-32.png/.test(ix)&&/icons\/apple-touch-icon.png/.test(ix)&&/icons\/icon-512.png/.test(ix)&&!/"\.\/icon-180.png"/.test(sw)&&/Houdon/.test(T);})()); })(), "true");
+    return String((function(){var fs=require('fs'),path=require('path'),R=function(f){return fs.readFileSync(path.join(__dirname,'..',f),'utf8')};var m=JSON.parse(R('manifest.webmanifest'));var ok=m.icons.length===4&&m.icons.every(function(i){return /^icons\//.test(i.src)&&fs.existsSync(path.join(__dirname,'..',i.src))});var ix=R('index.html');var sw=R('sw.js');return ok&&/icons\/favicon-32-v2.png/.test(ix)&&/icons\/apple-touch-icon-v2.png/.test(ix)&&/icons\/icon-512-v2.png/.test(ix)&&!/"\.\/icon-180.png"/.test(sw)&&/Houdon/.test(T);})()); })(), "true");
 
 check("v390: in-app logo replaced",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
@@ -1079,9 +1079,49 @@ check("v425: ASRA 2025 dabigatran intervals and reversal position",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
     return String(/120 h \(CrCl 30.u201349\)/.test(P) && /ASRA 2025, IA/.test(P) && !/ADVISES AGAINST THIS/.test(P)); })(), "true");
 
-check("v426: ERC NLS/PLS-dependent content hidden",
+check("v426→v436: ERC NLS/PLS content shown again after the Part 12 check",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String(run('[PENDING_ERC_PAED, CHECKLISTS_SHOWN.some(c=>c.id==="newborn"), DRUGS.find(d=>d.id==="adrenaline").doses.filter(x=>!isPendingErc(x)).some(x=>/cardiac arrest/.test(x.en) && /CHILDREN/.test(x.en))].join()') === 'true,false,false' && (T.match(/!PENDING_ERC_PAED && /g)||[]).length === 8); })(), "true");
+    return String(run('[PENDING_ERC_PAED, CHECKLISTS_SHOWN.some(c=>c.id==="newborn"), DRUGS.find(d=>d.id==="adrenaline").doses.filter(x=>!isPendingErc(x)).some(x=>/cardiac arrest/.test(x.en) && /CHILDREN/.test(x.en))].join()') === 'false,true,true' && (T.match(/!PENDING_ERC_PAED && /g)||[]).length === 8); })(), "true");
+
+check("v427: every checklist has a colour",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('CHECKLISTS.every(c => /^#[0-9A-F]{6}$/i.test(c.color || ""))') === true); })(), "true");
+
+check("v428: versioned icon file names and updateViaCache",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const fs=require('fs'),p=require('path'); const R=(f)=>fs.readFileSync(p.join(__dirname,'..',f),'utf8'); const m=JSON.parse(R('manifest.webmanifest')); return m.icons.every(i=>/-v2\.png$/.test(i.src) && fs.existsSync(p.join(__dirname,'..',i.src))) && /updateViaCache: "none"/.test(R('index.html')) && /icons\/apple-touch-icon-v2\.png/.test(R('sw.js')); })()); })(), "true");
+
+check("v429: Tools tab opens with nothing expanded",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/const \[open, setOpen\] = useState\(null\);\n  const groupOf/.test(require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8')) && /const \[openGroups, setOpenGroups\] = useState\(\[\]\);/.test(require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8'))); })(), "true");
+
+check("v430: link preview tags, share button and QR",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const fs=require('fs'),p=require('path'); const H=fs.readFileSync(p.join(__dirname,'..','index.html'),'utf8'); return /property="og:image" content="https:\/\/lilia33t\.github\.io\/Morfeas\/icons\/og-image\.png"/.test(H) && fs.existsSync(p.join(__dirname,'..','icons','og-image.png')) && fs.existsSync(p.join(__dirname,'..','icons','qr-morfeas.png')) && /function ShareBlock/.test(T) && /navigator\.share/.test(T) && /React\.createElement\(ShareBlock, \{ lang \}\)/.test(T); })()); })(), "true");
+
+check("v431: share surfaces show only the name",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const H=require('fs').readFileSync(require('path').join(__dirname,'..','index.html'),'utf8'); return /og:title" content="Morfeas"/.test(H) && !/og:description/.test(H) && !/name="description"/.test(H) && /const text = "Morfeas";/.test(T) && !/Scan it with your phone camera/.test(T); })()); })(), "true");
+
+check("v432: Part 10: wide irregular \u2192 synchronised; ESA/EBA 2013; laryngospasm peds dose",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('(function(){ const g=id=>CHECKLISTS.find(c=>c.id===id); const s=g("svt_unstable"); const L=g("laryngospasm"); return s.stepsEn[3].includes("SYNCHRONISED") && !/unsynchronized/.test(s.stepsEn.join()) && s.stepsEl.length===s.stepsEn.length && L.stepsEn.some(x=>x.includes("1.5 mg/kg")) && !/Larson/.test(L.stepsEn.join()) && !JSON.stringify(CHECKLISTS).includes("Guide 2019") && g("or_fire").stepsEl.length===g("or_fire").stepsEn.length && !JSON.stringify(DRUGS).includes("UKKA 2023"); })()') === true); })(), "true");
+
+check("v433: Part 11: no ACT 250\u2013300, driving pressure row, ticagrelor 3 days",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(!/ACT 250/.test(T) && !/ACT target 250/.test(T) && /Driving pressure \(Pplat/.test(T) && /ticagrelor ", \/\* @__PURE__ \*\/ React.createElement\(Hi, null, "3 days"\)/.test(T) && /Obstructive pattern \(FEV/.test(T)); })(), "true");
+
+check("v434: bicarbonate rows follow ERC 2025",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('(function(){ const d=DRUGS.find(x=>x.id==="bicarbonate").doses; return d.some(r=>r.en==="Arrest from hyperkalaemia (ERC 2025)" && /^50 mmol/.test(r.fixedEn)) && !d.some(r=>/50–100 mmol/.test(r.fixedEn||"")); })()') === true); })(), "true");
+
+check("v435: bicarbonate TCA 1-2 mmol/kg",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('(function(){ const d=DRUGS.find(x=>x.id==="bicarbonate").doses.find(r=>/Tricyclic/.test(r.en)); return !!d && d.lo===1 && d.hi===2 && d.unit==="mmol/kg"; })()') === true); })(), "true");
+
+check("v436: Part 12: paediatric hyperkalaemia, ERC PLS doses, newborn adrenaline",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('(function(){ const h=CHECKLISTS.find(c=>c.id==="hyperkalaemia"); const n=CHECKLISTS.find(c=>c.id==="newborn"); return /NO calcium, NO bicarbonate/.test(h.stepsEn.join()) && /IN CARDIAC ARREST — ADULTS/.test(h.stepsEn.join()) && /10–30 µg\\/kg/.test(n.stepsEn.join()) && n.stepsEl.length===n.stepsEn.length; })()') === true && /Math.min\(0.3 \* w, 12\)/.test(T) && !/adolescents/.test(T) && !/still used for vagal tone and premedication/.test(T)); })(), "true");
 
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
