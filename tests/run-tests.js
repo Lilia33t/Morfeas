@@ -175,7 +175,7 @@ check("anaphylaxis: EL and EN step counts match",
 check("every checklist has matching EL/EN step counts",
   run("CHECKLISTS.filter(c => c.stepsEl.length !== c.stepsEn.length).length"), 0);
 check("bradycardia: dopamine 5-20 mcg/kg/min (ACLS)",
-  run('/Dopamine 5\\u201320/.test(CHECKLISTS.find(c => c.id === "brady").stepsEn.join(" "))'), true);
+  run('/[Dd]opamine 5\\u201320/.test(CHECKLISTS.find(c => c.id === "brady").stepsEn.join(" "))'), true);
 check("MH: dantrolene 2.5 mg/kg initial",
   run('/2\\.5 mg\\/kg/.test(CHECKLISTS.find(c => c.id === "mh").stepsEn.join(" "))'), true);
 
@@ -186,7 +186,7 @@ check("search index covers every drug, checklist, tool, score and guideline",
   run(`(() => {
     const i = buildSearchIndex("el");
     const n = (k) => i.filter(x => x.kind === k).length;
-    return n("drug") === DRUGS.length && n("list") === CHECKLISTS.length &&
+    return n("drug") === DRUGS.length && n("list") === CHECKLISTS_SHOWN.length &&
            n("tool") === TOOL_SECTIONS.length && n("score") === SCORES.length &&
            n("guide") === GUIDELINES.length;
   })()`), true);
@@ -512,8 +512,8 @@ check("peds: naloxone BNFc 1 mcg/kg present alongside the protocol dose", /BNFc 
   check("anticoag: dabigatran high 72 h, lab target if CrCl<50", /72 h \u00b7 CrCl <50: until laboratory target/.test(ac), true);
   check("anticoag: fondaparinux low 36 h, CrCl<50 72 h", /36 h \u00b7 CrCl <50: 72 h/.test(ac), true);
   check("anticoag: combinations take the longest interval", /LONGEST interval/.test(ac), true);
-  check("anticoag: ASRA 2025 divergence on reversal agents is flagged", /ASRA 2025 ADVISES AGAINST/.test(ac), true);
-  check("anticoag: ASRA 2025 dabigatran up to 5 days is noted", /up to 5 days if CrCl <50/.test(ac), true);
+  check("anticoag: ASRA 2025 position on reversal agents (routine vs needed for surgery)", /do NOT reverse solely to allow a regional technique in routine patients/.test(ac), true);
+  check("anticoag: ASRA 2025 dabigatran intervals by CrCl (72 h / 120 h / level <30)", /120 h \(CrCl 30.49\)/.test(ac) && /level <30 ng\/mL \(IIC\)/.test(ac), true);
   check("anticoag: every row has both languages",
     run("ANTICOAG.every(function(x){return x.name && x.nameEn && x.stopEl && x.stopEn && x.restartEl && x.restartEn;})"), true);
 }
@@ -803,7 +803,7 @@ check("v354: airway card — Guedel per UNICEF, Portex 6/7, no unsourced half-vo
   String(/Size 00", v: "\\u224840 mm"/.test(src) && /Size 4", v: "\\u224890 mm"/.test(src) && /Portex 6/.test(src) && !/At half the maximum volume/.test(src) && !/nostril to the tragus/.test(src)), "true");
 
 check("v355: CSHT numeric curves removed; bariatric Janmahasatian + AAGBI scalars",
-  String(typeof run('typeof CSHT_DATA') === "string" && run('typeof CSHT_DATA') === "undefined" && /ffmJan\(w, h, sex\)/.test(src) && /AAGBI\/SOBA 2015\)/.test(src) && !/SOBA UK 2022 single sheet/.test(src) && /rocuronium, atracurium, vecuronium/.test(src)), "true");
+  String(typeof run('typeof CSHT_DATA') === "string" && run('typeof CSHT_DATA') === "undefined" && /ffmJan\(w, h, sex\)/.test(src) && /AAGBI\/SOBA 2015\)/.test(src) && !/SOBA UK 2022 single sheet/.test(src) && /rocuronium \(Esmeron SmPC: ideal body weight .u2014 sources differ\), atracurium, vecuronium/.test(src)), "true");
 
 check("v355: TCI targets per SmPC; Kataria 3-16 y; quick-calc Mg rate",
   String(/Procedural sedation 0.5.u20132.5/.test(src) && /over 65 years initially 1.5.u20134 ng\/mL/.test(src) && !/Spont. breathing 1/.test(src) && /c.a <= 16 && c.w >= 15/.test(src) && /max 2 g\/h/.test(src) && !/prefer central/.test(src)), "true");
@@ -815,7 +815,7 @@ check("v357: Fick ScvO2 direction, transplant neostigmine, FLACC bands",
   String(/~2.u20133% LOWER than SvO/.test(src) && !/runs a few percent above true SvO/.test(src) && /normal 22.u201330%/.test(src) && /bradycardia and asystole/.test(src) && !/atropine and neostigmine have no effect/.test(src) && !/action threshold: \\u2265 4/.test(src) && !/LaFarge/.test(src) && /v: el \? "\\u03AE\\u03C0\\u03B9\\u03BF\\u03C2" : "mild"/.test(src)), "true");
 
 check("v359: anticoagulant restart wording per ESAIC/ESRA 2022",
-  String(!/NSAIDs or tricyclics/.test(src) && !/Not covered by the 2022 ESAIC/.test(src) && /48.u201372 h after a high-bleeding-risk procedure/.test(src) && /usually ~6 h postoperatively\) \\u00B7 only after catheter removal/.test(src)), "true");
+  String(!/NSAIDs or tricyclics/.test(src) && !/Not covered by the 2022 ESAIC/.test(src) && /~24 h postop, according to guidelines on therapeutic anticoagulation/.test(src) && !/48.u201372 h after a high-bleeding-risk/.test(src) && /usually ~6 h postoperatively\) \\u00B7 only after catheter removal/.test(src)), "true");
 
 check("v360: neuraxial/regional per SmPC and NYSORA",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8");
@@ -910,7 +910,7 @@ check("v382: dystrophy volatile wording per MHAUS/PPMD",
 
 check("v383: no unsourced Na 145-155 target",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String(!/target Na 145/.test(T) && /BTF 2019 .u00B7 10.u201320 min/.test(T)); })(), "true");
+    return String(!/target Na 145/.test(T) && /BTF 2019 \(paediatric\) .u00B7 10.u201320 min/.test(T)); })(), "true");
 
 check("v384: recruitment tool present with protocol sources",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
@@ -1033,7 +1033,7 @@ check("v413: phenylephrine CS row per Kinsella 2018 Recommendation 5",
 
 check("v414: LAST bolus 2-3 min, dexamethasone children 5th consensus, andexanet note, ATI reference",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String((function(){ return run('[CHECKLISTS.find(c=>c.id==="last").stepsEn.some(x=>/bolus 1.5 mL\\/kg over 2\u20133 min/.test(x)), (function(){var d=DRUGS.find(x=>x.id==="dexamethasone").doses.find(x=>/5th Consensus/.test(x.en)); return d.lo+"-"+d.max;})(), /withdrawn from the US market/.test(DRUGS.find(d=>d.id==="andexanet").notesEn), /Anaesthesia 2020/.test(CHECKLISTS.find(c=>c.id==="das_ati").srcEn)].join("|")') === 'true|0.15-4|true|true'; })()); })(), "true");
+    return String((function(){ return run('[CHECKLISTS.find(c=>c.id==="last").stepsEn.some(x=>/bolus 1.5 mL\\/kg \u2014 over 1 min \\(ERC 2025\\) or 2\u20133 min/.test(x)), (function(){var d=DRUGS.find(x=>x.id==="dexamethasone").doses.find(x=>/5th Consensus/.test(x.en)); return d.lo+"-"+d.max;})(), /withdrawn from the US market/.test(DRUGS.find(d=>d.id==="andexanet").notesEn), /Anaesthesia 2020/.test(CHECKLISTS.find(c=>c.id==="das_ati").srcEn)].join("|")') === 'true|0.15-4|true|true'; })()); })(), "true");
 
 check("v415: DAS 2025 eFONA wording, adenosine 6-12-18, anaphylaxis infusion per RCUK, PCC 25 IU/kg for Xa",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
@@ -1054,6 +1054,34 @@ check("v418: SOAP 2021 platelet thresholds in pre-eclampsia",
 check("v419: ROTEM PCC trigger tied to the reference range",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
     return String(/EXTEM CT above the reference range/.test(T) && !/EXTEM CT >80s/.test(T)); })(), "true");
+
+check("v420: ERC 2025 ALS / DAS 2025 checklist updates",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('[/aminophylline/.test(CHECKLISTS.find(c=>c.id==="brady").stepsEn.join()) && /isoprenaline 5/.test(CHECKLISTS.find(c=>c.id==="brady").stepsEn.join()), /48\u201372 h per ERC/.test(CHECKLISTS.find(c=>c.id==="mh").stepsEn.join()), /EtO\u2082 \u22650.9/.test(CHECKLISTS.find(c=>c.id==="rsi").stepsEn.join()), /sodium bicarbonate 50 mmol/.test(CHECKLISTS.find(c=>c.id==="hyperkalaemia").stepsEn.join()), CHECKLISTS.every(c=>c.stepsEl.length===c.stepsEn.length)].join()') === 'true,true,true,true,true'); })(), "true");
+
+check("v421: hypertonic saline labelled paediatric; rocuronium obesity sources",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/Hypertonic 3% NaCl .u2014 CHILDREN/.test(T) && run('/AAGBI\\/SOBA 2015 \\(Table 3\\) uses lean body weight/.test(DRUGS.find(d=>d.id==="rocuronium").notesEn)') === true); })(), "true");
+
+check("v422: audit registry has no stale vasopressin default",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(!/προεπιλογή 0\.03/.test(require('fs').readFileSync(require('path').join(__dirname,'..','audit','audit-registry.json'),'utf8'))); })(), "true");
+
+check("v423: dobutamine dilutions within the SmPC 5 mg/mL limit",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const i=T.indexOf('id: "dobut"'); const seg=T.slice(i, T.indexOf('id: "vaso"', i)); return !/1e4/.test(seg) && /5e3/.test(seg); })()); })(), "true");
+
+check("v424: no unsourced 48-72 h restart in the anticoagulant table",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(!/48.u201372 h/.test(P.slice(P.indexOf('const ANTICOAG'), P.indexOf('];', P.indexOf('const ANTICOAG'))))); })(), "true");
+
+check("v425: ASRA 2025 dabigatran intervals and reversal position",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/120 h \(CrCl 30.u201349\)/.test(P) && /ASRA 2025, IA/.test(P) && !/ADVISES AGAINST THIS/.test(P)); })(), "true");
+
+check("v426: ERC NLS/PLS-dependent content hidden",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('[PENDING_ERC_PAED, CHECKLISTS_SHOWN.some(c=>c.id==="newborn"), DRUGS.find(d=>d.id==="adrenaline").doses.filter(x=>!isPendingErc(x)).some(x=>/cardiac arrest/.test(x.en) && /CHILDREN/.test(x.en))].join()') === 'true,false,false' && (T.match(/!PENDING_ERC_PAED && /g)||[]).length === 8); })(), "true");
 
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).

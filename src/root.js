@@ -246,7 +246,7 @@ function LineIcon({ name, size }) {
 function HomeScreen({ lang, go }) {
   const el = lang === "el";
   const TILES = [
-    { id: "lists", icon: "alert", el: "Λίστες κρίσεων", en: "Crisis checklists", subEl: CHECKLISTS.length + " λίστες βήμα προς βήμα", subEn: CHECKLISTS.length + " step-by-step checklists", urgent: true },
+    { id: "lists", icon: "alert", el: "Λίστες κρίσεων", en: "Crisis checklists", subEl: CHECKLISTS_SHOWN.length + " λίστες βήμα προς βήμα", subEn: CHECKLISTS.length + " step-by-step checklists", urgent: true },
     { id: "meds", icon: "pill", el: "Φάρμακα", en: "Drugs", subEl: DRUGS.length + " φάρμακα, δόσεις στο βάρος", subEn: DRUGS.length + " drugs, weight-based doses" },
     { id: "tools", icon: "calc", el: "Εργαλεία", en: "Tools", subEl: TOOLS_SHOWN.length + " κάρτες & υπολογιστές", subEn: TOOLS_SHOWN.length + " cards & calculators" },
     { id: "peds", icon: "child", el: "Παιδιατρική κάρτα", en: "Paediatric card", subEl: "αεραγωγός, ζωτικά, επείγοντα", subEn: "airway, vitals, emergencies" },
