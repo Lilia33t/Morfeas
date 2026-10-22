@@ -276,7 +276,7 @@ const LIGHT = {
   tealDark: "#14253F",
   onAccent: "#FFFFFF",
   monitor: "#7C90AB",
-  bg: "#F4F6F9",
+  bg: "#EAF0F8",
   card: "#FFFFFF",
   cardAlt: "#F8FAFC",
   line: "#E1E7EE",
@@ -324,6 +324,9 @@ const DARK = {
   tintSelected: "#26344A"
 };
 
+// Greek capitals carry no accents: uppercase in JS (CSS text-transform keeps the tonos in Chromium).
+const UNIT_TOKENS = /^(?:\u00B5g|mcg|mg|ng|g|kg|mL|ml|L|dL|mmol|mol|min|h|s|IU|U|mEq|cmH\u2082O|mmHg)$/;
+const upGr = (x) => typeof x === "string" ? x.split(/(\s+|[()\/,\u00B7:;\u2013\u2014-])/).map((tok) => UNIT_TOKENS.test(tok) ? tok : tok.normalize("NFD").replace(/[\u0301\u0342]/g, "").normalize("NFC").split("\u00B5").map((p) => p.toUpperCase()).join("\u00B5")).join("") : x;
 const S = { ...LIGHT };
 function applyTheme(mode) {
   Object.assign(S, mode === "dark" ? DARK : LIGHT);

@@ -115,7 +115,7 @@ function ToolsTab({ lang, weight, age, height, sex, focus, onUse }) {
       placeholder: lang === "el" ? "\u{1F50D} \u0391\u03BD\u03B1\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7 \u03B5\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03BF\u03C5\u2026" : "\u{1F50D} Search tools\u2026",
       style: { ...inputStyle, fontSize: 14.5, padding: "11px 36px 11px 13px" }
     }
-  ), q && /* @__PURE__ */ React.createElement("button", { onClick: () => setQ(""), style: { position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", border: "none", background: "none", color: S.muted, fontWeight: 600, fontSize: 18, cursor: "pointer", fontFamily: "inherit" } }, "\xD7")), !query && favSections.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 6 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 12, color: S.muted, letterSpacing: 0.6, textTransform: "uppercase", padding: "4px 4px 0" } }, "\u2B50 ", lang === "el" ? "\u0391\u03B3\u03B1\u03C0\u03B7\u03BC\u03AD\u03BD\u03B1" : "Favourites"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, flexWrap: "wrap" } }, favSections.map((sec) => /* @__PURE__ */ React.createElement("button", { key: "fav-" + sec.id, onClick: () => { setOpen(sec.id); if (onUse) onUse(sec); const g = groupOf(sec.id); if (g) setOpenGroups((gs) => gs.includes(g) ? gs : gs.concat(g)); }, style: {
+  ), q && /* @__PURE__ */ React.createElement("button", { onClick: () => setQ(""), style: { position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", border: "none", background: "none", color: S.muted, fontWeight: 600, fontSize: 18, cursor: "pointer", fontFamily: "inherit" } }, "\xD7")), !query && favSections.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 6 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 12, color: S.muted, letterSpacing: 0.6, padding: "4px 4px 0" } }, upGr("\u2B50 "),upGr(lang === "el" ? "\u0391\u03B3\u03B1\u03C0\u03B7\u03BC\u03AD\u03BD\u03B1" : "Favourites")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, flexWrap: "wrap" } }, favSections.map((sec) => /* @__PURE__ */ React.createElement("button", { key: "fav-" + sec.id, onClick: () => { setOpen(sec.id); if (onUse) onUse(sec); const g = groupOf(sec.id); if (g) setOpenGroups((gs) => gs.includes(g) ? gs : gs.concat(g)); }, style: {
     display: "flex",
     alignItems: "center",
     gap: 6,
@@ -128,10 +128,10 @@ function ToolsTab({ lang, weight, age, height, sex, focus, onUse }) {
     color: S.ink,
     cursor: "pointer",
     fontFamily: "inherit"
-  } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15 } }, sec.icon), sec[lang])))), GROUPS.map((grp) => {
+  } }, /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex", color: S.teal } }, TOOL_ICON_OF[sec.id] ? /* @__PURE__ */ React.createElement(LineIcon, { name: TOOL_ICON_OF[sec.id], size: 16 }) : sec.icon), sec[lang])))), GROUPS.map((grp) => {
     const groupSecs = sections.filter((s) => s.group === grp.id && matches(s));
     if (groupSecs.length === 0) return null;
-    return /* @__PURE__ */ React.createElement("div", { key: grp.id, style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => toggleGroup(grp.id), style: { display: "flex", alignItems: "center", gap: 8, width: "100%", background: "none", border: "none", padding: "8px 4px 2px", cursor: "pointer", fontFamily: "inherit", textAlign: "left" } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 12, color: S.muted, letterSpacing: 0.6, textTransform: "uppercase" } }, grp[lang]), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: S.muted, background: S.bg, borderRadius: 20, padding: "1px 7px" } }, groupSecs.length), /* @__PURE__ */ React.createElement("span", { style: { flex: 1 } }), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 700, fontSize: 16, transform: (query || openGroups.includes(grp.id)) ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), (query || openGroups.includes(grp.id)) && groupSecs.map((sec) => {
+    return /* @__PURE__ */ React.createElement("div", { key: grp.id, style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => toggleGroup(grp.id), style: { display: "flex", alignItems: "center", gap: 8, width: "100%", background: "none", border: "none", padding: "8px 4px 2px", cursor: "pointer", fontFamily: "inherit", textAlign: "left" } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 12, color: S.muted, letterSpacing: 0.6 } }, upGr(grp[lang])), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: S.muted, background: S.bg, borderRadius: 20, padding: "1px 7px" } }, groupSecs.length), /* @__PURE__ */ React.createElement("span", { style: { flex: 1 } }), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 700, fontSize: 16, transform: (query || openGroups.includes(grp.id)) ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), (query || openGroups.includes(grp.id)) && groupSecs.map((sec) => {
       const isOpen = open === sec.id;
       const isFav = favs.includes(sec.id);
       return /* @__PURE__ */ React.createElement("div", { key: sec.id, ref: focus && focus.id === sec.id ? focusRef : null, style: { background: S.card, borderRadius: 14, border: `1.5px solid ${isOpen ? S.teal : S.line}`, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => { const next = isOpen ? null : sec.id; setOpen(next); if (next && onUse) onUse(sec); }, style: {
@@ -145,7 +145,7 @@ function ToolsTab({ lang, weight, age, height, sex, focus, onUse }) {
         gap: 10,
         fontFamily: "inherit",
         textAlign: "left"
-      } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 17 } }, sec.icon), /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 15.5, color: S.ink, flex: 1 } }, sec[lang]), /* @__PURE__ */ React.createElement("span", { onClick: (e) => toggleFav(sec.id, e), style: { fontSize: 17, cursor: "pointer", color: isFav ? S.amber : S.line } }, "\u2605"), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px" } }, sec.id === "asaps" && /* @__PURE__ */ React.createElement(ASACard, { lang }), sec.id === "scores" && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, flexWrap: "wrap" } }, allScores.map((sc) => /* @__PURE__ */ React.createElement("button", { key: sc.id, onClick: () => setScoreOpen(sc.id), style: {
+      } }, /* @__PURE__ */ React.createElement("span", { style: { width: 32, height: 32, borderRadius: 9, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center", background: S.tintSelected, color: S.teal } }, TOOL_ICON_OF[sec.id] ? /* @__PURE__ */ React.createElement(LineIcon, { name: TOOL_ICON_OF[sec.id], size: 20 }) : sec.icon), /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 15.5, color: S.ink, flex: 1 } }, sec[lang]), /* @__PURE__ */ React.createElement("span", { onClick: (e) => toggleFav(sec.id, e), style: { fontSize: 17, cursor: "pointer", color: isFav ? S.amber : S.line } }, "\u2605"), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px" } }, sec.id === "asaps" && /* @__PURE__ */ React.createElement(ASACard, { lang }), sec.id === "scores" && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, flexWrap: "wrap" } }, allScores.map((sc) => /* @__PURE__ */ React.createElement("button", { key: sc.id, onClick: () => setScoreOpen(sc.id), style: {
         flex: "1 1 28%",
         padding: "7px 4px",
         borderRadius: 9,
@@ -162,14 +162,68 @@ function ToolsTab({ lang, weight, age, height, sex, focus, onUse }) {
 }
 const TAB_IDS = ["home", "meds", "tci", "tools", "peds", "lists", "about"];
 
+// Line icons (drawn for Morfeas) replacing emoji in the home tiles and the bottom bar.
+const LINE_ICONS = {
+  home: [["path", { d: "M3.5 11 12 4l8.5 7" }], ["path", { d: "M5.5 9.5V20h13V9.5" }], ["path", { d: "M10 20v-5.5h4V20" }]],
+  pill: [["rect", { x: 2.8, y: 8, width: 18.4, height: 8, rx: 4, transform: "rotate(-40 12 12)" }], ["path", { d: "M9.2 9.2l5.6 5.6", transform: "rotate(5 12 12)" }]],
+  calc: [["rect", { x: 5, y: 3, width: 14, height: 18, rx: 2.5 }], ["rect", { x: 8, y: 6, width: 8, height: 3.5, rx: 0.8 }], ["path", { d: "M8.5 13h.01M12 13h.01M15.5 13h.01M8.5 16.5h.01M12 16.5h.01M15.5 16.5h.01", strokeWidth: 2.6 }]],
+  child: [["circle", { cx: 12, cy: 7, r: 3.2 }], ["path", { d: "M6.5 21v-3.5a5.5 5.5 0 0 1 11 0V21" }], ["path", { d: "M10.2 6.6h.01M13.8 6.6h.01", strokeWidth: 2 }]],
+  alert: [["path", { d: "M12 3.5 21.5 20h-19z" }], ["path", { d: "M12 10v4.5" }], ["path", { d: "M12 17.3h.01", strokeWidth: 2.6 }]],
+  info: [["circle", { cx: 12, cy: 12, r: 9 }], ["path", { d: "M12 11v6" }], ["path", { d: "M12 7.6h.01", strokeWidth: 2.6 }]]
+};
+const TOOL_ICON_PATHS = {
+  airway: [["rect",{x:4,y:3,width:4.5,height:12,rx:1.6}],["path",{d:"M8.5 5h2.5c4.5 0 8 3.5 8.5 9"}],["path",{d:"M6.25 15v5"}]],
+  chart: [["path",{d:"M4 20h16"}],["rect",{x:6,y:11,width:3,height:7,rx:.6}],["rect",{x:11,y:7,width:3,height:11,rx:.6}],["rect",{x:16,y:4,width:3,height:14,rx:.6}]],
+  brain: [["path",{d:"M12 5.5a3 3 0 0 0-5.6-1.2A3 3 0 0 0 4 8a3 3 0 0 0 .3 4.9A3.2 3.2 0 0 0 7.6 18 3 3 0 0 0 12 19.5z"}],["path",{d:"M12 5.5a3 3 0 0 1 5.6-1.2A3 3 0 0 1 20 8a3 3 0 0 1-.3 4.9 3.2 3.2 0 0 1-3.3 5.1A3 3 0 0 1 12 19.5z"}],["path",{d:"M12 5.5v14"}]],
+  tag: [["path",{d:"M3.5 12.5V4.5h8l9 9-8 8z"}],["circle",{cx:8,cy:9,r:1.4}]],
+  drop: [["path",{d:"M12 3.5c3.5 4.5 6 7.6 6 10.5a6 6 0 0 1-12 0c0-2.9 2.5-6 6-10.5z"}]],
+  heart: [["path",{d:"M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"}]],
+  pregnant: [["circle",{cx:11,cy:4,r:2}],["path",{d:"M9.5 7.5c-1 1.5-1.5 3.5-1 5.5l1 3.5-1 4.5"}],["path",{d:"M11 7.5c.8 1.3 1 2.5.8 3.6 2.7.6 4.7 2.6 4.7 5 0 2-1.6 3.4-3.8 3.4"}],["path",{d:"M9.5 16.5h3"}]],
+  fetus: [["circle",{cx:12,cy:12,r:8.5}],["circle",{cx:13.5,cy:9,r:2.3}],["path",{d:"M12 11.2c-2.5 1-3.5 3.2-2.8 5.3.6 1.8 2.6 2.3 4.2 1.4 1.3-.8 1.6-2.3.8-3.3"}]],
+  lungs: [["path",{d:"M12 4v7"}],["path",{d:"M12 11l-2.5 2"}],["path",{d:"M12 11l2.5 2"}],["path",{d:"M9 7.5c-3 .5-5 4.5-5 9 0 2 1 3 2.5 3S9 18.5 9 17z"}],["path",{d:"M15 7.5c3 .5 5 4.5 5 9 0 2-1 3-2.5 3S15 18.5 15 17z"}]],
+  clock: [["circle",{cx:12,cy:12,r:8.5}],["path",{d:"M12 7.5V12l3 2"}]],
+  scope: [["rect",{x:3,y:3.5,width:7,height:5,rx:1.5}],["path",{d:"M6.5 8.5v2.5c0 3 3 4 6 4s5.5 1 5.5 3.5"}],["circle",{cx:18,cy:19.5,r:1.4}],["path",{d:"M8 6h.01",strokeWidth:2.4}]],
+  vessel: [["path",{d:"M12 3v7"}],["path",{d:"M12 10c0 3-5 3.5-5 10.5"}],["path",{d:"M12 10c0 3 5 3.5 5 10.5"}]],
+  kidney: [["path",{d:"M15 4c-3.5 0-6 3.5-6 8s2.5 8 6 8c2.5 0 4-2 4-4.5 0-2-1.5-2.5-1.5-3.5S19 10.5 19 8.5C19 6 17.5 4 15 4z"}],["path",{d:"M9 12H5.5"}]],
+  liver: [["path",{d:"M3.5 9.5C3.5 7 5 6 7.5 6c4 0 9-1.2 11.5-.2 1.6.6 1.6 2.6.4 4.3C16.8 14 10.5 18.5 7.5 18.5 5 18.5 3.5 15.5 3.5 9.5z"}],["path",{d:"M11.5 6.3c-.5 3 .3 6.5 2.3 9"}],["path",{d:"M9 18.3c.5-1.8 1.7-3 3.2-3.6"}]],
+  dna: [["path",{d:"M7 3c0 6 10 6 10 12s-10 3-10 6"}],["path",{d:"M17 3c0 6-10 6-10 12"}],["path",{d:"M17 21c0-2-2-3-4-4"}],["path",{d:"M8.5 7h7M8.5 17h7"}]],
+  muscle: [["path",{d:"M3 5h7"}],["path",{d:"M10 5c2 0 3 1.5 3 3.5"}],["path",{d:"M10.5 10.5h5"}],["rect",{x:4,y:13,width:16,height:7,rx:3.5}],["path",{d:"M8 13.3v6.4M12 13v7M16 13.3v6.4"}]],
+  scale: [["path",{d:"M12 4v16"}],["path",{d:"M5 7h14"}],["path",{d:"M8 20h8"}],["path",{d:"M5 7l-2.5 6a2.5 2.5 0 0 0 5 0z"}],["path",{d:"M19 7l-2.5 6a2.5 2.5 0 0 0 5 0z"}]],
+  syringe: [["path",{d:"M17.5 3.5l3 3"}],["path",{d:"M19 5l-11 11"}],["path",{d:"M14.5 4.5l5 5"}],["path",{d:"M11 8l1.5 1.5M8.5 10.5L10 12"}],["path",{d:"M8 16l-1.5 1.5-3 3"}],["path",{d:"M5.5 13l5.5 5.5"}]],
+  face: [["circle",{cx:12,cy:12,r:8.5}],["path",{d:"M9 9.5h.01M15 9.5h.01",strokeWidth:2.4}],["path",{d:"M8.5 16c1-1.3 2.2-2 3.5-2s2.5.7 3.5 2"}]],
+  target: [["circle",{cx:12,cy:12,r:8.5}],["circle",{cx:12,cy:12,r:4.5}],["circle",{cx:12,cy:12,r:.8,fill:"currentColor"}]],
+  vial: [["path",{d:"M9 3h6"}],["path",{d:"M10 3v4.5L6 18a2 2 0 0 0 1.9 2.5h8.2A2 2 0 0 0 18 18L14 7.5V3"}],["path",{d:"M8 14h8"}]],
+  trend: [["path",{d:"M4 20h16M4 4v16"}],["path",{d:"M6.5 7c3 0 3.5 6 6.5 7.5S17 16 20 16"}]],
+  calc: [["rect",{x:5,y:3,width:14,height:18,rx:2.5}],["rect",{x:8,y:6,width:8,height:3.5,rx:.8}],["path",{d:"M8.5 13h.01M12 13h.01M15.5 13h.01M8.5 16.5h.01M12 16.5h.01M15.5 16.5h.01",strokeWidth:2.6}]],
+  flask: [["path",{d:"M9.5 3h5"}],["path",{d:"M10.5 3v6l-5 9.5A1.8 1.8 0 0 0 7.1 21h9.8a1.8 1.8 0 0 0 1.6-2.5l-5-9.5V3"}],["path",{d:"M7.5 15h9"}]],
+  wind: [["path",{d:"M3.5 9h11a2.5 2.5 0 1 0-2.5-2.5"}],["path",{d:"M3.5 13h14a2.5 2.5 0 1 1-2.5 2.5"}],["path",{d:"M3.5 17h6"}]],
+  moon: [["path",{d:"M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z"}]],
+  recycle: [["path",{d:"M20 12a8 8 0 0 1-14 5.3"}],["path",{d:"M4 12a8 8 0 0 1 14-5.3"}],["path",{d:"M18.5 3v4h-4"}],["path",{d:"M5.5 21v-4h4"}]],
+  mask: [["path",{d:"M5 9c2.5-1.5 4.5-2 7-2s4.5.5 7 2v4c0 3-3.5 5-7 5s-7-2-7-5z"}],["path",{d:"M5 10.5H2.5M19 10.5h2.5"}],["path",{d:"M9 11h6M9.5 14h5"}]],
+  pulse: [["path",{d:"M3 12h4l2-5 3 10 2.5-7 1.5 2h5"}]],
+  wave: [["path",{d:"M4 20h16M4 4v16"}],["path",{d:"M6 18c1-9 2.5-12 4-12s2 6 4 9 4 3 6 3"}]],
+  bolt: [["path",{d:"M13 3 5.5 13.5H12L10.5 21 18.5 10H12z"}]],
+  pill: [["rect",{x:2.8,y:8,width:18.4,height:8,rx:4,transform:"rotate(-40 12 12)"}],["path",{d:"M9.2 9.2l5.6 5.6",transform:"rotate(5 12 12)"}]],
+  clipboard: [["rect",{x:5,y:4.5,width:14,height:16.5,rx:2}],["rect",{x:9,y:3,width:6,height:3.5,rx:1}],["path",{d:"M8.5 11h7M8.5 14.5h7M8.5 18h4"}]],
+  bacteria: [["rect",{x:5,y:8,width:14,height:8,rx:4,transform:"rotate(-20 12 12)"}],["path",{d:"M4 7 2.5 5.5M20 17l1.5 1.5M8 4.5 7.5 2.5M16 19.5l.5 2"}],["path",{d:"M10 12h.01M13.5 11h.01",strokeWidth:2.4}]],
+  bag: [["path",{d:"M7 3.5h10v10a5 5 0 0 1-10 0z"}],["path",{d:"M7 8h10"}],["path",{d:"M12 18.5v3"}]],
+  gauge: [["path",{d:"M3.5 16a8.5 8.5 0 0 1 17 0"}],["path",{d:"M12 16l4-5"}],["path",{d:"M3.5 19.5h17"}],["circle",{cx:12,cy:16,r:1}]],
+  alert: [["path",{d:"M12 3.5 21.5 20h-19z"}],["path",{d:"M12 10v4.5"}],["path",{d:"M12 17.3h.01",strokeWidth:2.6}]],
+  timer: [["circle",{cx:12,cy:13.5,r:7.5}],["path",{d:"M12 13.5V10M10 2.5h4M18.5 6.5l1.5-1.5"}]]
+};
+const TOOL_ICON_OF = { crisis:"alert", airwaysizes:"airway", scores:"chart", gcs:"brain", asaps:"tag", rotem:"drop", cardiac:"heart", cardnc:"heart", obstetric:"fetus", thoracic:"lungs", neuro:"brain", thrombectomy:"clock", giendo:"scope", vascular:"vessel", renal:"kidney", hepatic:"liver", immuno:"dna", neuromuscular:"muscle", pregnonob:"pregnant", bariatric:"scale", postop:"syringe", painscales:"face", neuraxial:"target", la:"gauge", anticoag:"drop", tci:"trend", quickcalc:"calc", renalcalc:"flask", mac:"wind", vaso:"syringe", sedcalc:"moon", vent:"lungs", recruit:"lungs", lowflow:"recycle", niv:"mask", fickco:"pulse", spiro:"wave", tof:"bolt", opioid:"pill", fluids:"bag", csht:"timer", periop:"clipboard", abx:"bacteria" };
+function LineIcon({ name, size }) {
+  const parts = LINE_ICONS[name] || TOOL_ICON_PATHS[name] || [];
+  return /* @__PURE__ */ React.createElement("svg", { width: size || 24, height: size || 24, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true" }, parts.map(([tag, props], i) => React.createElement(tag, { key: i, ...props })));
+}
 function HomeScreen({ lang, go }) {
   const el = lang === "el";
   const TILES = [
-    { id: "lists", icon: "\u{1F6A8}", el: "Λίστες κρίσεων", en: "Crisis checklists", subEl: "37 λίστες βήμα προς βήμα", subEn: "37 step-by-step checklists", urgent: true },
-    { id: "meds", icon: "\u{1F48A}", el: "Φάρμακα", en: "Drugs", subEl: "94 φάρμακα, δόσεις στο βάρος", subEn: "94 drugs, weight-based doses" },
-    { id: "tools", icon: "\u{1F9EE}", el: "Εργαλεία", en: "Tools", subEl: "39 κάρτες & υπολογιστές", subEn: "39 cards & calculators" },
-    { id: "peds", icon: "\u{1F9D2}", el: "Παιδιατρική κάρτα", en: "Paediatric card", subEl: "αεραγωγός, ζωτικά, επείγοντα", subEn: "airway, vitals, emergencies" },
-        { id: "about", icon: "\u2139\uFE0F", el: "Σχετικά & πηγές", en: "About & sources", subEl: "οδηγίες, βιβλιογραφία, όρια", subEn: "guidelines, references, limits" }
+    { id: "lists", icon: "alert", el: "Λίστες κρίσεων", en: "Crisis checklists", subEl: CHECKLISTS.length + " λίστες βήμα προς βήμα", subEn: CHECKLISTS.length + " step-by-step checklists", urgent: true },
+    { id: "meds", icon: "pill", el: "Φάρμακα", en: "Drugs", subEl: DRUGS.length + " φάρμακα, δόσεις στο βάρος", subEn: DRUGS.length + " drugs, weight-based doses" },
+    { id: "tools", icon: "calc", el: "Εργαλεία", en: "Tools", subEl: TOOL_SECTIONS.length + " κάρτες & υπολογιστές", subEn: TOOL_SECTIONS.length + " cards & calculators" },
+    { id: "peds", icon: "child", el: "Παιδιατρική κάρτα", en: "Paediatric card", subEl: "αεραγωγός, ζωτικά, επείγοντα", subEn: "airway, vitals, emergencies" },
+        { id: "about", icon: "info", el: "Σχετικά & πηγές", en: "About & sources", subEl: "οδηγίες, βιβλιογραφία, όρια", subEn: "guidelines, references, limits" }
   ];
   return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } },
     /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: S.muted, fontWeight: 600, lineHeight: 1.5, marginBottom: 2 } },
@@ -180,7 +234,7 @@ function HomeScreen({ lang, go }) {
         background: x.urgent ? S.tintDanger : S.card, color: x.urgent ? S.tintDangerFg : S.ink,
         border: "1px solid " + (x.urgent ? S.red : S.line), borderRadius: 14, padding: "14px 16px",
         cursor: "pointer", fontFamily: "inherit" } },
-      /* @__PURE__ */ React.createElement("span", { style: { fontSize: 26, flexShrink: 0 } }, x.icon),
+      /* @__PURE__ */ React.createElement("span", { style: { width: 44, height: 44, borderRadius: 12, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: x.urgent ? S.card : S.tintSelected, color: x.urgent ? S.red : S.teal } }, /* @__PURE__ */ React.createElement(LineIcon, { name: x.icon, size: 26 })),
       /* @__PURE__ */ React.createElement("span", { style: { display: "flex", flexDirection: "column", gap: 2, flex: 1 } },
         /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 15.5 } }, el ? x.el : x.en),
         /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: x.urgent ? S.tintDangerFg : S.muted, fontWeight: 600 } }, el ? x.subEl : x.subEn)),
@@ -282,11 +336,11 @@ function AnesthesiaAssistant() {
   }, [lang]);
   const t = T[lang];
   const tabs = [
-    { id: "home", icon: "\u{1F3E0}" },
-    { id: "meds", icon: "\u{1F48A}" },
-    { id: "tools", icon: "\u{1F9EE}" },
-    { id: "peds", icon: "\u{1F9D2}" },
-    { id: "lists", icon: "\u{1F6A8}" }
+    { id: "home", icon: "home" },
+    { id: "meds", icon: "pill" },
+    { id: "tools", icon: "calc" },
+    { id: "peds", icon: "child" },
+    { id: "lists", icon: "alert" }
   ];
   if (!accepted) {
     return /* @__PURE__ */ React.createElement("div", { style: {
@@ -377,26 +431,45 @@ function AnesthesiaAssistant() {
     color: S.teal,
     cursor: "pointer",
     fontFamily: "inherit"
-  } }, lang === "el" ? "EN" : "\u0395\u039B"), /* @__PURE__ */ React.createElement("button", { onClick: cycleTheme, title: themeLabel, "aria-label": themeLabel, style: { padding: "6px 10px", borderRadius: 10, border: `1.5px solid ${S.line}`, background: S.card, fontWeight: 700, fontSize: 13, color: S.teal, cursor: "pointer", fontFamily: "inherit", marginLeft: 6 } }, themeIcon)), /* @__PURE__ */ React.createElement(PatientBar, { lang, weight, setWeight, age, setAge, height, setHeight, sex, setSex })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, padding: "4px 16px 16px", overflowY: "auto" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, background: S.card, border: `1.5px solid ${gq ? S.teal : S.line}`, borderRadius: 12, padding: "0 10px", marginBottom: 10 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, opacity: 0.55 } }, "\u{1F50D}"), /* @__PURE__ */ React.createElement("input", { value: gq, onChange: (e) => setGq(e.target.value), placeholder: lang === "el" ? "\u0391\u03BD\u03B1\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7 \u03C6\u03B1\u03C1\u03BC\u03AC\u03BA\u03C9\u03BD, \u03B5\u03C0\u03B5\u03B9\u03B3\u03CC\u03BD\u03C4\u03C9\u03BD, \u03B5\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03C9\u03BD\u2026" : "Search drugs, emergencies, tools\u2026", style: { flex: 1, border: "none", outline: "none", background: "transparent", padding: "11px 0", fontSize: 14.5, fontFamily: "inherit", color: S.ink, minWidth: 0 } }), gq && /* @__PURE__ */ React.createElement("button", { onClick: () => setGq(""), "aria-label": lang === "el" ? "\u039A\u03B1\u03B8\u03B1\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B1\u03BD\u03B1\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7\u03C2" : "Clear search", style: { border: "none", background: "none", color: S.muted, fontWeight: 700, fontSize: 18, cursor: "pointer", fontFamily: "inherit", padding: "0 2px" } }, "\xD7")), recents.length > 0 && gq.trim().length < 2 && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: S.muted, padding: "0 2px 5px" } }, "\u{1F551} " + (lang === "el" ? "\u03A0\u03C1\u03CC\u03C3\u03C6\u03B1\u03C4\u03B1" : "Recent")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, overflowX: "auto", paddingBottom: 2 } }, recents.map((r, i) => /* @__PURE__ */ React.createElement("button", { key: r.tab + r.target + i, onClick: () => jumpTo(r), style: { flexShrink: 0, maxWidth: 190, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", background: S.card, border: `1.5px solid ${S.line}`, borderRadius: 20, padding: "6px 12px", fontSize: 12.5, fontWeight: 700, color: S.ink, cursor: "pointer", fontFamily: "inherit" } }, recentTitle(r, lang))))), gq.trim().length >= 2 ? /* @__PURE__ */ React.createElement(SearchResults, { lang, query: gq, onPick: pickResult }) : /* @__PURE__ */ React.createElement(React.Fragment, null, tab === "home" && /* @__PURE__ */ React.createElement(HomeScreen, { lang, go: setTab }), tab === "meds" && /* @__PURE__ */ React.createElement(MedsTab, { lang, weight, focus }), tab === "tools" && /* @__PURE__ */ React.createElement(ToolsTab, { lang, weight, age, height, sex, focus, onUse: (sec) => remember({ tab: "tools", target: sec.id, title: sec[lang], kind: "tool" }) }), tab === "peds" && /* @__PURE__ */ React.createElement(PedsCard, { lang, weight, age, height, sex }), tab === "lists" && /* @__PURE__ */ React.createElement(ChecklistTab, { lang, focus }), tab === "about" && /* @__PURE__ */ React.createElement(AboutCard, { lang }))), /* @__PURE__ */ React.createElement("div", { style: { padding: "0 16px 8px", fontSize: 11, color: S.muted, fontWeight: 600, lineHeight: 1.4, textAlign: "center" } }, t.disclaimer), /* @__PURE__ */ React.createElement("div", { style: { padding: "0 16px 8px", fontSize: 10, color: S.muted, fontWeight: 600, lineHeight: 1.5, textAlign: "center" } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700 } }, lang === "el" ? "\u0394\u03B7\u03BC\u03B9\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1: Efstathia Pistioli, MD" : "Created by Efstathia Pistioli, MD"), /* @__PURE__ */ React.createElement("br", null), "\xA9 ", (/* @__PURE__ */ new Date()).getFullYear(), " Efstathia Pistioli, MD. ", lang === "el" ? "\u039C\u03B5 \u03B5\u03C0\u03B9\u03C6\u03CD\u03BB\u03B1\u03BE\u03B7 \u03C0\u03B1\u03BD\u03C4\u03CC\u03C2 \u03B4\u03B9\u03BA\u03B1\u03B9\u03CE\u03BC\u03B1\u03C4\u03BF\u03C2." : "All rights reserved."), /* @__PURE__ */ React.createElement("div", { style: {
+  } }, lang === "el" ? "EN" : "\u0395\u039B"), /* @__PURE__ */ React.createElement("button", { onClick: cycleTheme, title: themeLabel, "aria-label": themeLabel, style: { padding: "6px 10px", borderRadius: 10, border: `1.5px solid ${S.line}`, background: S.card, fontWeight: 700, fontSize: 13, color: S.teal, cursor: "pointer", fontFamily: "inherit", marginLeft: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", minWidth: 38, minHeight: 32 } }, /* @__PURE__ */ React.createElement(ThemeGlyph, { mode: theme }))), /* @__PURE__ */ React.createElement(PatientBar, { lang, weight, setWeight, age, setAge, height, setHeight, sex, setSex })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, padding: "4px 16px 16px", overflowY: "auto" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, background: S.card, border: `1.5px solid ${gq ? S.teal : S.line}`, borderRadius: 12, padding: "0 10px", marginBottom: 10 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, opacity: 0.55 } }, "\u{1F50D}"), /* @__PURE__ */ React.createElement("input", { value: gq, onChange: (e) => setGq(e.target.value), placeholder: lang === "el" ? "\u0391\u03BD\u03B1\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7 \u03C6\u03B1\u03C1\u03BC\u03AC\u03BA\u03C9\u03BD, \u03B5\u03C0\u03B5\u03B9\u03B3\u03CC\u03BD\u03C4\u03C9\u03BD, \u03B5\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03C9\u03BD\u2026" : "Search drugs, emergencies, tools\u2026", style: { flex: 1, border: "none", outline: "none", background: "transparent", padding: "11px 0", fontSize: 14.5, fontFamily: "inherit", color: S.ink, minWidth: 0 } }), gq && /* @__PURE__ */ React.createElement("button", { onClick: () => setGq(""), "aria-label": lang === "el" ? "\u039A\u03B1\u03B8\u03B1\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B1\u03BD\u03B1\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7\u03C2" : "Clear search", style: { border: "none", background: "none", color: S.muted, fontWeight: 700, fontSize: 18, cursor: "pointer", fontFamily: "inherit", padding: "0 2px" } }, "\xD7")), recents.length > 0 && gq.trim().length < 2 && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: S.muted, padding: "0 2px 5px" } }, "\u{1F551} " + (lang === "el" ? "\u03A0\u03C1\u03CC\u03C3\u03C6\u03B1\u03C4\u03B1" : "Recent")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, overflowX: "auto", paddingBottom: 2 } }, recents.map((r, i) => /* @__PURE__ */ React.createElement("button", { key: r.tab + r.target + i, onClick: () => jumpTo(r), style: { flexShrink: 0, maxWidth: 190, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", background: S.card, border: `1.5px solid ${S.line}`, borderRadius: 20, padding: "6px 12px", fontSize: 12.5, fontWeight: 700, color: S.ink, cursor: "pointer", fontFamily: "inherit" } }, recentTitle(r, lang))))), gq.trim().length >= 2 ? /* @__PURE__ */ React.createElement(SearchResults, { lang, query: gq, onPick: pickResult }) : /* @__PURE__ */ React.createElement(React.Fragment, null, tab === "home" && /* @__PURE__ */ React.createElement(HomeScreen, { lang, go: setTab }), tab === "meds" && /* @__PURE__ */ React.createElement(MedsTab, { lang, weight, focus }), tab === "tools" && /* @__PURE__ */ React.createElement(ToolsTab, { lang, weight, age, height, sex, focus, onUse: (sec) => remember({ tab: "tools", target: sec.id, title: sec[lang], kind: "tool" }) }), tab === "peds" && /* @__PURE__ */ React.createElement(PedsCard, { lang, weight, age, height, sex }), tab === "lists" && /* @__PURE__ */ React.createElement(ChecklistTab, { lang, focus }), tab === "about" && /* @__PURE__ */ React.createElement(AboutCard, { lang }))), /* @__PURE__ */ React.createElement("div", { style: { padding: "2px 16px 6px", fontSize: 10, color: S.muted, fontWeight: 600, lineHeight: 1.4, textAlign: "center" } }, lang === "el" ? "\u0395\u03C0\u03B1\u03BB\u03B7\u03B8\u03B5\u03CD\u03C3\u03C4\u03B5 \u03BA\u03AC\u03B8\u03B5 \u03B4\u03CC\u03C3\u03B7 \u03C0\u03C1\u03B9\u03BD \u03C4\u03B7 \u03C7\u03BF\u03C1\u03AE\u03B3\u03B7\u03C3\u03B7" : "Verify every dose before administration", " \xB7 \xA9 ", (/* @__PURE__ */ new Date()).getFullYear(), " Efstathia Pistioli, MD"), /* @__PURE__ */ React.createElement("div", { style: {
     display: "flex",
-    borderTop: `1.5px solid ${S.line}`,
-    background: S.card,
+    background: "#1D3D6B",
     position: "sticky",
-    bottom: 0
-  } }, tabs.map((tb) => /* @__PURE__ */ React.createElement("button", { key: tb.id, onClick: () => setTab(tb.id), "aria-label": t.tabs[tb.id], title: t.tabs[tb.id], style: {
+    bottom: 0,
+    padding: "6px 4px calc(8px + env(safe-area-inset-bottom, 0px))"
+  } }, tabs.map((tb) => /* @__PURE__ */ React.createElement("button", { key: tb.id, onClick: () => setTab(tb.id), "aria-label": t.tabs[tb.id], "aria-current": tab === tb.id ? "page" : void 0, title: t.tabs[tb.id], style: {
     flex: 1,
-    padding: "10px 1px 12px",
+    padding: "4px 1px 0",
     border: "none",
     background: "none",
     cursor: "pointer",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: 2,
+    gap: 3,
     fontFamily: "inherit",
     minWidth: 0,
-    borderTop: tab === tb.id ? `2.5px solid ${S.teal}` : "2.5px solid transparent"
-  } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 24, lineHeight: 1, opacity: tab === tb.id ? 1 : 0.55 } }, tb.icon)))));
+    color: tab === tb.id ? "#FFFFFF" : "#B9C8DC"
+  } }, /* @__PURE__ */ React.createElement(LineIcon, { name: tb.icon, size: 24 }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: tab === tb.id ? 800 : 600, lineHeight: 1.1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%" } }, t.tabs[tb.id]), /* @__PURE__ */ React.createElement(PoppyMark, { on: tab === tb.id })))));
+}
+
+// Small drawn poppy marking the active tab (echoes the poppies of the app icon).
+// Theme button icon drawn as SVG (the text glyph for "auto" rendered clipped on some phones).
+function ThemeGlyph({ mode }) {
+  const c = S.teal;
+  const p = { width: 18, height: 18, viewBox: "0 0 24 24", "aria-hidden": "true" };
+  if (mode === "light") return /* @__PURE__ */ React.createElement("svg", p, /* @__PURE__ */ React.createElement("circle", { cx: 12, cy: 12, r: 4.5, fill: c }), [0, 45, 90, 135, 180, 225, 270, 315].map((a) => /* @__PURE__ */ React.createElement("line", { key: a, x1: 12, y1: 2.5, x2: 12, y2: 5.5, stroke: c, strokeWidth: 2, strokeLinecap: "round", transform: "rotate(" + a + " 12 12)" })));
+  if (mode === "dark") return /* @__PURE__ */ React.createElement("svg", p, /* @__PURE__ */ React.createElement("path", { d: "M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z", fill: c }));
+  return /* @__PURE__ */ React.createElement("svg", p, /* @__PURE__ */ React.createElement("circle", { cx: 12, cy: 12, r: 8.5, fill: "none", stroke: c, strokeWidth: 2 }), /* @__PURE__ */ React.createElement("path", { d: "M12 3.5a8.5 8.5 0 0 1 0 17z", fill: c }));
+}
+function PoppyMark({ on }) {
+  return /* @__PURE__ */ React.createElement("svg", { width: 10, height: 10, viewBox: "-10 -10 20 20", "aria-hidden": "true", style: { visibility: on ? "visible" : "hidden", marginTop: 1 } },
+    /* @__PURE__ */ React.createElement("g", { fill: "#D93A2E" },
+      /* @__PURE__ */ React.createElement("ellipse", { cx: 0, cy: -4.2, rx: 4.6, ry: 4.4 }),
+      /* @__PURE__ */ React.createElement("ellipse", { cx: 4.2, cy: 0, rx: 4.4, ry: 4.6 }),
+      /* @__PURE__ */ React.createElement("ellipse", { cx: 0, cy: 4.2, rx: 4.6, ry: 4.4 }),
+      /* @__PURE__ */ React.createElement("ellipse", { cx: -4.2, cy: 0, rx: 4.4, ry: 4.6 })),
+    /* @__PURE__ */ React.createElement("circle", { r: 2.3, fill: "#1A1A1A" }));
 }
 
 // Catches render/runtime errors anywhere in the tree below it so a bug in one

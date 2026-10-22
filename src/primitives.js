@@ -1,6 +1,6 @@
 function PatientBar({ lang, weight, setWeight, age, setAge, height, setHeight, sex, setSex }) {
   const t = T[lang];
-  const fieldStyle = { ...inputStyle, background: S.cardAlt, border: `1.5px solid ${S.line}`, color: S.ink, padding: "8px 8px", fontSize: 14 };
+  const fieldStyle = { ...inputStyle, background: S.cardAlt, border: `1.5px solid ${S.line}`, color: S.ink, padding: "8px 6px", fontSize: 14 };
   const [ageUnit, setAgeUnit] = useState("y");
   const ageDisplay = age === "" ? "" : ageUnit === "m" ? String(Math.round(parseFloat(age) * 12 * 100) / 100) : age;
   const onAgeChange = (val) => {
@@ -15,7 +15,7 @@ function PatientBar({ lang, weight, setWeight, age, setAge, height, setHeight, s
     }
     setAge(ageUnit === "m" ? String(num / 12) : val);
   };
-  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, background: S.card, padding: "10px 12px", borderRadius: 16, boxShadow: "0 1px 3px rgba(80,64,48,0.06)", border: `1.5px solid ${S.line}` } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "center" } }, /* @__PURE__ */ React.createElement("svg", { width: "24", height: "24", viewBox: "0 0 26 26", style: { flexShrink: 0 } }, /* @__PURE__ */ React.createElement("polyline", { points: "1,15 6,15 8,8 11,21 14,11 16,15 25,15", fill: "none", stroke: S.teal, strokeWidth: "2", strokeLinejoin: "round", strokeLinecap: "round" })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, display: "flex", gap: 6 } }, /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, background: S.card, padding: "10px 12px", borderRadius: 16, boxShadow: "0 1px 3px rgba(80,64,48,0.06)", border: `1.5px solid ${S.line}` } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "center" } }, /* @__PURE__ */ React.createElement("svg", { width: "24", height: "24", viewBox: "0 0 26 26", style: { flexShrink: 0 } }, /* @__PURE__ */ React.createElement("polyline", { points: "1,15 6,15 8,8 11,21 14,11 16,15 25,15", fill: "none", stroke: S.teal, strokeWidth: "2", strokeLinejoin: "round", strokeLinecap: "round" })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, display: "flex", gap: 6 } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", flex: 1.15, minWidth: 0 } }, /* @__PURE__ */ React.createElement(
     "input",
     {
       type: "number",
@@ -24,9 +24,9 @@ function PatientBar({ lang, weight, setWeight, age, setAge, height, setHeight, s
       onChange: (e) => setWeight(e.target.value),
       placeholder: t.weight,
       "aria-label": t.weight,
-      style: { ...fieldStyle, flex: 1.2, minWidth: 0 }
+      style: { ...fieldStyle, width: "100%", paddingRight: 25 }
     }
-  ), /* @__PURE__ */ React.createElement(
+  ), /* @__PURE__ */ React.createElement("span", { "aria-hidden": "true", style: { position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)", fontSize: 9.5, fontWeight: 700, color: S.muted, pointerEvents: "none" } }, "kg")), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", flex: 1.1, minWidth: 0 } }, /* @__PURE__ */ React.createElement(
     "input",
     {
       type: "number",
@@ -35,9 +35,9 @@ function PatientBar({ lang, weight, setWeight, age, setAge, height, setHeight, s
       onChange: (e) => onAgeChange(e.target.value),
       placeholder: ageUnit === "m" ? lang === "el" ? "\u0397\u03BB\u03B9\u03BA\u03AF\u03B1 (\u03BC)" : "Age (mo)" : t.age,
       "aria-label": t.age,
-      style: { ...fieldStyle, flex: 1, minWidth: 0 }
+      style: { ...fieldStyle, width: "100%", paddingRight: 25 }
     }
-  ), /* @__PURE__ */ React.createElement(
+  ), /* @__PURE__ */ React.createElement("span", { "aria-hidden": "true", style: { position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)", fontSize: 9.5, fontWeight: 700, color: S.muted, pointerEvents: "none" } }, ageUnit === "m" ? (lang === "el" ? "\u03BC\u03AE\u03BD." : "mo") : (lang === "el" ? "\u03AD\u03C4\u03B7" : "y"))), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", flex: 1.1, minWidth: 0 } }, /* @__PURE__ */ React.createElement(
     "input",
     {
       type: "number",
@@ -46,17 +46,17 @@ function PatientBar({ lang, weight, setWeight, age, setAge, height, setHeight, s
       onChange: (e) => setHeight(e.target.value),
       placeholder: t.height,
       "aria-label": t.height,
-      style: { ...fieldStyle, flex: 1.1, minWidth: 0 }
+      style: { ...fieldStyle, width: "100%", paddingRight: 25 }
     }
-  ), /* @__PURE__ */ React.createElement(
+  ), /* @__PURE__ */ React.createElement("span", { "aria-hidden": "true", style: { position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)", fontSize: 9.5, fontWeight: 700, color: S.muted, pointerEvents: "none" } }, "cm")), /* @__PURE__ */ React.createElement(
     "button",
     {
       onClick: () => setSex(sex === "M" ? "F" : "M"),
       "aria-label": t.sex,
       style: {
         ...fieldStyle,
-        flex: 0.6,
-        minWidth: 42,
+        flex: "0 0 40px",
+        minWidth: 40,
         padding: "4px 6px",
         cursor: "pointer",
         fontWeight: 800,
@@ -89,6 +89,55 @@ function PatientBar({ lang, weight, setWeight, age, setAge, height, setHeight, s
     },
     lbl
   )))));
+}
+// Split a drug's notes into labelled groups at display time. The stored text is unchanged; only its
+// sentences are grouped (original order kept inside each group). Nothing is added or removed.
+const NOTE_ABBR = /(?:^|[\s(])(?:\u03C0\.\u03C7|\u03BA\.\u03AC|\u03BA\.\u03BB\u03C0|\u03BA\.\u03BF\.\u03BA|e\.g|i\.e|vs|approx|ca|cf|resp|no|fig|ref|Dr|St|\u0392\u03BB|\u03B2\u03BB|\u03B1\u03BD\u03B1\u03B8|rev|\u03AD\u03BA\u03B4|ed|vol|\u03C3\u03B5\u03BB|pp?)$/i;
+function splitSentences(text) {
+  const out = []; let start = 0, depth = 0;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === "(" || ch === "[") depth++;
+    else if ((ch === ")" || ch === "]") && depth > 0) depth--;
+    else if ((ch === "." || ch === "!" || ch === "?") && depth === 0) {
+      const after = text.slice(i + 1);
+      const m = /^\s+(?=[\u00AB"(\[]?[A-Z\u0391-\u03A9\u0386\u0388\u0389\u038A\u038C\u038E\u038F>\u2265\u2264<0-9])/.exec(after);
+      if (!m) continue;
+      const before = text.slice(start, i);
+      if (NOTE_ABBR.test(before)) continue;
+      if (/^\s+\d/.test(after) && /(?:^|\s)[A-Za-z\u0391-\u03A9\u03B1-\u03C9\u03AC-\u03CE]{1,5}$/.test(before)) continue;
+      out.push(text.slice(start, i + 1).trim()); start = i + 1 + m[0].length; i = start - 1;
+    }
+  }
+  const rest = text.slice(start).trim(); if (rest) out.push(rest);
+  return out;
+}
+const NOTE_TITLES = { gen: { el: "\u0393\u03B5\u03BD\u03B9\u03BA\u03AC", en: "General" }, pop: { el: "\u0395\u03B9\u03B4\u03B9\u03BA\u03BF\u03AF \u03C0\u03BB\u03B7\u03B8\u03C5\u03C3\u03BC\u03BF\u03AF", en: "Special populations" }, int: { el: "\u0391\u03BB\u03BB\u03B7\u03BB\u03B5\u03C0\u03B9\u03B4\u03C1\u03AC\u03C3\u03B5\u03B9\u03C2", en: "Interactions" }, od: { el: "\u03A5\u03C0\u03B5\u03C1\u03B4\u03BF\u03C3\u03BF\u03BB\u03BF\u03B3\u03AF\u03B1", en: "Overdose" }, src: { el: "\u03A0\u03B7\u03B3\u03AE", en: "Source" } };
+const NOTE_GROUPS = [
+  { k: "src", el: "\u03A0\u03B7\u03B3\u03AE", en: "Source", re: /^(\u03A0\u03B7\u03B3(\u03AE|\u03AD\u03C2)|Sources?)(?=[\s:])/ },
+  { k: "od", el: "\u03A5\u03C0\u03B5\u03C1\u03B4\u03BF\u03C3\u03BF\u03BB\u03BF\u03B3\u03AF\u03B1", en: "Overdose", re: /^(\u03A5\u03C0\u03B5\u03C1\u03B4\u03BF\u03C3\u03BF\u03BB\u03BF\u03B3|\u0391\u03BD\u03C4\u03AF\u03B4\u03BF\u03C4\u03BF|Overdos|Antidote)/i },
+  { k: "int", el: "\u0391\u03BB\u03BB\u03B7\u03BB\u03B5\u03C0\u03B9\u03B4\u03C1\u03AC\u03C3\u03B5\u03B9\u03C2", en: "Interactions", re: /^(\u0391\u03BB\u03BB\u03B7\u03BB\u03B5\u03C0\u03B9\u03B4\u03C1|Interact)/i },
+  { k: "pop", el: "\u0395\u03B9\u03B4\u03B9\u03BA\u03BF\u03AF \u03C0\u03BB\u03B7\u03B8\u03C5\u03C3\u03BC\u03BF\u03AF", en: "Special populations", re: /^(\u039A\u03CD\u03B7\u03C3\u03B7|\u0395\u03B3\u03BA\u03C5\u03BC\u03BF\u03C3|\u0398\u03B7\u03BB\u03B1\u03C3\u03BC|\u03A0\u03B1\u03B9\u03B4\u03B9\u03AC|\u03A0\u03B1\u03B9\u03B4\u03B9|\u039D\u03B5\u03BF\u03B3\u03BD|\u0392\u03C1\u03AD\u03C6|\u0397\u03BB\u03B9\u03BA\u03B9\u03C9\u03BC\u03AD\u03BD|(\u039D\u03B5\u03C6\u03C1\u03B9\u03BA|\u0397\u03C0\u03B1\u03C4\u03B9\u03BA)(\u03AE|\u03AD\u03C2)(\s+(\u03B1\u03BD\u03B5\u03C0\u03AC\u03C1\u03BA\u03B5\u03B9\u03B1|\u03B4\u03C5\u03C3\u03BB\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1|\u03BD\u03CC\u03C3\u03BF\u03C2|\u03BD\u03CC\u03C3\u03BF|\u03AE\s)|\s*[:(\/,])|\u03A0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA|[<>\u2265\u2264]\s?\d+\s?(\u03B5\u03C4\u03CE\u03BD|\u03AD\u03C4\u03B7)|Pregnan|Breast|Lactat|Child|Paediatric|Pediatric|Neonat|Infant|Elderly|Older|(Renal|Hepatic)(\s+(impairment|failure|dysfunction|disease|insufficiency|or\s)|\s*[:(\/,])|Obes|[<>\u2265\u2264]\s?\d+\s?(y|years))/i }
+];
+function noteSections(text) {
+  if (!text) return null;
+  const groups = { gen: [], pop: [], int: [], od: [], src: [] };
+  for (const s of splitSentences(text)) { const g = NOTE_GROUPS.find((x) => x.re.test(s)); groups[g ? g.k : "gen"].push(s); }
+  const order = ["gen", "pop", "int", "od", "src"];
+  const used = order.filter((k) => groups[k].length);
+  if (used.length < 2) return null;
+  const strip = /^(\u0391\u03BB\u03BB\u03B7\u03BB\u03B5\u03C0\u03B9\u03B4\u03C1\u03AC\u03C3\u03B5\u03B9\u03C2|Interactions|\u03A5\u03C0\u03B5\u03C1\u03B4\u03BF\u03C3\u03BF\u03BB\u03BF\u03B3\u03AF\u03B1|Overdose|\u03A0\u03B7\u03B3\u03AE|\u03A0\u03B7\u03B3\u03AD\u03C2|Sources?)\s*:\s*/;
+  return used.map((k) => ({ k, text: groups[k].join(" ").replace(k === "gen" || k === "pop" ? /^$/ : strip, "") }));
+}
+
+// Bold the dose figures (number + unit) inside free-text dose lines so they stand out at a glance.
+const EMPH_RE = /((?:[≥≤<>~]\s?)?\d+(?:[.,]\d+)?(?:\s?[–-]\s?\d+(?:[.,]\d+)?)?\s?(?:µg\/kg\/min|mcg\/kg\/min|µg\/kg\/h|mcg\/kg\/h|mg\/kg\/(?:ημέρα|day|h)|µg\/kg|mcg\/kg|mg\/kg|IU\/kg|U\/kg|mL\/kg|mg\/mL|µg\/mL|mL\/h|mg\/h|mg\/min|µg\/min|mmol|mg|µg|mcg|mL|IU|g\b|min\b|h\b|s\b|%|cmH₂O))/g;
+function emphNums(text) {
+  if (typeof text !== "string") return text;
+  const parts = text.split(EMPH_RE);
+  if (parts.length === 1) return text;
+  // A figure glued to a word (e.g. "G5%") is part of a name, not a dose: leave it plain.
+  return parts.map((p, i) => i % 2 === 1 && !/[A-Za-z\u0370-\u03FF]$/.test(parts[i - 1]) ? React.createElement("b", { key: i, style: { fontWeight: 800, color: S.teal, whiteSpace: "nowrap" } }, p) : p);
 }
 function MedsTab({ lang, weight, focus }) {
   const t = T[lang];
@@ -147,8 +196,12 @@ function MedsTab({ lang, weight, focus }) {
     } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 15.5, color: S.ink } }, d.name), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 10 } }, d.doses.map((ds, i) => {
       const dt = doseText(ds, w, lang);
       const isStr = typeof dt === "string";
-      return /* @__PURE__ */ React.createElement("div", { key: i, style: { background: S.bg, borderRadius: 10, padding: "9px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: S.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.4 } }, ds[lang]), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 4 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14.5, color: S.ink } }, isStr ? dt : dt.base), !isStr && w > 0 && /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 16.5, color: dt.capped ? S.amber : S.teal, fontVariantNumeric: "tabular-nums" } }, "= ", dt.calc, dt.capped ? ` (${t.maxLabel})` : "")), ds.max && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 600 } }, t.maxLabel, ": ", ds.max, " ", ds.unit.split("/")[0]));
-    }), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.ink, lineHeight: 1.45 } }, /* @__PURE__ */ React.createElement("strong", { style: { color: S.teal } }, t.notes, ": "), lang === "el" ? d.notesEl : d.notesEn), (lang === "el" ? d.ciEl : d.ciEn) !== "\u2014" && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.red, lineHeight: 1.45 } }, /* @__PURE__ */ React.createElement("strong", null, t.ci, ": "), lang === "el" ? d.ciEl : d.ciEn), w > 0 && d.doses.some((ds) => typeof doseText(ds, w, lang) !== "string") && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: S.amber, fontWeight: 600, lineHeight: 1.4 } }, lang === "el" ? "\u26A0 \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03AD\u03BD\u03B5\u03C2 \u03C4\u03B9\u03BC\u03AD\u03C2 \u03C3\u03C4\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2 \u2014 \u03B5\u03C0\u03B1\u03BB\u03B7\u03B8\u03B5\u03CD\u03C3\u03C4\u03B5 \u03C0\u03C1\u03B9\u03BD \u03C4\u03B7 \u03C7\u03BF\u03C1\u03AE\u03B3\u03B7\u03C3\u03B7." : "\u26A0 Weight-calculated values \u2014 verify before administration.")));
+      return /* @__PURE__ */ React.createElement("div", { key: i, style: { background: S.bg, borderRadius: 10, padding: "9px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: S.muted, fontWeight: 600, letterSpacing: 0.4 } }, upGr(ds[lang])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 4 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14.5, color: S.ink } }, isStr ? emphNums(dt) : dt.base), !isStr && w > 0 && /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 16.5, color: dt.capped ? S.amber : S.teal, fontVariantNumeric: "tabular-nums" } }, "= ", dt.calc, dt.capped ? ` (${t.maxLabel})` : "")), ds.max && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 600 } }, t.maxLabel, ": ", ds.max, " ", ds.unit.split("/")[0]));
+    }), (() => {
+      const ns = noteSections(lang === "el" ? d.notesEl : d.notesEn);
+      if (!ns) return /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.ink, lineHeight: 1.45 } }, /* @__PURE__ */ React.createElement("strong", { style: { color: S.teal } }, t.notes, ": "), lang === "el" ? d.notesEl : d.notesEn);
+      return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, color: S.teal, fontSize: 13.5, marginBottom: 6 } }, t.notes), ns.map((g) => /* @__PURE__ */ React.createElement("div", { key: g.k, style: { background: S.bg, borderRadius: 10, padding: "8px 12px", marginBottom: 6 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, fontWeight: 800, color: S.teal, letterSpacing: 0.4, marginBottom: 2 } }, upGr(NOTE_TITLES[g.k][lang])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.ink, lineHeight: 1.45 } }, g.text))));
+    })(), (lang === "el" ? d.ciEl : d.ciEn) !== "\u2014" && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.red, lineHeight: 1.45 } }, /* @__PURE__ */ React.createElement("strong", null, t.ci, ": "), lang === "el" ? d.ciEl : d.ciEn), w > 0 && d.doses.some((ds) => typeof doseText(ds, w, lang) !== "string") && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: S.amber, fontWeight: 600, lineHeight: 1.4 } }, lang === "el" ? "\u26A0 \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03AD\u03BD\u03B5\u03C2 \u03C4\u03B9\u03BC\u03AD\u03C2 \u03C3\u03C4\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2 \u2014 \u03B5\u03C0\u03B1\u03BB\u03B7\u03B8\u03B5\u03CD\u03C3\u03C4\u03B5 \u03C0\u03C1\u03B9\u03BD \u03C4\u03B7 \u03C7\u03BF\u03C1\u03AE\u03B3\u03B7\u03C3\u03B7." : "\u26A0 Weight-calculated values \u2014 verify before administration.")));
   }));
 }
 function ChecklistTab({ lang, focus }) {
@@ -339,7 +392,7 @@ function TCITab({ lang, weight, age, height, sex }) {
       alignItems: "center",
       fontFamily: "inherit",
       textAlign: "left"
-    } }, /* @__PURE__ */ React.createElement("span", { style: { display: "flex", flexDirection: "column", gap: 2 } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 15.5, color: S.ink } }, m.name), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: S.muted, fontWeight: 600 } }, m.targetType)), /* @__PURE__ */ React.createElement("span", { style: { display: "flex", alignItems: "center", gap: 8 } }, !ready && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: S.amber } }, "\u26A0"), ready && !valid && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: S.amber } }, "!"), valid && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: S.teal } }, "\u25CF"), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A"))), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 10 } }, !ready && /* @__PURE__ */ React.createElement("div", { style: { background: S.tintNeutral, borderRadius: 10, padding: "9px 12px", fontSize: 13, color: S.amber, fontWeight: 600 } }, t.needCov, " ", missing.map((r) => covLabel[r][lang]).join(", ")), /* @__PURE__ */ React.createElement("div", { style: { background: S.bg, borderRadius: 10, padding: "9px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.4, marginBottom: 3 } }, t.targetsHead), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, color: S.ink, lineHeight: 1.5 } }, lang === "el" ? m.targetsEl : m.targetsEn)), ready && v1 > 0 && !m.noBolus && /* @__PURE__ */ React.createElement("div", { style: { background: S.bg, borderRadius: 10, padding: "9px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.4 } }, t.bolusEst), /* @__PURE__ */ React.createElement(BolusRows, { drug, v1, lang }), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: S.muted, fontWeight: 600, marginTop: 4 } }, "V1 \u2248 ", fmt(v1), " L \xB7 ", lang === "el" ? "\u03C0\u03BF\u03C3\u03CC\u03C4\u03B7\u03C4\u03B1 = \u03C3\u03C4\u03CC\u03C7\u03BF\u03C2 \xD7 V1 (\u03BF \u03B1\u03BB\u03B3\u03CC\u03C1\u03B9\u03B8\u03BC\u03BF\u03C2 TCI \u03C4\u03BF \u03B1\u03BD\u03B1\u03BB\u03B1\u03BC\u03B2\u03AC\u03BD\u03B5\u03B9)" : "amount = target \xD7 V1 (your TCI pump handles this)")), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.ink, lineHeight: 1.45 } }, /* @__PURE__ */ React.createElement("strong", { style: { color: S.teal } }, lang === "el" ? "\u03A0\u03B5\u03B4\u03AF\u03BF" : "Range", ": "), lang === "el" ? m.rangeEl : m.rangeEn), ready && !valid && (m.warnEl || m.warnEn) && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.amber, lineHeight: 1.45, fontWeight: 600 } }, "\u26A0 ", lang === "el" ? m.warnEl || "\u0395\u03BA\u03C4\u03CC\u03C2 \u03B5\u03CD\u03C1\u03BF\u03C5\u03C2 \u03B5\u03C0\u03B9\u03BA\u03CD\u03C1\u03C9\u03C3\u03B7\u03C2" : m.warnEn || "Outside validation range"), ready && !valid && !(m.warnEl || m.warnEn) && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.amber, lineHeight: 1.45, fontWeight: 600 } }, "\u26A0 ", lang === "el" ? "\u0391\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2 \u03B5\u03BA\u03C4\u03CC\u03C2 \u03B5\u03CD\u03C1\u03BF\u03C5\u03C2 \u03B5\u03C0\u03B9\u03BA\u03CD\u03C1\u03C9\u03C3\u03B7\u03C2 \u03C4\u03BF\u03C5 \u03BC\u03BF\u03BD\u03C4\u03AD\u03BB\u03BF\u03C5." : "Patient outside the model's validation range.")));
+    } }, /* @__PURE__ */ React.createElement("span", { style: { display: "flex", flexDirection: "column", gap: 2 } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 15.5, color: S.ink } }, m.name), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: S.muted, fontWeight: 600 } }, m.targetType)), /* @__PURE__ */ React.createElement("span", { style: { display: "flex", alignItems: "center", gap: 8 } }, !ready && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: S.amber } }, "\u26A0"), ready && !valid && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: S.amber } }, "!"), valid && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: S.teal } }, "\u25CF"), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A"))), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 10 } }, !ready && /* @__PURE__ */ React.createElement("div", { style: { background: S.tintNeutral, borderRadius: 10, padding: "9px 12px", fontSize: 13, color: S.amber, fontWeight: 600 } }, t.needCov, " ", missing.map((r) => covLabel[r][lang]).join(", ")), /* @__PURE__ */ React.createElement("div", { style: { background: S.bg, borderRadius: 10, padding: "9px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 700, letterSpacing: 0.4, marginBottom: 3 } }, upGr(t.targetsHead)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, color: S.ink, lineHeight: 1.5 } }, lang === "el" ? m.targetsEl : m.targetsEn)), ready && v1 > 0 && !m.noBolus && /* @__PURE__ */ React.createElement("div", { style: { background: S.bg, borderRadius: 10, padding: "9px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 700, letterSpacing: 0.4 } }, upGr(t.bolusEst)), /* @__PURE__ */ React.createElement(BolusRows, { drug, v1, lang }), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: S.muted, fontWeight: 600, marginTop: 4 } }, "V1 \u2248 ", fmt(v1), " L \xB7 ", lang === "el" ? "\u03C0\u03BF\u03C3\u03CC\u03C4\u03B7\u03C4\u03B1 = \u03C3\u03C4\u03CC\u03C7\u03BF\u03C2 \xD7 V1 (\u03BF \u03B1\u03BB\u03B3\u03CC\u03C1\u03B9\u03B8\u03BC\u03BF\u03C2 TCI \u03C4\u03BF \u03B1\u03BD\u03B1\u03BB\u03B1\u03BC\u03B2\u03AC\u03BD\u03B5\u03B9)" : "amount = target \xD7 V1 (your TCI pump handles this)")), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.ink, lineHeight: 1.45 } }, /* @__PURE__ */ React.createElement("strong", { style: { color: S.teal } }, lang === "el" ? "\u03A0\u03B5\u03B4\u03AF\u03BF" : "Range", ": "), lang === "el" ? m.rangeEl : m.rangeEn), ready && !valid && (m.warnEl || m.warnEn) && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.amber, lineHeight: 1.45, fontWeight: 600 } }, "\u26A0 ", lang === "el" ? m.warnEl || "\u0395\u03BA\u03C4\u03CC\u03C2 \u03B5\u03CD\u03C1\u03BF\u03C5\u03C2 \u03B5\u03C0\u03B9\u03BA\u03CD\u03C1\u03C9\u03C3\u03B7\u03C2" : m.warnEn || "Outside validation range"), ready && !valid && !(m.warnEl || m.warnEn) && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.amber, lineHeight: 1.45, fontWeight: 600 } }, "\u26A0 ", lang === "el" ? "\u0391\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2 \u03B5\u03BA\u03C4\u03CC\u03C2 \u03B5\u03CD\u03C1\u03BF\u03C5\u03C2 \u03B5\u03C0\u03B9\u03BA\u03CD\u03C1\u03C9\u03C3\u03B7\u03C2 \u03C4\u03BF\u03C5 \u03BC\u03BF\u03BD\u03C4\u03AD\u03BB\u03BF\u03C5." : "Patient outside the model's validation range.")));
   }), React.createElement("div", { style: { fontSize: 10.5, color: S.muted, fontWeight: 600, lineHeight: 1.45, paddingTop: 6, borderTop: "1px solid " + S.line } }, lang === "el" ? "\u03A0\u03B7\u03B3\u03AD\u03C2 \u03BC\u03BF\u03BD\u03C4\u03AD\u03BB\u03C9\u03BD: Marsh, Br J Anaesth 1991 \u00B7 Schnider, Anesthesiology 1998 \u00B7 Eleveld, Br J Anaesth 2018 (\u03C0\u03C1\u03BF\u03C0\u03BF\u03C6\u03CC\u03BB\u03B7) \u00B7 Kataria, Anesthesiology 1994 \u00B7 Absalom & Kenny, Br J Anaesth 2005 (Paedfusor) \u00B7 Minto, Anesthesiology 1997 \u00B7 Eleveld, Anesthesiology 2017 (\u03C1\u03B5\u03BC\u03B9\u03C6\u03B5\u03BD\u03C4\u03B1\u03BD\u03AF\u03BB\u03B7) \u00B7 Gepts, Anesthesiology 1995 \u00B7 Maitre, Anesthesiology 1987 \u00B7 Hannivoort, Anesthesiology 2015. \u03A4\u03BF V1 \u03B5\u03AF\u03BD\u03B1\u03B9 \u03B5\u03BA\u03C4\u03AF\u03BC\u03B7\u03C3\u03B7 \u03C4\u03BF\u03C5 \u03BC\u03BF\u03BD\u03C4\u03AD\u03BB\u03BF\u03C5 \u03B3\u03B9\u03B1 \u03C0\u03C1\u03BF\u03C3\u03B1\u03BD\u03B1\u03C4\u03BF\u03BB\u03B9\u03C3\u03BC\u03CC \u2014 \u03C4\u03B1 \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03AC \u03C1\u03C5\u03B8\u03BC\u03CC \u03BA\u03B1\u03B9 \u03C0\u03BF\u03C3\u03CC\u03C4\u03B7\u03C4\u03B1 \u03C4\u03B1 \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03B5\u03B9 \u03B7 \u03B1\u03BD\u03C4\u03BB\u03AF\u03B1. \u039F\u03B9 \u03C5\u03BB\u03BF\u03C0\u03BF\u03B9\u03AE\u03C3\u03B5\u03B9\u03C2 \u03B4\u03B9\u03B1\u03C6\u03AD\u03C1\u03BF\u03C5\u03BD \u03BC\u03B5\u03C4\u03B1\u03BE\u03CD \u03BA\u03B1\u03C4\u03B1\u03C3\u03BA\u03B5\u03C5\u03B1\u03C3\u03C4\u03CE\u03BD (\u03C0.\u03C7. ke0, \u03B1\u03C1\u03C4\u03B7\u03C1\u03B9\u03B1\u03BA\u03CC/\u03C6\u03BB\u03B5\u03B2\u03B9\u03BA\u03CC \u03B1\u03AF\u03BC\u03B1)." : "Model sources: Marsh, Br J Anaesth 1991 \u00B7 Schnider, Anesthesiology 1998 \u00B7 Eleveld, Br J Anaesth 2018 (propofol) \u00B7 Kataria, Anesthesiology 1994 \u00B7 Absalom & Kenny, Br J Anaesth 2005 (Paedfusor) \u00B7 Minto, Anesthesiology 1997 \u00B7 Eleveld, Anesthesiology 2017 (remifentanil) \u00B7 Gepts, Anesthesiology 1995 \u00B7 Maitre, Anesthesiology 1987 \u00B7 Hannivoort, Anesthesiology 2015. V1 is the model estimate, for orientation only \u2014 the pump calculates the actual rates and amounts. Implementations differ between manufacturers (e.g. ke0, arterial vs venous)."));
 }
 function Chip({ label, val }) {

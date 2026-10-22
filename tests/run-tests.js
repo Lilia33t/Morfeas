@@ -956,6 +956,30 @@ check("v394: growth charts and paediatric IBW methods",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
     return String(/CDC_GROWTH/.test(P) && /growthCalc/.test(P) && /function GrowthPane/.test(T) && /24\(5\):421/.test(T) && (function(){ const vm=require('vm'); const c={}; vm.createContext(c); vm.runInContext(P.slice(P.indexOf('const CDC_GROWTH'), P.indexOf('const pedsCalc'))+';this.g=growthCalc(72.2,"M",115.6,20.8);',c); return Math.abs(c.g.hp-49.5)<1 && Math.abs(c.g.traub-20.64)<0.05 && Math.abs(c.g.moore-20.74)<0.05; })()); })(), "true");
 
+check("v395: landiolol from the Rapibloc SmPC and new icon credit",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const D=require('fs').readFileSync(require('path').join(__dirname,'..','src','data.js'),'utf8'); return /id: "landiolol"/.test(D) && /57\.6 mg\/kg/.test(D) && /Rapibloc 300 mg/.test(T) && /posterised to four tones/.test(T) && require('fs').readFileSync(require('path').join(__dirname,'..','manifest.webmanifest'),'utf8').includes('#1D3D6B'); })()); })(), "true");
+
+check("v396: bottom bar with labels and poppy, blue light background",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const fs=require('fs'),p=require('path'); const R=fs.readFileSync(p.join(__dirname,'..','src','root.js'),'utf8'); const F=fs.readFileSync(p.join(__dirname,'..','src','formulas.js'),'utf8'); return /function PoppyMark/.test(R) && /background: "#1D3D6B"/.test(R) && /t\.tabs\[tb\.id\]\), \/\* @__PURE__ \*\/ React\.createElement\(PoppyMark/.test(R) && /bg: "#EAF0F8"/.test(F); })()); })(), "true");
+
+check("v397: design pass: line icons, units, accentless capitals, note sections without loss",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const fs=require('fs'),p=require('path'),vm=require('vm'); const R=fs.readFileSync(p.join(__dirname,'..','src','root.js'),'utf8'); const c={console,React:{createElement:()=>null},window:{},document:{},localStorage:{getItem(){},setItem(){}},navigator:{}}; vm.createContext(c); for(const f of ['data','formulas','primitives']) vm.runInContext(fs.readFileSync(p.join(__dirname,'..','src',f+'.js'),'utf8'),c); vm.runInContext('this.ok = DRUGS.every(d => [d.notesEl, d.notesEn].every(t => { const ss = splitSentences(t); return ss.join(" ").replace(/\\s+/g," ") === t.replace(/\\s+/g," ").trim(); })); this.up = upGr("Ενήλικες — µg"); this.ls = noteSections(DRUGS.find(d=>d.id==="landiolol").notesEl).map(x=>x.k).join(",");', c); return c.ok && c.up === 'ΕΝΗΛΙΚΕΣ — µg' && c.ls === 'gen,pop,int,od,src' && /function LineIcon/.test(R) && /DRUGS\.length \+/.test(R) && /function ThemeGlyph/.test(R) && !/textTransform: "uppercase"/.test(T+R+P); })()); })(), "true");
+
+check("v398: line icon for every tool section",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const fs=require('fs'),p=require('path'),vm=require('vm'); const s=fs.readFileSync(p.join(__dirname,'..','src','root.js'),'utf8'); const c={}; vm.createContext(c); vm.runInContext(s.slice(s.indexOf('const TOOL_SECTIONS'), s.indexOf('\n];', s.indexOf('const TOOL_SECTIONS'))+3) + ';' + s.slice(s.indexOf('const TOOL_ICON_PATHS'), s.indexOf('function LineIcon')) + ';this.ok = TOOL_SECTIONS.every(x => TOOL_ICON_OF[x.id] && TOOL_ICON_PATHS[TOOL_ICON_OF[x.id]]);', c); return c.ok; })()); })(), "true");
+
+check("v399: distinct pregnancy icons and NMJ icon",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const s=require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8'); return /obstetric:"fetus"/.test(s) && /pregnonob:"pregnant"/.test(s) && /  fetus: /.test(s) && /muscle: \[\["path",\{d:"M3 5h7"\}\]/.test(s); })()); })(), "true");
+
+check("v400: liver and endoscope icons",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const s=require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8'); return /  liver: \[\["path",\{d:"M3\.5 9\.5C/.test(s) && /  scope: \[\["rect",\{x:3,y:3\.5/.test(s); })()); })(), "true");
+
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
 (function () {
