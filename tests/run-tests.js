@@ -165,7 +165,7 @@ check(
 const anaph = (lang) => run(`CHECKLISTS.find(c => c.id === "anaphylaxis").steps${lang}.join(" | ")`);
 check("anaphylaxis: no live steroid/antihistamine recommendation",
   /hydrocortisone|chlorphenamine|antihistamine/i.test(anaph("En")) &&
-  !/no longer recommended/i.test(anaph("En")), false);
+  !/no longer recommended|not routine in the initial treatment/i.test(anaph("En")), false);
 check("anaphylaxis: repeat adrenaline at 5 min", /5 min/.test(anaph("En")), true);
 check("anaphylaxis: refractory = after two doses", /TWO appropriate doses/.test(anaph("En")), true);
 check("anaphylaxis: IV is first line under anaesthesia", /IV is first line/.test(anaph("En")), true);
@@ -278,13 +278,13 @@ check("sufentanil IV 15 mcg/24h -> OME 30", 15 * opioidF("sufent-iv"), 30);
 check("fentanyl patch 25 mcg/h -> OME 60", 25 * opioidF("fent-tts"), 60);
 check("codeine PO 300 mg -> OME 30", 300 * opioidF("codeine"), 30, 0.001);
 check("tramadol PO 300 mg -> OME 30", 300 * opioidF("tramadol"), 30);
-check("tapentadol PO 75 mg -> OME 30", 75 * opioidF("tapent"), 30);
+check("tapentadol PO 75 mg -> OME 22.5 (ANZCA 0.3, the conservative direction to morphine; v412)", 75 * opioidF("tapent"), 22.5);
 check("OME 60 -> oxycodone PO 40 mg", 60 / opioidF("oxy-po"), 40);
 check("OME 60 -> fentanyl patch 25 mcg/h", 60 / opioidF("fent-tts"), 25);
 // Methadone and buprenorphine must stay OUT: conversion is non-linear.
 check("methadone & buprenorphine excluded from converter",
   run("OPIOIDS.filter(o => /methadone|buprenorph/i.test(o.id + o.en) && o.grp !== \"td\").length"), 0);
-check("buprenorphine patch 35 mcg/h -> OME 84", 35 * opioidF("bup-tts"), 84);
+check("buprenorphine patch 35 mcg/h -> OME 70 (ANZCA 2, conservative to morphine; v412)", 35 * opioidF("bup-tts"), 70);
 check("nalbuphine stays out of the converter (ceiling effect)",
   run("OPIOIDS.some(o => /nalb/i.test(o.id + o.en))"), false);
 check("tramadol: drug entry agrees with the converter (300 mg = 30 mg OME)",
@@ -644,7 +644,7 @@ check("amiodarone (SmPC): loading 5 mg/kg, maintenance max 1200 mg, thyroid cont
   run("(function(){var d=DRUGS.filter(function(x){return x.id==='amiodarone';})[0];return [d.doses[1].lo,d.doses[2].max].join(',')+'|'+/thyroid/.test(d.ciEn)+'|'+/CPR/.test(d.ciEn);})()"), "5,1200|true|true");
 
 check("adenosine (SmPC): child 0.1 mg/kg max 6 then max 12, long QT contraindicated",
-  run("(function(){var d=DRUGS.filter(function(x){return x.id==='adenosine';})[0];return [d.doses[2].lo,d.doses[2].max,d.doses[3].max].join(',')+'|'+/long QT/.test(d.ciEn);})()"), "0.1,6,12|true");
+  run("(function(){var d=DRUGS.filter(function(x){return x.id==='adenosine';})[0];return [d.doses[3].lo,d.doses[3].max,d.doses[4].max].join(',')+'|'+/long QT/.test(d.ciEn);})()"), "0.1,6,12|true");
 
 check("vasopressin (SmPC): max 0.03 U/min, 0.75 mL/h at 0.01 with 0.8 U/mL",
   run("(function(){var d=DRUGS.filter(function(x){return x.id==='vasopressin';})[0];return /max 0.03 U\\/min/.test(d.doses[0].fixedEn)+'|'+/0.75/.test(d.doses[1].fixedEn);})()"), "true|true");
@@ -731,7 +731,7 @@ check("lidocaine IV infusion <=1.5 mg/kg/h; TXA renal table, seizure CI; ketamin
   run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return /\u22641.5 mg.kg.h/.test(g('lidocaine_iv').doses[1].fixedEn)+'|'+/5 mg.kg every 24 h/.test(g('txa').doses[4].fixedEn)+'|'+/seizures/.test(g('txa').ciEn)+'|'+/outside the SmPC/.test(g('ketamine_analgesic').notesEn);})()"), "true|true|true|true");
 
 check("dantrolene 2.5 mg/kg + 60 mL per vial; intralipid >70 kg 100 mL; fibrinogen 70 mg/kg if unknown",
-  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return g('dantrolene').doses[0].lo+'|'+/60 mL/.test(g('dantrolene').doses[3].fixedEn)+'|'+/^bolus 100 mL/.test(g('intralipid').doses[2].fixedEn)+'|'+g('fibrinogen').doses[1].lo;})()"), "2.5|true|true|70");
+  run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return g('dantrolene').doses[0].lo+'|'+/60 mL/.test(g('dantrolene').doses[3].fixedEn)+'|'+/^bolus 100 mL/.test(g('intralipid').doses.filter(function(x){return />70 kg/.test(x.en);})[0].fixedEn)+'|'+g('fibrinogen').doses[1].lo;})()"), "2.5|true|true|70");
 
 check("PCC SmPC bands and HIT CI; desmopressin SmPC 0.4 and practice 0.3 max 20",
   run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return g('pcc').doses[0].en+'|'+/HIT/.test(g('pcc').ciEn)+'|'+g('desmopressin').doses[0].lo+'|'+g('desmopressin').doses[1].max;})()"), "INR 2.0\u20133.9 (SmPC)|true|0.4|20");
@@ -991,6 +991,69 @@ check("v402: ASA, antibiotic, vascular and thrombectomy icons",
 check("v403: no repeated icons for GCS/ROTEM/vent/recruit/cardnc",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
     return String((function(){ const s=require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8'); return /gcs:"eye"/.test(s) && /rotem:"rotem"/.test(s) && /vent:"ventwave"/.test(s) && /recruit:"lungsopen"/.test(s) && /cardnc:"heartecg"/.test(s); })()); })(), "true");
+
+check("v404: CALC_MODE tiers cover every tool and default is full",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const fs=require('fs'),p=require('path'),vm=require('vm'); const s=fs.readFileSync(p.join(__dirname,'..','src','root.js'),'utf8'); const F=fs.readFileSync(p.join(__dirname,'..','src','formulas.js'),'utf8'); const c={CALC_MODE:'full'}; vm.createContext(c); vm.runInContext(s.slice(s.indexOf('const TOOL_SECTIONS'), s.indexOf('const TOOLS_SHOWN')) + ';this.ok = TOOL_SECTIONS.every(x => ["ref","dose","calc","complex"].includes(TOOL_TIER[x.id])) && Object.keys(TOOL_TIER).length === TOOL_SECTIONS.length;', c); return c.ok && /const CALC_MODE = "full";/.test(F) && fs.existsSync(p.join(__dirname,'..','audit','CALC-MODES.md')); })()); })(), "true");
+
+check("v405: crisis mode and educational wording",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const fs=require('fs'),p=require('path'); const R=fs.readFileSync(p.join(__dirname,'..','src','root.js'),'utf8'); return /function CrisisMode/.test(P) && /setCrisis\(c\.id\)/.test(P) && /wakeLock/.test(P) && /Educational aid/.test(R) && /educational and informational aid/.test(R) && !/decision-support/i.test(R) && /Morfeas is an educational and informational aid/.test(T); })()); })(), "true");
+
+check("v406: terms version, privacy, review date, attributed wording",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const R=require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8'); return /const TERMS_VERSION = 2;/.test(R) && /=== TERMS_VERSION/.test(R) && /const CONTENT_CHECKED = /.test(T) && /const REPORT_EMAIL = /.test(T) && /Privacy: the app does not collect/.test(T) && /Per the algorithm/.test(T) && !/ · suggested/.test(T); })()); })(), "true");
+
+check("v407: lidocaine IBW, small-dose rounding, per-24h units, fluids/renal/PBW guards, Greek drug search",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const r = run('[fmt(0.007), fmt(0.0028), fmt(0.013), fmt(150), ibwDevine(90,"M"), ibwLidoConsensus(160,"F"), doseText(DRUGS.find(d=>d.id==="lidocaine_iv").doses[0], ibwLidoConsensus(160,"F"), "el").calc, DRUGS.find(d=>d.id==="lidocaine_iv").doses[0].basis, doseText(DRUGS.find(d=>d.id==="amiodarone").doses[2], 70, "el").calc].join("|")'); return r === '0.007|0.0028|0.013|150||55|55–82.5 mg|ibw|700–1200 mg/24h' && /const adultOK = a >= 18 && a <= 120;/.test(T) && /const autoCat = !a \? null/.test(T) && /d\.synEl \|\| ""/.test(P) && /function PatientBarCore/.test(P) && !/clinical practice\)/.test(require('fs').readFileSync(require('path').join(__dirname,'..','src','data.js'),'utf8').match(/id: "lidocaine_iv"[\s\S]*?id: "furosemide"/)[0]); })()); })(), "true");
+
+check("v408: age-group hiding of calculated dose rows",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const fs=require('fs'),vm=require('vm'); const c={React:{}}; vm.createContext(c); vm.runInContext(fs.readFileSync(require('path').join(__dirname,'..','src','data.js'),'utf8')+';'+P.match(/const doseAgeGroup[\s\S]*?\n};/)[0]+';this.D=DRUGS;this.g=doseAgeGroup', c); const f=(id,i)=>c.g(c.D.find(d=>d.id===id).doses[i]); return f('propofol',0)==='adult' && f('propofol',9)==='peds' && c.g({en:'CHILDREN and small adults — loading (SmPC)'})===null && c.g({en:'Elderly / hepatic / biliary / renal — maintenance'})===null && c.g({en:'Induction (adults & adolescents)'})===null && /aNum >= 18/.test(P) && /height, sex, age, focus/.test(fs.readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8')); })()); })(), "true");
+
+check("v409: vasopressin calculator opens at 0.01 U/min",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/id: "vaso",[\s\S]{0,200}def: 0\.01,/.test(T) && /Start 0\.01 U\/min, increase every 15/.test(T)); })(), "true");
+
+check("v410: SRI on both React scripts, no opaque caching",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const fs=require('fs'),p=require('path'); const H=fs.readFileSync(p.join(__dirname,'..','index.html'),'utf8'); const W=fs.readFileSync(p.join(__dirname,'..','sw.js'),'utf8'); return (H.match(/integrity="sha512-[A-Za-z0-9+\/=]{88}" crossorigin="anonymous" referrerpolicy="no-referrer"/g)||[]).length===2 && H.includes('sha512-QVs8Lo43F9lSuBykadDb0oSXDL/BbZ588urWVCRwSIoewQv/Ewg1f84mK3U790bZ0FfhFa1YSQUmIhG+pIRKeg==') && H.includes('sha512-6a1107rTlA4gYpgHAqbwLAtxmWipBdJFcq8y5S/aTge3Bp+VAklABm2LO+Kg51vOWR9JMZq1Ovjl5tpluNpTeQ==') && /res\.ok && res\.type !== "opaque"/.test(W); })()); })(), "true");
+
+check("v411: LA sources and limits, sugammadex/neostigmine/midazolam updates",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const r = run('[LA_LIST.every(l=>l.noteEl&&l.noteEn), LA_LIST.find(l=>l.id==="mepi").absByConc[2], LA_LIST.find(l=>l.id==="mepi").absByConc[1], LA_LIST.find(l=>l.id==="chloro").concs.join(), DRUGS.find(d=>d.id==="midazolam").doses.filter(x=>/IM (premedication|conscious sedation)/.test(x.en)).map(x=>x.lo+"-"+x.hi+":"+x.max).join(), /birth/.test(DRUGS.find(d=>d.id==="sugammadex").doses.map(x=>x.en).join()), /TOFr >0.2/.test(DRUGS.find(d=>d.id==="neostigmine").notesEn)].join("|")'); return r === 'true|400|300|2|0.08-0.2:null,0.05-0.15:null|true|true' && /ageN > 0 && ageN < 12/.test(T) && /LACalc, \{ lang, weight, age \}/.test(require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8')); })()); })(), "true");
+
+check("v412: direction-specific opioid factors and daily maxima, UKKA 2026, Intralipid QRH 2023, sedation population",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ const r = run('[OPIOIDS.find(o=>o.id==="fent-tts").fFrom, OPIOIDS.find(o=>o.id==="tramadol").fFrom, OPIOIDS.find(o=>o.id==="tramadol").maxDay, OPIOIDS.find(o=>o.id==="codeine").maxDay, OPIOIDS.every(o=>!o.fFrom || o.fFrom >= o.f), DRUGS.find(d=>d.id==="intralipid").doses.some(x=>/Maximum cumulative/.test(x.en) && x.lo===12), DRUGS.find(d=>d.id==="insulin_glucose").doses.some(x=>/6.0\u20136.4/.test(x.en)), !/UK Kidney Association 2023/.test(JSON.stringify(DRUGS))].join("|")'); return r === '3|0.2|400|240|true|true|true|true' && /const pop = popPick \|\| /.test(T) && /line-through/.test(T); })()); })(), "true");
+
+check("v413: phenylephrine CS row per Kinsella 2018 Recommendation 5",
+  run('/variable rate by syringe pump, titrated to BP and heart rate/.test(DRUGS.find(d=>d.id==="phenylephrine").doses[2].fixedEn) && /until delivery/.test(DRUGS.find(d=>d.id==="phenylephrine").doses[2].fixedEn)'), true);
+
+check("v414: LAST bolus 2-3 min, dexamethasone children 5th consensus, andexanet note, ATI reference",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){ return run('[CHECKLISTS.find(c=>c.id==="last").stepsEn.some(x=>/bolus 1.5 mL\\/kg over 2\u20133 min/.test(x)), (function(){var d=DRUGS.find(x=>x.id==="dexamethasone").doses.find(x=>/5th Consensus/.test(x.en)); return d.lo+"-"+d.max;})(), /withdrawn from the US market/.test(DRUGS.find(d=>d.id==="andexanet").notesEn), /Anaesthesia 2020/.test(CHECKLISTS.find(c=>c.id==="das_ati").srcEn)].join("|")') === 'true|0.15-4|true|true'; })()); })(), "true");
+
+check("v415: DAS 2025 eFONA wording, adenosine 6-12-18, anaphylaxis infusion per RCUK, PCC 25 IU/kg for Xa",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('[/moved the transverse-vs-vertical decision earlier/.test(CHECKLISTS.find(c=>c.id==="difficult_airway").stepsEn.join()), /6 mg rapid push \u2192 12 mg \u2192 18 mg/.test(CHECKLISTS.find(c=>c.id==="svt_stable").stepsEn.join()), /0.5\u20131 mL\\/kg\\/h/.test(CHECKLISTS.find(c=>c.id==="anaphylaxis").stepsEn.join()), DRUGS.find(d=>d.id==="pcc").doses.find(x=>/Xa inhibitor/.test(x.en)).hi].join("|")') === 'true|true|true|25'); })(), "true");
+
+check("v416: fibrinogen acquired bleeding without the unfound per-kg dose",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('(function(){var d=DRUGS.find(x=>x.id==="fibrinogen").doses.find(x=>/Acquired bleeding/.test(x.en)); return !d.lo && /no per-kg dose/.test(d.fixedEn) && /\u22641.5 g\\/L/.test(d.fixedEn);})()') === true); })(), "true");
+
+check("v417: AFE A-OK caution, SCOOP per Iliff 2022, haemorrhage per Rossaint 2023, pneumothorax wording",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('[/ACOG cautions/.test(CHECKLISTS.find(c=>c.id==="afe").stepsEn.join()), /Iliff/.test(CHECKLISTS.find(c=>c.id==="scoop").srcEn) && !/glue|HFNO/.test(CHECKLISTS.find(c=>c.id==="scoop").stepsEn.join()), /at least 1:2/.test(CHECKLISTS.find(c=>c.id==="hemorrhage").stepsEn.join()) && !/1:1:1/.test(CHECKLISTS.find(c=>c.id==="hemorrhage").stepsEn.join()), CHECKLISTS.every(c=>c.stepsEl.length===c.stepsEn.length)].join()') === 'true,true,true,true' && /Iliff HA/.test(T)); })(), "true");
+
+check("v418: SOAP 2021 platelet thresholds in pre-eclampsia",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/SOAP 2021, no other risk factors\): platelets \\u226570/.test(T) && /Bauer ME, et al\. The Society for Obstetric Anesthesia/.test(T) && !/70\\u201380 & not rapidly falling/.test(T)); })(), "true");
+
+check("v419: ROTEM PCC trigger tied to the reference range",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/EXTEM CT above the reference range/.test(T) && !/EXTEM CT >80s/.test(T)); })(), "true");
 
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).

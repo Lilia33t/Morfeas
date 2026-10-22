@@ -16,7 +16,9 @@ const ibwDevine = (h, sex) => {
   if (!h || h <= 0) return null;
   const inchesOver60 = h / 2.54 - 60;
   const base = sex === "M" ? 50 : 45.5;
-  return base + 2.3 * inchesOver60;
+  const v = base + 2.3 * inchesOver60;
+  // Devine is an adult formula; below ~100 cm it goes negative, which must never reach a calculation.
+  return v > 0 ? v : null;
 };
 const pbw = (h, sex) => ibwDevine(h, sex);
 const abw = (w, h, sex) => {
@@ -202,7 +204,7 @@ const T = {
     notes: "\u03A3\u03B7\u03BC\u03B5\u03B9\u03CE\u03C3\u03B5\u03B9\u03C2",
     ci: "\u0391\u03BD\u03C4\u03B5\u03BD\u03B4\u03B5\u03AF\u03BE\u03B5\u03B9\u03C2",
     maxLabel: "max",
-    disclaimer: "\u0395\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03BF \u03C5\u03C0\u03BF\u03C3\u03C4\u03AE\u03C1\u03B9\u03BE\u03B7\u03C2 \u03B3\u03B9\u03B1 \u03B5\u03C0\u03B1\u03B3\u03B3\u03B5\u03BB\u03BC\u03B1\u03C4\u03AF\u03B5\u03C2 \u03C5\u03B3\u03B5\u03AF\u03B1\u03C2. \u0395\u03C0\u03B1\u03BB\u03B7\u03B8\u03B5\u03CD\u03C3\u03C4\u03B5 \u03BA\u03AC\u03B8\u03B5 \u03B4\u03CC\u03C3\u03B7 \u03C0\u03C1\u03B9\u03BD \u03C4\u03B7 \u03C7\u03BF\u03C1\u03AE\u03B3\u03B7\u03C3\u03B7 \u2014 \u03B4\u03B5\u03BD \u03C5\u03C0\u03BF\u03BA\u03B1\u03B8\u03B9\u03C3\u03C4\u03AC \u03C4\u03B7\u03BD \u03BA\u03BB\u03B9\u03BD\u03B9\u03BA\u03AE \u03BA\u03C1\u03AF\u03C3\u03B7.",
+    disclaimer: "\u0395\u03BA\u03C0\u03B1\u03B9\u03B4\u03B5\u03C5\u03C4\u03B9\u03BA\u03CC \u03BA\u03B1\u03B9 \u03B5\u03BD\u03B7\u03BC\u03B5\u03C1\u03C9\u03C4\u03B9\u03BA\u03CC \u03B2\u03BF\u03AE\u03B8\u03B7\u03BC\u03B1 \u03B3\u03B9\u03B1 \u03B5\u03C0\u03B1\u03B3\u03B3\u03B5\u03BB\u03BC\u03B1\u03C4\u03AF\u03B5\u03C2 \u03C5\u03B3\u03B5\u03AF\u03B1\u03C2. \u0395\u03C0\u03B1\u03BB\u03B7\u03B8\u03B5\u03CD\u03C3\u03C4\u03B5 \u03BA\u03AC\u03B8\u03B5 \u03B4\u03CC\u03C3\u03B7 \u03C0\u03C1\u03B9\u03BD \u03C4\u03B7 \u03C7\u03BF\u03C1\u03AE\u03B3\u03B7\u03C3\u03B7 \u2014 \u03B4\u03B5\u03BD \u03C5\u03C0\u03BF\u03BA\u03B1\u03B8\u03B9\u03C3\u03C4\u03AC \u03C4\u03B7\u03BD \u03BA\u03BB\u03B9\u03BD\u03B9\u03BA\u03AE \u03BA\u03C1\u03AF\u03C3\u03B7.",
     weightNeeded: "\u0395\u03B9\u03C3\u03AC\u03B3\u03B5\u03C4\u03B5 \u03B2\u03AC\u03C1\u03BF\u03C2 \u03B3\u03B9\u03B1 \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC \u03B4\u03CC\u03C3\u03B5\u03C9\u03BD"
   },
   en: {
@@ -227,14 +229,23 @@ const T = {
     notes: "Notes",
     ci: "Contraindications",
     maxLabel: "max",
-    disclaimer: "Decision-support tool for healthcare professionals. Verify every dose before administration \u2014 does not replace clinical judgment.",
+    disclaimer: "Educational and informational aid for healthcare professionals. Verify every dose before administration \u2014 does not replace clinical judgment.",
     weightNeeded: "Enter weight to calculate doses"
   }
 };
 const fmt = (n) => {
   if (n >= 100) return Math.round(n).toString();
   if (n >= 10) return (Math.round(n * 10) / 10).toString();
-  return (Math.round(n * 100) / 100).toString();
+  if (n >= 1) return (Math.round(n * 100) / 100).toString();
+  // Below 1, keep two significant figures so neonatal doses (e.g. 0.007 mg) are neither rounded up nor shown as 0.
+  if (n > 0) return Number(n.toPrecision(2)).toString();
+  return "0";
+};
+// IV lidocaine consensus (Foo et al., Anaesthesia 2021): "ideal body weight = (height in cm - 100) for men; and (height in cm - 105) for women".
+const ibwLidoConsensus = (h, sex) => {
+  if (!(h > 0)) return null;
+  const v = sex === "M" ? h - 100 : h - 105;
+  return v > 0 ? v : null;
 };
 function doseText(d, w, lang) {
   // Fixed-text doses are usually language-neutral (numbers and units), but
@@ -327,6 +338,13 @@ const DARK = {
 // Greek capitals carry no accents: uppercase in JS (CSS text-transform keeps the tonos in Chromium).
 const UNIT_TOKENS = /^(?:\u00B5g|mcg|mg|ng|g|kg|mL|ml|L|dL|mmol|mol|min|h|s|IU|U|mEq|cmH\u2082O|mmHg)$/;
 const upGr = (x) => typeof x === "string" ? x.split(/(\s+|[()\/,\u00B7:;\u2013\u2014-])/).map((tok) => UNIT_TOKENS.test(tok) ? tok : tok.normalize("NFD").replace(/[\u0301\u0342]/g, "").normalize("NFC").split("\u00B5").map((p) => p.toUpperCase()).join("\u00B5")).join("") : x;
+// Build-time switch for what the app calculates (see audit/CALC-MODES.md):
+//   "full"      — everything (current app)
+//   "simple"    — hides complex calculators/decision tools (TCI, infusion rates, sedation rates,
+//                 opioid conversion, recruitment protocol, NIV algorithm, paediatric growth/IBW)
+//   "reference" — additionally no weight-based totals and no formula calculators: doses shown as
+//                 mg/kg / ranges from the sources only
+const CALC_MODE = "full";
 const S = { ...LIGHT };
 function applyTheme(mode) {
   Object.assign(S, mode === "dark" ? DARK : LIGHT);

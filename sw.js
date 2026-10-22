@@ -1,6 +1,6 @@
 // Morfeas — service worker
 // Bump CACHE whenever anything in APP_SHELL changes, to force an update.
-const CACHE = "anesthesia-v403";
+const CACHE = "anesthesia-v419";
 
 const APP_SHELL = [
   "./",
@@ -92,7 +92,9 @@ self.addEventListener("fetch", (event) => {
     if (cached) return cached;
     try {
       const res = await fetch(req);
-      if (res && (res.status === 200 || res.type === "opaque")) {
+      // Only complete, readable responses are cached: an opaque response may hide an error page, and the
+      // CDN scripts are requested with CORS (crossorigin + integrity), so they are never opaque.
+      if (res && res.ok && res.type !== "opaque") {
         const clone = res.clone();
         caches.open(CACHE).then((c) => c.put(req, clone));
       }

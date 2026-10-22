@@ -1,6 +1,6 @@
 {
  "_readme": "Μητρώο ελέγχου περιεχομένου Morfeas. Κάθε εργαλείο, φάρμακο, checklist, κλίμακα και οδηγία της εφαρμογής πρέπει να έχει εγγραφή εδώ. status: reviewed = ελέγχθηκε με πηγές · reviewed-kept = ελέγχθηκε, η χρήστρια αποφάσισε να μείνει ως έχει (βλ. unverified) · pending = δεν έχει ελεγχθεί · excluded = εκτός ελέγχου (π.χ. πρωτόκολλο κλινικής). Κανόνας: μόνο αξιόπιστες πηγές, τίποτα από μνήμη. Το tests/audit-check.js συγκρίνει αυτό το αρχείο με την εφαρμογή.",
- "appVersion": 403,
+ "appVersion": 419,
  "updated": "2026-10-22",
  "items": [
   {
@@ -40,9 +40,11 @@
    "name": "Midazolam",
    "status": "reviewed",
    "versions": [
-    288
+    288,
+    411
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -214,9 +216,11 @@
    "name": "Sugammadex",
    "status": "reviewed",
    "versions": [
-    299
+    299,
+    411
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -224,9 +228,11 @@
    "name": "Neostigmine + Glycopyrrolate",
    "status": "reviewed",
    "versions": [
-    299
+    299,
+    411
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -255,9 +261,11 @@
    "name": "Amiodarone",
    "status": "reviewed",
    "versions": [
-    303
+    303,
+    407
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -265,9 +273,11 @@
    "name": "Adenosine",
    "status": "reviewed",
    "versions": [
-    304
+    304,
+    415
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -295,9 +305,11 @@
    "name": "Calcium chloride / gluconate",
    "status": "reviewed",
    "versions": [
-    307
+    307,
+    412
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -315,9 +327,11 @@
    "name": "Insulin (+ glucose)",
    "status": "reviewed",
    "versions": [
-    308
+    308,
+    412
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -460,9 +474,11 @@
    "name": "Phenylephrine",
    "status": "reviewed",
    "versions": [
-    316
+    316,
+    413
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -676,9 +692,11 @@
    "name": "Droperidol",
    "status": "reviewed",
    "versions": [
-    339
+    339,
+    414
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -686,9 +704,11 @@
    "name": "Dexamethasone",
    "status": "reviewed",
    "versions": [
-    330
+    330,
+    414
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -790,9 +810,11 @@
    "name": "Lidocaine IV (systemic)",
    "status": "reviewed",
    "versions": [
-    334
+    334,
+    407
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -802,10 +824,11 @@
    "versions": [
     346,
     348,
-    380
+    380,
+    407
    ],
    "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
-   "date": "2026-10-17"
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -868,9 +891,11 @@
    "name": "Intralipid 20% (LAST)",
    "status": "reviewed",
    "versions": [
-    335
+    335,
+    412
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -904,9 +929,12 @@
    "name": "Fibrinogen concentrate",
    "status": "reviewed",
    "versions": [
-    335
+    335,
+    415,
+    416
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -914,9 +942,11 @@
    "name": "Prothrombin complex concentrate (4F-PCC)",
    "status": "reviewed",
    "versions": [
-    336
+    336,
+    415
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -954,9 +984,12 @@
    "name": "Andexanet alfa (Ondexxya)",
    "status": "reviewed",
    "versions": [
-    339
+    339,
+    414,
+    415
    ],
-   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
   },
   {
    "type": "drug",
@@ -1027,9 +1060,11 @@
    "name": "svt_stable",
    "status": "reviewed",
    "versions": [
-    277
+    277,
+    415
    ],
-   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
   },
   {
    "type": "checklist",
@@ -1047,9 +1082,11 @@
    "name": "difficult_airway",
    "status": "reviewed",
    "versions": [
-    277
+    277,
+    415
    ],
-   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
   },
   {
    "type": "checklist",
@@ -1057,9 +1094,11 @@
    "name": "das_ati",
    "status": "reviewed",
    "versions": [
-    277
+    277,
+    414
    ],
-   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
   },
   {
    "type": "checklist",
@@ -1117,9 +1156,11 @@
    "name": "pneumothorax",
    "status": "reviewed",
    "versions": [
-    277
+    277,
+    417
    ],
-   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
   },
   {
    "type": "checklist",
@@ -1127,9 +1168,11 @@
    "name": "scoop",
    "status": "reviewed",
    "versions": [
-    277
+    277,
+    417
    ],
-   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
   },
   {
    "type": "checklist",
@@ -1147,9 +1190,11 @@
    "name": "hemorrhage",
    "status": "reviewed",
    "versions": [
-    277
+    277,
+    417
    ],
-   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
   },
   {
    "type": "checklist",
@@ -1177,9 +1222,11 @@
    "name": "anaphylaxis",
    "status": "reviewed",
    "versions": [
-    277
+    277,
+    415
    ],
-   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
   },
   {
    "type": "checklist",
@@ -1187,9 +1234,11 @@
    "name": "last",
    "status": "reviewed",
    "versions": [
-    277
+    277,
+    414
    ],
-   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
   },
   {
    "type": "checklist",
@@ -1237,9 +1286,11 @@
    "name": "afe",
    "status": "reviewed",
    "versions": [
-    277
+    277,
+    417
    ],
-   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
   },
   {
    "type": "checklist",
@@ -1407,12 +1458,13 @@
    "status": "reviewed",
    "versions": [
     363,
-    367
+    367,
+    419
    ],
    "note": "Manufacturer ranges (Region Skåne) · ESAIC 2022 πλήρες κείμενο · European trauma 2023 (σύνοψη συστάσεων R23, R29, R30, R33, R34)",
    "type": "tool",
    "name": "ROTEM / TEG (ερμηνεία)",
-   "date": "2026-10-17",
+   "date": "2026-10-22",
    "unverified": [
     "LI30 <94%: μόνο ως εύρος αναφοράς σε case report (HKMJ 2021) — δεν μπήκε",
     "Τρανεξαμικό mg/kg: ESAIC μόνο 10–15 mg/kg στη γυναικολογία — δεν μπήκε γενικά"
@@ -1462,12 +1514,17 @@
    "versions": [
     311,
     316,
-    357
+    357,
+    418,
+    419
    ],
-   "date": "2026-10-16",
+   "date": "2026-10-22",
    "note": "Πηγές ήδη ενσωματωμένες (SmPC, Kinsella 2018, consensus 2019, Onishi, Białowolska)",
    "type": "tool",
-   "name": "Μαιευτική αναισθησία"
+   "name": "Μαιευτική αναισθησία",
+   "unverified": [
+    "Onishi 2017: η δημοσίευση υπάρχει (Int J Obstet Anesth 2017;31:68–73, επιβεβαιώθηκε μέσω J Anesth 2025 ref. 8), αλλά η τιμή ED95 12.6 mg δεν επιβεβαιώθηκε — το περιεχόμενο δεν ήταν προσβάσιμο (22/10/2026)"
+   ]
   },
   {
    "id": "thoracic",
@@ -1678,23 +1735,26 @@
    "versions": [
     328,
     329,
-    341
+    341,
+    411
    ],
    "note": "Μέγιστες δόσεις τοπικών κατά SmPC",
    "type": "tool",
-   "name": "Όρια τοπικών αναισθητικών"
+   "name": "Όρια τοπικών αναισθητικών",
+   "date": "2026-10-22"
   },
   {
    "id": "anticoag",
    "status": "reviewed",
    "versions": [
     359,
-    370
+    370,
+    418
    ],
    "note": "Πλήρης έλεγχος με το κείμενο ESAIC/ESRA 2022 (Kietaibl, Eur J Anaesthesiol 2022;39:100–132)",
    "type": "tool",
    "name": "Αντιπηκτικά & Νευραξονικός",
-   "date": "2026-10-17",
+   "date": "2026-10-22",
    "unverified": [
     "ASRA 2025: «αντενδείκνυται η χρήση αντιδότου» — το πλήρες κείμενο ASRA δεν ήταν προσβάσιμο· τα 72/120 h, ≥24 h και <30 ng/mL μόνο από NYSORA"
    ]
@@ -1725,9 +1785,10 @@
    "id": "renalcalc",
    "status": "reviewed",
    "versions": [
-    357
+    357,
+    407
    ],
-   "date": "2026-10-16",
+   "date": "2026-10-22",
    "type": "tool",
    "name": "Νεφρική λειτουργία (CrCl / eGFR)"
   },
@@ -1746,10 +1807,11 @@
    "id": "vaso",
    "status": "reviewed-kept",
    "versions": [
-    355
+    355,
+    409
    ],
-   "date": "2026-10-16",
-   "note": "Ελέγχθηκε· ζήτησες να μη γίνουν αλλαγές",
+   "date": "2026-10-22",
+   "note": "Ελέγχθηκε· ζήτησες να μη γίνουν αλλαγές — εξαίρεση v409 με δική σου έγκριση: βαζοπρεσσίνη έναρξη 0.01 U/min (Empressin SmPC, Läkemedelsverket 18/12/2023)",
    "unverified": [
     "Νοραδρεναλίνη «συνήθες 0.05–0.5»",
     "Αδρεναλίνη «συνήθες 0.01–0.5» (FDA: 0.05–2)",
@@ -1764,10 +1826,11 @@
    "status": "reviewed-kept",
    "versions": [
     282,
-    355
+    355,
+    412
    ],
-   "date": "2026-10-16",
-   "note": "Ελέγχθηκε· ζήτησες να μη γίνουν αλλαγές",
+   "date": "2026-10-22",
+   "note": "Ελέγχθηκε· ζήτησες να μη γίνουν αλλαγές — εξαίρεση v412 (διόρθωση κώδικα από τον ανεξάρτητο έλεγχο): ο πληθυσμός ακολουθεί την ηλικία",
    "unverified": [
     "Ναλοξόνη 40 mcg ανά 2–3 min (SmPC 100–200 µg)"
    ],
@@ -1779,9 +1842,10 @@
    "status": "reviewed",
    "versions": [
     352,
-    378
+    378,
+    407
    ],
-   "date": "2026-10-17",
+   "date": "2026-10-22",
    "type": "tool",
    "name": "Αερισμός & Μηχανική πνεύμονα"
   },
@@ -1834,19 +1898,22 @@
    "status": "reviewed",
    "versions": [
     338,
-    339
+    339,
+    412
    ],
    "type": "tool",
-   "name": "Μετατροπή οπιοειδών"
+   "name": "Μετατροπή οπιοειδών",
+   "date": "2026-10-22"
   },
   {
    "id": "fluids",
    "status": "reviewed",
    "versions": [
     353,
-    377
+    377,
+    407
    ],
-   "date": "2026-10-17",
+   "date": "2026-10-22",
    "type": "tool",
    "name": "Υγρά & Αίμα (περιεγχειρητικά)"
   },

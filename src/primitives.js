@@ -1,4 +1,13 @@
-function PatientBar({ lang, weight, setWeight, age, setAge, height, setHeight, sex, setSex }) {
+function PatientBar(props) {
+  const w = parseFloat(props.weight) || 0, h = parseFloat(props.height) || 0, a = parseFloat(props.age) || 0;
+  const el = props.lang === "el";
+  const bad = [];
+  if (w && (w < 0.3 || w > 300)) bad.push(el ? "\u03B2\u03AC\u03C1\u03BF\u03C2" : "weight");
+  if (h && (h < 25 || h > 230)) bad.push(el ? "\u03CD\u03C8\u03BF\u03C2" : "height");
+  if (a && a > 120) bad.push(el ? "\u03B7\u03BB\u03B9\u03BA\u03AF\u03B1" : "age");
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(PatientBarCore, props), bad.length ? /* @__PURE__ */ React.createElement("div", { role: "alert", style: { fontSize: 12, color: S.red, fontWeight: 700, padding: "4px 4px 0" } }, "\u26A0 ", el ? "\u0395\u03BB\u03AD\u03B3\u03BE\u03C4\u03B5: " : "Check: ", bad.join(", "), el ? " \u03B5\u03BA\u03C4\u03CC\u03C2 \u03BB\u03BF\u03B3\u03B9\u03BA\u03CE\u03BD \u03BF\u03C1\u03AF\u03C9\u03BD" : " outside plausible limits") : null);
+}
+function PatientBarCore({ lang, weight, setWeight, age, setAge, height, setHeight, sex, setSex }) {
   const t = T[lang];
   const fieldStyle = { ...inputStyle, background: S.cardAlt, border: `1.5px solid ${S.line}`, color: S.ink, padding: "8px 6px", fontSize: 14 };
   const [ageUnit, setAgeUnit] = useState("y");
@@ -139,7 +148,16 @@ function emphNums(text) {
   // A figure glued to a word (e.g. "G5%") is part of a name, not a dose: leave it plain.
   return parts.map((p, i) => i % 2 === 1 && !/[A-Za-z\u0370-\u03FF]$/.test(parts[i - 1]) ? React.createElement("b", { key: i, style: { fontWeight: 800, color: S.teal, whiteSpace: "nowrap" } }, p) : p);
 }
-function MedsTab({ lang, weight, focus }) {
+// Age group of a calculated dose row, read from its English label: rows naming only children/neonates/infants are
+// paediatric, rows naming only adults (or exactly "Elderly") are adult; anything else (unlabelled, or both) applies to all ages.
+const doseAgeGroup = (ds) => {
+  const t = ds.en || "";
+  const p = /\b(children|neonates?|newborns?|infants?)\b/i.test(t), a = /\badults?\b/i.test(t) || /^elderly$/i.test(t.trim());
+  if (p && !a) return "peds";
+  if (a && !p && !/adolescent/i.test(t)) return "adult";
+  return null;
+};
+function MedsTab({ lang, weight, height, sex, age, focus }) {
   const t = T[lang];
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("all");
@@ -166,8 +184,16 @@ function MedsTab({ lang, weight, focus }) {
     return () => clearTimeout(t);
   }, [focus, open]);
   const w = parseFloat(weight) || 0;
+  const hNum = parseFloat(height) || 0;
+  // Doses marked basis:"ibw" are calculated on the source's ideal body weight, never on actual weight.
+  const wIbw = w > 0 ? ibwLidoConsensus(hNum, sex) || 0 : 0;
+  const aNum = parseFloat(age) || 0;
+  // With an age entered, a row for the other age group keeps its text but shows no calculated value.
+  const offAge = (ds) => { const g = doseAgeGroup(ds); return aNum > 0 && (g === "peds" && aNum >= 18 || g === "adult" && aNum < 18) ? g : null; };
+  const wFor = (ds) => offAge(ds) ? 0 : ds.basis === "ibw" ? wIbw : w;
+  const ql = q.toLowerCase();
   const list = DRUGS.filter(
-    (d) => (cat === "all" || d.cat === cat) && d.name.toLowerCase().includes(q.toLowerCase())
+    (d) => (cat === "all" || d.cat === cat) && (d.name.toLowerCase().includes(ql) || (d.synEl || "").toLowerCase().includes(ql))
   );
   return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4, WebkitOverflowScrolling: "touch" } }, CATS.map((c) => /* @__PURE__ */ React.createElement("button", { key: c.id, onClick: () => setCat(c.id), style: {
     padding: "6px 12px",
@@ -194,17 +220,63 @@ function MedsTab({ lang, weight, focus }) {
       alignItems: "center",
       fontFamily: "inherit"
     } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 15.5, color: S.ink } }, d.name), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 10 } }, d.doses.map((ds, i) => {
-      const dt = doseText(ds, w, lang);
+      const wd = wFor(ds);
+      const dt = doseText(ds, wd, lang);
       const isStr = typeof dt === "string";
-      return /* @__PURE__ */ React.createElement("div", { key: i, style: { background: S.bg, borderRadius: 10, padding: "9px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: S.muted, fontWeight: 600, letterSpacing: 0.4 } }, upGr(ds[lang])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 4 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14.5, color: S.ink } }, isStr ? emphNums(dt) : dt.base), !isStr && w > 0 && /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 16.5, color: dt.capped ? S.amber : S.teal, fontVariantNumeric: "tabular-nums" } }, "= ", dt.calc, dt.capped ? ` (${t.maxLabel})` : "")), ds.max && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 600 } }, t.maxLabel, ": ", ds.max, " ", ds.unit.split("/")[0]));
+      const og = w > 0 && !ds.fixed ? offAge(ds) : null;
+      const ageNote = og ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 600 } }, og === "peds" ? (lang === "el" ? "\u0394\u03B5\u03BD \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9 \u2014 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC, \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2 \u226518 \u03B5\u03C4\u03CE\u03BD" : "Not calculated \u2014 paediatric row, patient \u226518 years") : (lang === "el" ? "\u0394\u03B5\u03BD \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9 \u2014 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03B5\u03BD\u03AE\u03BB\u03B9\u03BA\u03B5\u03C2, \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2 <18 \u03B5\u03C4\u03CE\u03BD" : "Not calculated \u2014 adult row, patient <18 years")) : null;
+      const ibwNote = !og && ds.basis === "ibw" && w > 0 ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: wd ? S.muted : S.amber, fontWeight: 700 } }, wd ? (lang === "el" ? "\u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03C3\u03B5 \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 %s kg (consensus: \u03CD\u03C8\u03BF\u03C2 \u2212 100 \u2642 / \u2212 105 \u2640)" : "Calculated on ideal body weight %s kg (consensus: height \u2212 100 \u2642 / \u2212 105 \u2640)").replace("%s", fmt(wd)) + (wd > w ? (lang === "el" ? " \u00B7 \u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 \u03B5\u03AF\u03BD\u03B1\u03B9 \u03BC\u03B9\u03BA\u03C1\u03CC\u03C4\u03B5\u03C1\u03BF" : " \u00B7 actual weight is lower") : "") : (lang === "el" ? "\u03A3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03CD\u03C8\u03BF\u03C2 \u03B3\u03B9\u03B1 \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC \u03C3\u03B5 \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2" : "Enter height to calculate on ideal body weight")) : null;
+      return /* @__PURE__ */ React.createElement("div", { key: i, style: { background: S.bg, borderRadius: 10, padding: "9px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: S.muted, fontWeight: 600, letterSpacing: 0.4 } }, upGr(ds[lang])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 4 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14.5, color: S.ink } }, isStr ? emphNums(dt) : dt.base), !isStr && wd > 0 && /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 16.5, color: dt.capped ? S.amber : S.teal, fontVariantNumeric: "tabular-nums" } }, "= ", dt.calc, dt.capped ? ` (${t.maxLabel})` : "")), ageNote, ibwNote, ds.max && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 600 } }, t.maxLabel, ": ", ds.max, " ", ds.unit.replace("/kg", "")));
     }), (() => {
       const ns = noteSections(lang === "el" ? d.notesEl : d.notesEn);
       if (!ns) return /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.ink, lineHeight: 1.45 } }, /* @__PURE__ */ React.createElement("strong", { style: { color: S.teal } }, t.notes, ": "), lang === "el" ? d.notesEl : d.notesEn);
       return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, color: S.teal, fontSize: 13.5, marginBottom: 6 } }, t.notes), ns.map((g) => /* @__PURE__ */ React.createElement("div", { key: g.k, style: { background: S.bg, borderRadius: 10, padding: "8px 12px", marginBottom: 6 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, fontWeight: 800, color: S.teal, letterSpacing: 0.4, marginBottom: 2 } }, upGr(NOTE_TITLES[g.k][lang])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.ink, lineHeight: 1.45 } }, g.text))));
-    })(), (lang === "el" ? d.ciEl : d.ciEn) !== "\u2014" && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.red, lineHeight: 1.45 } }, /* @__PURE__ */ React.createElement("strong", null, t.ci, ": "), lang === "el" ? d.ciEl : d.ciEn), w > 0 && d.doses.some((ds) => typeof doseText(ds, w, lang) !== "string") && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: S.amber, fontWeight: 600, lineHeight: 1.4 } }, lang === "el" ? "\u26A0 \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03AD\u03BD\u03B5\u03C2 \u03C4\u03B9\u03BC\u03AD\u03C2 \u03C3\u03C4\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2 \u2014 \u03B5\u03C0\u03B1\u03BB\u03B7\u03B8\u03B5\u03CD\u03C3\u03C4\u03B5 \u03C0\u03C1\u03B9\u03BD \u03C4\u03B7 \u03C7\u03BF\u03C1\u03AE\u03B3\u03B7\u03C3\u03B7." : "\u26A0 Weight-calculated values \u2014 verify before administration.")));
+    })(), (lang === "el" ? d.ciEl : d.ciEn) !== "\u2014" && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.red, lineHeight: 1.45 } }, /* @__PURE__ */ React.createElement("strong", null, t.ci, ": "), lang === "el" ? d.ciEl : d.ciEn), w > 0 && d.doses.some((ds) => typeof doseText(ds, w, lang) !== "string") && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: S.amber, fontWeight: 600, lineHeight: 1.4 } }, lang === "el" ? "\u26A0 \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03AD\u03BD\u03B5\u03C2 \u03C4\u03B9\u03BC\u03AD\u03C2 \u03C3\u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 \u03C4\u03B7\u03C2 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE\u03C2 \u03B1\u03C3\u03B8\u03B5\u03BD\u03BF\u03CD\u03C2, \u03B5\u03BA\u03C4\u03CC\u03C2 \u03B1\u03BD \u03B1\u03BD\u03B1\u03B3\u03C1\u03AC\u03C6\u03B5\u03C4\u03B1\u03B9 \u03AC\u03BB\u03BB\u03BF \u2014 \u03B5\u03C0\u03B1\u03BB\u03B7\u03B8\u03B5\u03CD\u03C3\u03C4\u03B5 \u03C0\u03C1\u03B9\u03BD \u03C4\u03B7 \u03C7\u03BF\u03C1\u03AE\u03B3\u03B7\u03C3\u03B7." : "\u26A0 Calculated on the actual weight in the patient bar unless stated otherwise \u2014 verify before administration.")));
   }));
 }
+// Crisis mode: one checklist full-screen, large text, high contrast, running timer and event marks,
+// screen kept awake where the browser allows it. Steps share the tick state of the Lists tab.
+function CrisisMode({ c, lang, done, toggle, onClose }) {
+  const el = lang === "el";
+  const steps = el ? c.stepsEl : c.stepsEn;
+  const [t0] = useState(() => Date.now());
+  const [now, setNow] = useState(() => Date.now());
+  const [marks, setMarks] = useState([]);
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 500);
+    let lock = null;
+    try { if (navigator.wakeLock && navigator.wakeLock.request) navigator.wakeLock.request("screen").then((l) => { lock = l; }).catch(() => {}); } catch (e) {}
+    return () => { clearInterval(id); try { lock && lock.release(); } catch (e) {} };
+  }, []);
+  const mmss = (ms) => { const s = Math.max(0, Math.floor(ms / 1000)); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
+  const nDone = steps.filter((_, i) => done[c.id + ":" + i]).length;
+  const next = steps.findIndex((_, i) => !done[c.id + ":" + i]);
+  const lastMark = marks.length ? marks[marks.length - 1] : null;
+  const BG = "#0E1B30", CARD = "#17294A", INK = "#FFFFFF", MUTED = "#B9C8DC";
+  const btn = { border: "none", borderRadius: 12, fontFamily: "inherit", fontWeight: 800, cursor: "pointer" };
+  return React.createElement("div", { role: "dialog", "aria-modal": "true", "aria-label": el ? c.titleEl : c.titleEn, style: { position: "fixed", inset: 0, zIndex: 10000, background: BG, color: INK, display: "flex", flexDirection: "column", fontFamily: "'Morfeas Sans', -apple-system, system-ui, sans-serif" } },
+    React.createElement("div", { style: { padding: "calc(12px + env(safe-area-inset-top, 0px)) 16px 10px", borderBottom: "4px solid " + c.color } },
+      React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } },
+        React.createElement("span", { style: { width: 14, height: 14, borderRadius: 99, background: c.color, flexShrink: 0 } }),
+        React.createElement("div", { style: { flex: 1, fontSize: 19, fontWeight: 800, lineHeight: 1.2 } }, el ? c.titleEl : c.titleEn),
+        React.createElement("button", { onClick: onClose, "aria-label": el ? "\u039A\u03BB\u03B5\u03AF\u03C3\u03B9\u03BC\u03BF" : "Close", style: { ...btn, background: CARD, color: INK, fontSize: 20, width: 44, height: 44 } }, "\u2715")),
+      React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginTop: 10 } },
+        React.createElement("div", { style: { fontSize: 40, fontWeight: 800, fontVariantNumeric: "tabular-nums", letterSpacing: 1, lineHeight: 1 } }, mmss(now - t0)),
+        React.createElement("div", { style: { flex: 1, fontSize: 12.5, color: MUTED, fontWeight: 600, lineHeight: 1.35 } }, lastMark ? (el ? "\u0391\u03C0\u03CC \u03C4\u03B7 \u03C3\u03AE\u03BC\u03B1\u03BD\u03C3\u03B7 " : "Since mark ") + marks.length + ": " : (el ? "\u03A7\u03C1\u03CC\u03BD\u03BF\u03C2 \u03B1\u03C0\u03CC \u03C4\u03B7\u03BD \u03AD\u03BD\u03B1\u03C1\u03BE\u03B7" : "Time since start"), lastMark && React.createElement("b", { style: { color: INK, fontSize: 18, fontVariantNumeric: "tabular-nums" } }, mmss(now - lastMark))),
+        React.createElement("button", { onClick: () => setMarks((m) => [...m, Date.now()]), style: { ...btn, background: c.color, color: "#FFFFFF", fontSize: 14, padding: "12px 14px" } }, el ? "\u23F1 \u03A3\u03AE\u03BC\u03B1\u03BD\u03C3\u03B7" : "\u23F1 Mark")),
+      React.createElement("div", { style: { height: 6, borderRadius: 99, background: CARD, marginTop: 10, overflow: "hidden" } }, React.createElement("div", { style: { width: (100 * nDone / steps.length) + "%", height: "100%", background: c.color } }))),
+    React.createElement("div", { style: { flex: 1, overflowY: "auto", padding: "12px 12px 8px", display: "flex", flexDirection: "column", gap: 8 } },
+      steps.map((s, i) => {
+        const checked = !!done[c.id + ":" + i];
+        const isNext = i === next;
+        return React.createElement("button", { key: i, onClick: () => toggle(c.id, i), style: { ...btn, display: "flex", alignItems: "flex-start", gap: 12, textAlign: "left", padding: "14px 14px", background: isNext ? "#22406E" : CARD, boxShadow: isNext ? "inset 0 0 0 2px " + c.color : "none", color: checked ? MUTED : INK, fontWeight: 600 } },
+          React.createElement("span", { style: { width: 30, height: 30, borderRadius: 9, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: checked ? c.color : "transparent", boxShadow: checked ? "none" : "inset 0 0 0 2px " + MUTED, fontSize: checked ? 18 : 14, fontWeight: 900, color: checked ? "#FFFFFF" : MUTED } }, checked ? "\u2713" : i + 1),
+          React.createElement("span", { style: { fontSize: 18, lineHeight: 1.4, flex: 1, textDecoration: checked ? "line-through" : "none" } }, s));
+      })),
+    React.createElement("div", { style: { padding: "8px 16px calc(10px + env(safe-area-inset-bottom, 0px))", fontSize: 11, color: MUTED, fontWeight: 600, lineHeight: 1.4 } }, nDone + "/" + steps.length + (el ? " \u03B2\u03AE\u03BC\u03B1\u03C4\u03B1" : " steps") + (c.srcEl ? " \u00B7 " + (el ? "\u03A0\u03B7\u03B3\u03AE: " + c.srcEl : "Source: " + c.srcEn) : "")));
+}
 function ChecklistTab({ lang, focus }) {
+  const [crisis, setCrisis] = useState(null);
   const [open, setOpen] = useState(null);
   const [cat, setCat] = useState("all");
   const [q, setQ] = useState("");
@@ -249,7 +321,8 @@ function ChecklistTab({ lang, focus }) {
     const title = (lang === "el" ? c.titleEl : c.titleEn).toLowerCase();
     return (cat === "all" || c.cat === cat) && title.includes(q.toLowerCase());
   });
-  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } }, /* @__PURE__ */ React.createElement(
+  const crisisC = crisis ? CHECKLISTS.find((x) => x.id === crisis) : null;
+  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } }, crisisC && /* @__PURE__ */ React.createElement(CrisisMode, { c: crisisC, lang, done, toggle: toggleStep, onClose: () => setCrisis(null) }), /* @__PURE__ */ React.createElement(
     "input",
     {
       value: q,
@@ -293,7 +366,7 @@ function ChecklistTab({ lang, focus }) {
       background: complete ? S.teal : S.lineStrong,
       borderRadius: 99,
       padding: "3px 9px"
-    } }, nDone, "/", steps.length), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 6 } }, steps.map((s, i) => {
+    } }, nDone, "/", steps.length), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 6 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setCrisis(c.id), style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px 14px", marginBottom: 4, borderRadius: 12, border: "none", background: c.color, color: "#FFFFFF", fontWeight: 800, fontSize: 15, cursor: "pointer", fontFamily: "inherit" } }, "\u26F6 ", lang === "el" ? "\u039B\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1 \u03BA\u03C1\u03AF\u03C3\u03B7\u03C2 \u2014 \u03C0\u03BB\u03AE\u03C1\u03B7\u03C2 \u03BF\u03B8\u03CC\u03BD\u03B7" : "Crisis mode — full screen"), steps.map((s, i) => {
       const checked = !!done[`${c.id}:${i}`];
       return /* @__PURE__ */ React.createElement("button", { key: i, onClick: () => toggleStep(c.id, i), style: {
         display: "flex",
@@ -821,13 +894,14 @@ const SCORES = [
     src: "Validation of the Pediatric Sedation State Scale. Pediatrics, \u039C\u03AC\u03B9\u03BF\u03C2 2017. \u0391\u03BE\u03B9\u03BF\u03C0\u03B9\u03C3\u03C4\u03AF\u03B1 \u03BC\u03B5\u03C4\u03B1\u03BE\u03CD \u03C0\u03B1\u03C1\u03B1\u03C4\u03B7\u03C1\u03B7\u03C4\u03CE\u03BD ICC 0.994. \u0399\u03B4\u03B1\u03BD\u03B9\u03BA\u03AE \u03BA\u03B1\u03C4\u03AC\u03C3\u03C4\u03B1\u03C3\u03B7: 2 (\u03BA\u03B1\u03B9 \u03C3\u03C4\u03CC\u03C7\u03BF\u03C2 \u03C3\u03B5 \u03C0\u03C1\u03C9\u03C4\u03CC\u03BA\u03BF\u03BB\u03BB\u03B1 \u03BA\u03BB\u03B9\u03BD\u03B9\u03BA\u03CE\u03BD \u03BC\u03B5\u03BB\u03B5\u03C4\u03CE\u03BD). \u0391\u03BE\u03B9\u03BF\u03BB\u03BF\u03B3\u03B5\u03AF \u03C4\u03B7\u03BD \u03BA\u03B1\u03C4\u03AC\u03C3\u03C4\u03B1\u03C3\u03B7 \u03C4\u03B7 \u03C3\u03C4\u03B9\u03B3\u03BC\u03AE \u03C4\u03B7\u03C2 \u03B5\u03C0\u03AD\u03BC\u03B2\u03B1\u03C3\u03B7\u03C2, \u03CC\u03C7\u03B9 \u03BC\u03CC\u03BD\u03BF \u03C4\u03BF \u03B2\u03AC\u03B8\u03BF\u03C2 \u03BA\u03B1\u03C4\u03B1\u03C3\u03C4\u03BF\u03BB\u03AE\u03C2."
   }
 ];
+// Adult limits. Each row names its source (SmPC or clinical practice) in noteEl/noteEn.
 const LA_LIST = [
-  { id: "lido", name: "Lidocaine", perKg: 3, abs: 200, concs: [0.5, 1, 1.5, 2], noteEl: "\u039A\u03BB\u03B9\u03BD\u03B9\u03BA\u03AE \u03C0\u03C1\u03B1\u03BA\u03C4\u03B9\u03BA\u03AE (\u03C3\u03C5\u03BD\u03C4\u03B7\u03C1\u03B7\u03C4\u03B9\u03BA\u03CC) \u00B7 SmPC: 4.5 mg/kg, max 200 mg", noteEn: "Clinical practice (conservative) \u00B7 SmPC: 4.5 mg/kg, max 200 mg" },
-  { id: "lido_epi", name: "Lidocaine + Epi", perKg: 7, abs: 500, concs: [0.5, 1, 1.5, 2] },
-  { id: "mepi", name: "Mepivacaine", perKg: 4.4, abs: 350, concs: [1, 1.5, 2] },
-  { id: "prilo", name: "Prilocaine", perKg: 6, abs: 400, concs: [0.5, 1, 2] },
-  { id: "bupi", name: "Bupivacaine", perKg: 2, abs: 150, concs: [0.25, 0.5] },
-  { id: "levo", name: "Levobupivacaine", perKg: 2, abs: 150, concs: [0.25, 0.5] },
-  { id: "ropi", name: "Ropivacaine", perKg: 3, abs: 225, concs: [0.2, 0.375, 0.5, 0.75, 1] },
-  { id: "chloro", name: "Chloroprocaine", perKg: 11, abs: 800, concs: [1, 2, 3] }
+  { id: "lido", name: "Lidocaine", perKg: 3, abs: 200, concs: [0.5, 1, 1.5, 2], noteEl: "\u039A\u03BB\u03B9\u03BD\u03B9\u03BA\u03AE \u03C0\u03C1\u03B1\u03BA\u03C4\u03B9\u03BA\u03AE (\u03C3\u03C5\u03BD\u03C4\u03B7\u03C1\u03B7\u03C4\u03B9\u03BA\u03CC) 3 mg/kg \u00B7 SmPC: 4.5 mg/kg, max 200 mg (Lidocaine 1%, hameln)", noteEn: "Clinical practice (conservative) 3 mg/kg \u00B7 SmPC: 4.5 mg/kg, max 200 mg (Lidocaine 1%, hameln)" },
+  { id: "lido_epi", name: "Lidocaine + Epi", perKg: 7, abs: 500, concs: [0.5, 1, 1.5, 2], noteEl: "SmPC: max 500 mg (Lidocaine 2% + adrenaline 1:200.000, Aspen) \u00B7 7 mg/kg \u03BA\u03B1\u03C4\u03AC ASRA", noteEn: "SmPC: max 500 mg (Lidocaine 2% + adrenaline 1:200,000, Aspen) \u00B7 7 mg/kg per ASRA" },
+  { id: "mepi", name: "Mepivacaine", perKg: 4.4, abs: 300, absByConc: { 1: 300, 2: 400 }, concs: [1, 2], noteEl: "SmPC Mepivaca\u00EDna Normon: \u03B1\u03C0\u03BF\u03BA\u03BB\u03B5\u03B9\u03C3\u03BC\u03BF\u03AF \u03AD\u03C9\u03C2 300 mg (1%) / 400 mg (2%), \u03B4\u03B9\u03AE\u03B8\u03B7\u03C3\u03B7 \u03AD\u03C9\u03C2 200 mg \u2014 \u03C7\u03C9\u03C1\u03AF\u03C2 \u03CC\u03C1\u03B9\u03BF \u03B1\u03BD\u03AC kg \u03C3\u03B5 \u03B5\u03BD\u03AE\u03BB\u03B9\u03BA\u03B5\u03C2\u00B7 \u03C4\u03BF 4.4 mg/kg \u03B5\u03AF\u03BD\u03B1\u03B9 \u03B1\u03C0\u03CC \u03C4\u03BF Scandonest SmPC (\u03BF\u03B4\u03BF\u03BD\u03C4\u03B9\u03B1\u03C4\u03C1\u03B9\u03BA\u03CC)", noteEn: "Mepivaca\u00EDna Normon SmPC: blocks up to 300 mg (1%) / 400 mg (2%), infiltration up to 200 mg \u2014 no per-kg adult limit; 4.4 mg/kg is from the Scandonest SmPC (dental)" },
+  { id: "prilo", name: "Prilocaine", perKg: 6, abs: 400, concs: [0.5, 1, 2], noteEl: "SmPC: max 400 mg (Prilocaine 1%, Aspen) \u00B7 6 mg/kg: \u03BA\u03BB\u03B9\u03BD\u03B9\u03BA\u03AE \u03C0\u03C1\u03B1\u03BA\u03C4\u03B9\u03BA\u03AE", noteEn: "SmPC: max 400 mg (Prilocaine 1%, Aspen) \u00B7 6 mg/kg: clinical practice" },
+  { id: "bupi", name: "Bupivacaine", perKg: 2, abs: 150, concs: [0.25, 0.5], noteEl: "SmPC: 150 mg \u03B5\u03C6\u03AC\u03C0\u03B1\u03BE, \u22642 mg/kg \u03B1\u03BD\u03AC 4 h (Marcain, Aspen)", noteEn: "SmPC: 150 mg single dose, \u22642 mg/kg in any 4 h (Marcain, Aspen)" },
+  { id: "levo", name: "Levobupivacaine", perKg: 2, abs: 150, concs: [0.25, 0.5], noteEl: "SmPC Chirocaine: 150 mg \u03B5\u03C6\u03AC\u03C0\u03B1\u03BE, 400 mg/24 h \u2014 \u03B4\u03B5\u03BD \u03B4\u03AF\u03BD\u03B5\u03B9 \u03CC\u03C1\u03B9\u03BF \u03B1\u03BD\u03AC kg \u03C3\u03B5 \u03B5\u03BD\u03AE\u03BB\u03B9\u03BA\u03B5\u03C2\u00B7 \u03C4\u03BF 2 mg/kg \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C3\u03C5\u03BD\u03C4\u03B7\u03C1\u03B7\u03C4\u03B9\u03BA\u03AE \u03C3\u03CD\u03BC\u03B2\u03B1\u03C3\u03B7 \u03C4\u03B7\u03C2 \u03B5\u03C6\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE\u03C2", noteEn: "Chirocaine SmPC: 150 mg single dose, 400 mg/24 h \u2014 no per-kg adult limit; 2 mg/kg is an app conservative convention" },
+  { id: "ropi", name: "Ropivacaine", perKg: 3, abs: 225, concs: [0.2, 0.375, 0.5, 0.75, 1], noteEl: "\u039A\u03BB\u03B9\u03BD\u03B9\u03BA\u03AE \u03C0\u03C1\u03B1\u03BA\u03C4\u03B9\u03BA\u03AE 3 mg/kg, max 225 mg \u00B7 SmPC Naropin: \u03B5\u03C6\u03AC\u03C0\u03B1\u03BE 300 mg \u03AD\u03B3\u03B9\u03BD\u03B5 \u03BA\u03B1\u03BB\u03AC \u03B1\u03BD\u03B5\u03BA\u03C4\u03AE", noteEn: "Clinical practice 3 mg/kg, max 225 mg \u00B7 Naropin SmPC: a single 300 mg dose was well tolerated" },
+  { id: "chloro", name: "Chloroprocaine", perKg: 11, abs: 800, concs: [2], noteEl: "SmPC Ampres 20 mg/mL (\u03BA\u03C5\u03BA\u03BB\u03BF\u03C6\u03BF\u03C1\u03B5\u03AF \u03C3\u03C4\u03B7\u03BD \u0395\u03BB\u03BB\u03AC\u03B4\u03B1): \u03C0\u03B5\u03C1\u03B9\u03BD\u03B5\u03C5\u03C1\u03B9\u03BA\u03CC\u03C2 \u03B1\u03C0\u03BF\u03BA\u03BB\u03B5\u03B9\u03C3\u03BC\u03CC\u03C2 \u03C3\u03B5 \u03B5\u03BD\u03AE\u03BB\u03B9\u03BA\u03B5\u03C2, max 11 mg/kg, \u2264800 mg \u00B7 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC: \u03B4\u03B5\u03BD \u03AD\u03C7\u03B5\u03B9 \u03C4\u03B5\u03BA\u03BC\u03B7\u03C1\u03B9\u03C9\u03B8\u03B5\u03AF", noteEn: "Ampres 20 mg/mL SmPC (authorised in Greece): perineural block in adults, max 11 mg/kg, \u2264800 mg \u00B7 children: not established" }
 ];
