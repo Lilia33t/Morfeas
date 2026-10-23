@@ -1,6 +1,6 @@
 // Morfeas — service worker
 // Bump CACHE whenever anything in APP_SHELL changes, to force an update.
-const CACHE = "anesthesia-v419";
+const CACHE = "anesthesia-v447";
 
 const APP_SHELL = [
   "./",
@@ -12,12 +12,13 @@ const APP_SHELL = [
   "./src/root.js",
   "./manifest.webmanifest",
   "./LICENSE",
-  "./icons/favicon-32.png",
-  "./icons/apple-touch-icon.png",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/icon-maskable-192.png",
-  "./icons/icon-maskable-512.png",
+  "./icons/favicon-32-v2.png",
+  "./icons/apple-touch-icon-v2.png",
+  "./icons/icon-192-v2.png",
+  "./icons/icon-512-v2.png",
+  "./icons/icon-maskable-192-v2.png",
+  "./icons/icon-maskable-512-v2.png",
+  "./icons/qr-morfeas.png",
   "./fonts/commissioner.woff",
 ];
 
@@ -86,7 +87,8 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Everything else: cache-first, then network, caching what comes back.
+  // Everything else: cache-first, then network, caching what comes back. Updates arrive through a new
+  // CACHE name (all files replaced together), never file by file, so versions cannot mix.
   event.respondWith((async () => {
     const cached = await caches.match(req, MATCH);
     if (cached) return cached;

@@ -6,6 +6,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
 <title>Morfeas — Anesthesia Assistant</title>
 
+<!-- Link preview card (WhatsApp, Viber, Messenger, email, social). Absolute URLs are required. -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Morfeas" />
+<meta property="og:locale" content="el_GR" />
+<meta property="og:title" content="Morfeas" />
+<meta property="og:url" content="https://lilia33t.github.io/Morfeas/" />
+<meta property="og:image" content="https://lilia33t.github.io/Morfeas/icons/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Morfeas" />
+<meta name="twitter:card" content="summary_large_image" />
+
 <!-- PWA / iOS standalone -->
 <meta name="theme-color" content="#1D3D6B" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -19,8 +31,8 @@
   <meta name="googlebot" content="noindex, nofollow" />
 <meta name="format-detection" content="telephone=no" />
 <link rel="manifest" href="manifest.webmanifest" />
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32-v2.png" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon-v2.png" />
 
 <style>
   /* Commissioner (SIL OFL), self-hosted under its own family name so a font
@@ -67,7 +79,7 @@
 </head>
 <body>
 <div id="boot">
-  <img src="icons/icon-512.png" alt="Morfeas" style="width:132px;height:132px;border-radius:26px;box-shadow:0 6px 24px rgba(20,37,63,.18)" />
+  <img src="icons/icon-512-v2.png" alt="Morfeas" style="width:132px;height:132px;border-radius:26px;box-shadow:0 6px 24px rgba(20,37,63,.18)" />
   <div style="font-size:13px;letter-spacing:.3px;color:#42536A;margin-top:2px">Created by Efstathia Pistioli, MD</div>
 </div>
 <div id="root"></div>
@@ -101,7 +113,7 @@
   // Service worker for offline use
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
-      navigator.serviceWorker.register("sw.js").then(function (reg) {
+      navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {
         function showUpdateBanner() {
           if (document.getElementById("upd-banner")) return;
           var b = document.createElement("div");

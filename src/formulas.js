@@ -253,7 +253,7 @@ function doseText(d, w, lang) {
   if (d.fixed) return lang === "en" && d.fixedEn ? d.fixedEn : d.fixed;
   const range = d.lo === d.hi ? `${d.lo}` : `${d.lo}\u2013${d.hi}`;
   let base = `${range} ${d.unit}`;
-  if (!w) return base;
+  if (!(w > 0)) return base;
   const baseUnit = d.unit.replace(/^(mg|mcg|g|mL|IU|U|mmol|mEq)\/kg/, "$1");
   let lo = d.lo * w, hi = d.hi * w;
   let capped = false;

@@ -481,7 +481,7 @@ check("Fick CO: no VO2 returns null", run("fickCO(0, 20, 15)"), null);
   check("ESGE: anaesthetist for ASA >= 3 and Mallampati >= 3", /Mallampati \u2265 3/.test(gi), true);
   check("ERCP: MAC is the favoured technique", /\u03A0\u03A1\u039F\u03A4\u0399\u039C\u03A9\u039C\u0395\u039D\u0397|FAVOURED/.test(gi), true);
   check("high risk: half dose at ASA >= 3", /HALF the dose/.test(gi), true);
-  check("naloxone: perioperative titration 40 mcg", /40 \u00b5g \(0.04 mg\) IV, titrated/.test(gi), true);
+  check("naloxone: SmPC regimen 100\u2013200 mcg (v438)", /Naloxone \(opioid depression\): 100\u2013200 \u00b5g IV, then 100 \u00b5g every 2\u20133 min/.test(gi), true);
   check("naloxone: poisoning regimen kept separate", /Poisoning \(not the perioperative setting\)/.test(gi), true);
   check("flumazenil 200 mcg then 100 mcg, max 2 mg", /200 \u00b5g over 15 s, then 100 \u00b5g every minute, maximum 2 mg/.test(gi), true);
   check("naloxone before flumazenil", /give naloxone FIRST/.test(gi), true);
@@ -773,7 +773,7 @@ check("v348: glucagon, methylene blue, mannitol, carboprost, isoprenaline, furos
   run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};return [g('glucagon').doses.length,g('methylene_blue').doses.length,g('mannitol').doses.length,g('carboprost').doses.length,g('isoprenaline').doses.length,g('furosemide').doses.length,g('magnesium').doses.length].join(',')+'|'+/OUTSIDE SmPC .AHA 2023/.test(g('glucagon').doses.map(function(x){return x.en;}).join())+'|'+g('mannitol').doses[0].lo+','+g('mannitol').doses[0].unit;})()"), "5,5,6,3,5,4,9|true|1.5,g/kg");
 
 check("v348: hypertonic saline from Society for Endocrinology only; electrolytes card 150 mL over 20 min",
-  run("(function(){var h=DRUGS.filter(function(x){return x.id==='hypertonic_saline';})[0];return h.doses.length+'|'+/^150 mL NaCl 3% IV over 20 min/.test(h.doses[0].fixedEn)+'|'+/Society for Endocrinology/.test(h.notesEn)+'|'+h.ciEn;})()")+'|'+/over 20 min, .u00D72 or until .5 mmol.L/.test(src), "5|true|true|\u2014|true");
+  run("(function(){var h=DRUGS.filter(function(x){return x.id==='hypertonic_saline';})[0];return h.doses.length+'|'+/^150 mL NaCl 3% IV over 20 min/.test(h.doses[0].fixedEn)+'|'+/Society for Endocrinology/.test(h.notesEn)+'|'+h.ciEn;})()")+'|'+/over 20 min, .u00D72 or until .5 mmol.L/.test(src), "6|true|true|\u2014|true");
 
 check("v348: references — SmPCs, Society for Endocrinology 2022, ASA GLP-1 announcement, CPOC March 2021",
   String(/Konakion MM 10 mg.mL .Neon/.test(src) && /Furosemide 10 mg.mL .hameln/.test(src) && /Isoprenaline Hydrochloride 1 mg.5 mL .Synchrony/.test(src) && /Heparin sodium 5000 IU.mL .Wockhardt/.test(src) && /Ball S, Barth J, Levy M/.test(src) && /ASA news release, 29 October 2024/.test(src) && /emergency surgery. March 2021\./.test(src)), "true");
@@ -1081,7 +1081,7 @@ check("v425: ASRA 2025 dabigatran intervals and reversal position",
 
 check("v426→v436: ERC NLS/PLS content shown again after the Part 12 check",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String(run('[PENDING_ERC_PAED, CHECKLISTS_SHOWN.some(c=>c.id==="newborn"), DRUGS.find(d=>d.id==="adrenaline").doses.filter(x=>!isPendingErc(x)).some(x=>/cardiac arrest/.test(x.en) && /CHILDREN/.test(x.en))].join()') === 'false,true,true' && (T.match(/!PENDING_ERC_PAED && /g)||[]).length === 8); })(), "true");
+    return String(run('[PENDING_ERC_PAED, CHECKLISTS_SHOWN.some(c=>c.id==="newborn"), DRUGS.find(d=>d.id==="adrenaline").doses.filter(x=>!isPendingErc(x)).some(x=>/cardiac arrest/.test(x.en) && /CHILDREN/.test(x.en))].join()') === 'false,true,true' && (T.match(/!PENDING_ERC_PAED && /g)||[]).length === 9); })(), "true");
 
 check("v427: every checklist has a colour",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
@@ -1122,6 +1122,50 @@ check("v435: bicarbonate TCA 1-2 mmol/kg",
 check("v436: Part 12: paediatric hyperkalaemia, ERC PLS doses, newborn adrenaline",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
     return String(run('(function(){ const h=CHECKLISTS.find(c=>c.id==="hyperkalaemia"); const n=CHECKLISTS.find(c=>c.id==="newborn"); return /NO calcium, NO bicarbonate/.test(h.stepsEn.join()) && /IN CARDIAC ARREST — ADULTS/.test(h.stepsEn.join()) && /10–30 µg\\/kg/.test(n.stepsEn.join()) && n.stepsEl.length===n.stepsEn.length; })()') === true && /Math.min\(0.3 \* w, 12\)/.test(T) && !/adolescents/.test(T) && !/still used for vagal tone and premedication/.test(T)); })(), "true");
+
+check("v437: Part 13: peds caps, ETT rounding, calcium gluconate row",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('(function(){ const g=DRUGS.find(d=>d.doses.some(x=>/gluconate 10%, hyperkalaemia ONLY/.test(x.en))); const a=DRUGS.find(d=>d.id==="adenosine").doses.some(x=>x.lo===0.3&&/ERC PLS 2025/.test(x.en)); return !!g && a && doseText({lo:0.1,hi:0.1,unit:"mg/kg"},-5,"en")==="0.1 mg/kg" && PEDS_VITALS.length===13; })()') === true && /Math.floor\(p.ettCuffed \* 2\) \/ 2/.test(T) && /Math.min\(4 \* w, 200\)/.test(T) && /Math.min\(0.01 \* w, 1\)/.test(T) && /Math.min\(Math.max\(0.02 \* w, 0.1\), 0.5\)/.test(T) && !/50% of the adult dose/.test(T)); })(), "true");
+
+check("v438: SmPC alignment: naloxone, vasopressin, sugammadex",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(!/Naloxone perioperatively: 40/.test(T) && /"0.01\\u20130.03 U\/min"/.test(T) && !/TOF 1\\u20133 \\xB7 2 mg\/kg/.test(T) && /reappearance of T2/.test(T)); })(), "true");
+
+check("v439: peds synchronised cardioversion; no unsourced spinal adrenaline",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/Synchronised cardioversion", v: `\$\{fmt\(1 \* w\)\}/.test(T) && run('CHECKLISTS.find(c=>c.id==="total_spinal").stepsEn.join()').indexOf('adrenaline if refractory') < 0); })(), "true");
+
+check("v440: total spinal adrenaline dose per ERC bradycardia",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('CHECKLISTS.find(c=>c.id==="total_spinal").stepsEn[4]').indexOf('adrenaline 2\u201310 \u00b5g/min (ERC 2025') > 0); })(), "true");
+
+check("v441: ERC 2025 Special Circumstances: hysterotomy, SZC, OR arrest trigger",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('(function(){ const g=id=>CHECKLISTS.find(c=>c.id===id); const a=g("afe"), k=g("hyperkalaemia"), h=g("hypotension"); return !/within 5 min/.test(a.stepsEn.join()) && /SZC. 10 g orally/.test(k.stepsEn.join()) && /<50 mmHg/.test(h.stepsEn.join()) && h.stepsEl.length===h.stepsEn.length && a.stepsEl.length===a.stepsEn.length; })()') === true); })(), "true");
+
+check("v442: six new ERC 2025 checklists, equal steps in both languages",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('(function(){ const ids=["post_rosc","cardiac_surgery_arrest","lvad_arrest","asthma_arrest","hypokalaemia","maternal_arrest"]; return ids.every(id=>{ const c=CHECKLISTS_SHOWN.find(x=>x.id===id); return c && c.color && c.stepsEl.length===c.stepsEn.length && /ERC/.test(c.srcEn); }) && /0.05\u20130.1 mg/.test(CHECKLISTS.find(x=>x.id==="cardiac_surgery_arrest").stepsEn.join()) && /20 mmol IV over 2\u20133 min/.test(CHECKLISTS.find(x=>x.id==="hypokalaemia").stepsEn.join()); })()') === true); })(), "true");
+
+check("v443: torsades magnesium 2 g over 10 min",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('CHECKLISTS.find(c=>c.id==="svt_unstable").stepsEn.join()').indexOf('2 g (8 mmol) IV over 10 min') > 0); })(), "true");
+
+check("v444: Part 14: thrombectomy 6\u201324 h, ketamine wording, no FLUID_LOSS",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/6\\u201324 h window/.test(T) && !/infusion usually 0.1/.test(T) && !/FLUID_LOSS/.test(T) && /LMA Supreme size 4: 45 mL/.test(T)); })(), "true");
+
+check("v445: LV shock availability note",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('CHECKLISTS.find(c=>c.id==="lv_shock").stepsEn[1]').indexOf('may not be available in Greece') > 0); })(), "true");
+
+check("v446: adult TBI hypertonic note per NCS 2020, no adult dose",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('(function(){ const h=DRUGS.find(x=>x.id==="hypertonic_saline"); const a=h.doses.find(d=>/ADULTS/.test(d.en)); return !!a && !a.lo && /no guideline gives a dose/.test(a.fixedEn); })()') === true && /NCS 2020: hypertonic solutions suggested over mannitol/.test(T)); })(), "true");
+
+check("v447: AHA/ACC 2024 valve echo wording",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(!/echo if none within the past year/.test(T) && /moderate-to-severe valvular heart disease: transthoracic/.test(T)); })(), "true");
 
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).

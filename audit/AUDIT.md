@@ -1,19 +1,18 @@
-# Μητρώο ελέγχου Morfeas — v436
+# Μητρώο ελέγχου Morfeas — v447
 
-Ενημέρωση μητρώου: 2026-10-23 · Σύνολο εγγραφών: 189
+Ενημέρωση μητρώου: 2026-10-23 · Σύνολο εγγραφών: 195
 
-- Ελέγχθηκαν με πηγές: **179**
+- Ελέγχθηκαν με πηγές: **186**
 - Ελέγχθηκαν, μένουν ως έχουν με απόφασή σου: **8**
-- Δεν έχουν ελεγχθεί ακόμα: **1**
+- Δεν έχουν ελεγχθεί ακόμα: **0**
 - Εκτός ελέγχου: **1**
 
 ## Δεν έχουν ελεγχθεί ακόμα
 
-- Οδηγία · AHA/ACC 2024 μη καρδιοχειρουργική — v432: ανεξάρτητος έλεγχος Μέρος 10
 
 ## Ελέγχθηκαν, μένουν ως έχουν — σημεία χωρίς επιβεβαίωση
 
-### Εργαλείο · Καρδιοχειρουργική αναισθησία (v357)
+### Εργαλείο · Καρδιοχειρουργική αναισθησία (v357, v438)
 - Επανάληψη ACT κάθε 20–30 min / έλεγχος σε 3–5 min
 - AT III/FFP στην αντίσταση ηπαρίνης
 - Στόχοι CPB: ΜΑΠ 50–80, ροή 2.2–2.5, Hct >21–24 (EACTS 2024 §9 δεν ήταν προσβάσιμο)
@@ -22,7 +21,7 @@
 
 Πηγές που διαβάστηκαν: STS/SCA/AmSECT 2018 (ACT >480 s) · ISTH (αντίσταση ηπαρίνης) · AHA 2023 ΠΥ σε μη καρδιοχειρουργική · Cureus 2018 ΠΥ
 
-### Εργαλείο · Θωρακοχειρουργική αναισθησία (v357, v433)
+### Εργαλείο · Θωρακοχειρουργική αναισθησία (v357, v433, v437)
 - PEEP 5 (πηγή 3–10)
 - Pplat <25 (πηγή <20), peak <35 (πηγή <30)
 - SpO₂ ≥90% (πηγή στόχος 92–96%)
@@ -32,7 +31,7 @@
 
 Πηγές που διαβάστηκαν: Baloch et al., Anaesth Pain Intensive Care 2016 · OpenAnesthesia — DLT
 
-### Εργαλείο · Νευροαναισθησία (v357, v421)
+### Εργαλείο · Νευροαναισθησία (v357, v421, v446)
 - ΕΚΠ «<20–22» (BTF: θεραπεία >22)
 - ΣΑΠ >100 (BTF: ≥100 στα 50–69, ≥110 στα 15–49 και >70)
 - Ωσμωτικότητα <320
@@ -62,7 +61,7 @@
 - Σφηνοειδής = 2 τμήματα
 - «υποεκτιμά τον πρώιμο κίνδυνο στο εμφύσημα»
 
-### Εργαλείο · TOF / Νευρομυϊκός αποκλεισμός (v355)
+### Εργαλείο · TOF / Νευρομυϊκός αποκλεισμός (v355, v438)
 - Επιπολής αποκλεισμός TOFr <0.9 (ASA: <0.4)
 - Sugammadex 2 mg/kg «TOF 1–3» (SmPC: επανεμφάνιση T2)
 - 16 mg/kg «CICO»
@@ -77,7 +76,7 @@
 - Χωρίς επιβεβαιωμένη πηγή — το ESA/EBA QRG 2013 δεν έχει κεφάλαιο
 
 ### Checklist · lv_shock
-- «maintain SVR <800»: υπάρχει αυτούσιο στο ESA/EBA QRG 2013 αλλά αντιφάσκει με την ενέργεια — δεν ελέγχθηκε το Moitra 2012
+- «maintain SVR <800»: υπάρχει αυτούσιο στο Moitra 2012 Εικ. 1 — πιθανό λάθος της πηγής· φενολντοπάμη/νεσιριτίδη — δεν ελέγχθηκε αν κυκλοφορούν στην ΕΕ
 
 ### Εργαλείο · ROTEM / TEG (ερμηνεία)
 - LI30 <94%: μόνο ως εύρος αναφοράς σε case report (HKMJ 2021) — δεν μπήκε
@@ -109,13 +108,15 @@
 ### Εργαλείο · Αντιβιοτική προφύλαξη
 - Καισαρική «προ τομής»: ο πίνακας Bratzler δεν το ορίζει ειδικά — ισχύει ο γενικός κανόνας 60 min προ τομής
 
+### Οδηγία · AHA/ACC 2024 μη καρδιοχειρουργική
+- Πίνακες COR/LOE δεν διαβάστηκαν
+- Τα κριτήρια ηλικίας για BNP αφαιρέθηκαν (πιθανώς CCS)
+
 ### Καρτέλα · Παιδιατρική
 - Δεδομένα CDC για κορίτσια 2–20 ετών μερικά (το mirror κόβει τα αρχεία): ανάστημα έως 192.5, βάρος έως 188.5, BMI έως 160.5 μήνες
 - Το εκατοστημόριο υπολογίζεται με προσέγγιση της κανονικής κατανομής (Abramowitz–Stegun 7.1.26)
 - Ηλικία ύψους (McLaren): γραμμική παρεμβολή μεταξύ των μηνιαίων σημείων αντί για ανάγνωση γραφήματος
 - Ελάχιστη ΣΑΠ: PALS, με σημείωση των διαφορετικών τιμών p5 του ERC PLS 2025
-- Ζωτικά σημεία κατά APLS — δεν συγκρίθηκαν με τον πίνακα του ERC 2025
-- Μεγέθη τραχειοσωλήνων (Merck/κατασκευαστής) δεν ελέγχθηκαν
 
 ### Εργαλείο · Recruitment manoeuvres
 - PROBESE υπόταση/βραδυκαρδία: από The Bottom Line (όχι από το JAMA)
@@ -138,18 +139,33 @@
 - NIVAS/Squadrone/BiPOP: στοιχεία από δευτερογενείς περιλήψεις, όχι από το πλήρες JAMA
 - Κριτήρια διασωλήνωσης των μελετών δεν περιλαμβάνονται — δεν βρέθηκαν στις πηγές
 
+### Checklist · cardiac_surgery_arrest
+- IABP κατά την ΚΑΡΠΑ, ρυθμός βηματοδότησης και αμιωδαρόνη δεν περιλήφθηκαν — δεν βρέθηκαν στο κείμενο που διαβάστηκε
+
+### Checklist · lvad_arrest
+- Αναγνώριση χωρίς σφυγμό, θέση ηλεκτροδίων, βήματα της Εικ. 18 — δεν περιλήφθηκαν (δεν βρέθηκαν στο κείμενο που διαβάστηκε)
+
+### Checklist · asthma_arrest
+- Ρυθμίσεις αερισμού κατά την ΚΑΡΠΑ (συχνότητα, I:E) — δεν περιλήφθηκαν (δεν βρέθηκαν στο κείμενο που διαβάστηκε)
+
+### Checklist · hypokalaemia
+- Δόση μαγνησίου και ρυθμοί καλίου εκτός ανακοπής δεν περιλήφθηκαν — παραπομπή στους Γρήγορους υπολογιστές
+
+### Checklist · maternal_arrest
+- Όριο ηλικίας κύησης για υστεροτομή, δόσεις CaCl₂/Mg/TXA — δεν περιλήφθηκαν (δεν βρέθηκαν στο κείμενο που διαβάστηκε)
+
 ## Ελέγχθηκαν με πηγές
 
-**Εργαλείο (34):** Κρίσεις — Αλγόριθμοι (v277), Αεραγωγός — εκτίμηση & μεγέθη (v354), Κλίμακες κινδύνου (v351), ASA — φυσική κατάσταση (v357), ROTEM / TEG (ερμηνεία) (v419), Καρδιοπάθεια σε μη καρδιοχειρουργική επέμβαση (v381), Μαιευτική αναισθησία (v419), Ενδοσκοπήσεις πεπτικού (v433), Νεφρική νόσος τελικού σταδίου & αιμοκάθαρση (v373), Ηπατική νόσος / κίρρωση (v374), Ανοσοκαταστολή & μεταμόσχευση (v371), Νευρομυϊκές νόσοι (v382), Εγκυμοσύνη — μη μαιευτική επέμβαση (v372), Βαριατρικός / Παχύσαρκος ασθενής (v421), Οξεία μετεγχειρητική αναλγησία (v369), Κλίμακες πόνου (v371), Νευραξονική & Περιοχική (v368), Όρια τοπικών αναισθητικών (v411), Αντιπηκτικά & Νευραξονικός (v432), TCI / Στοχευμένη έγχυση (v375), Γρήγοροι υπολογιστές (v355), Νεφρική λειτουργία (CrCl / eGFR) (v407), MAC πτητικών (κατά ηλικία) (v378), Αερισμός & Μηχανική πνεύμονα (v407), Καρδιακή παροχή (Fick / SvO₂) (v357), Μετατροπή οπιοειδών (v412), Υγρά & Αίμα (περιεγχειρητικά) (v407), Context-Sensitive Half-Time (v375), Περιεγχειρητική ιατρική (v433), Αντιβιοτική προφύλαξη (v362), Recruitment manoeuvres (v384), Low-flow αναισθησία (v388), Glasgow Coma Scale (GCS / GCS-P) (v386), Μη επεμβατικός αερισμός μετεγχειρητικά (v393)
+**Εργαλείο (34):** Κρίσεις — Αλγόριθμοι (v277), Αεραγωγός — εκτίμηση & μεγέθη (v444), Κλίμακες κινδύνου (v351), ASA — φυσική κατάσταση (v357), ROTEM / TEG (ερμηνεία) (v419), Καρδιοπάθεια σε μη καρδιοχειρουργική επέμβαση (v381), Μαιευτική αναισθησία (v419), Ενδοσκοπήσεις πεπτικού (v438), Νεφρική νόσος τελικού σταδίου & αιμοκάθαρση (v373), Ηπατική νόσος / κίρρωση (v374), Ανοσοκαταστολή & μεταμόσχευση (v371), Νευρομυϊκές νόσοι (v382), Εγκυμοσύνη — μη μαιευτική επέμβαση (v372), Βαριατρικός / Παχύσαρκος ασθενής (v421), Οξεία μετεγχειρητική αναλγησία (v444), Κλίμακες πόνου (v371), Νευραξονική & Περιοχική (v444), Όρια τοπικών αναισθητικών (v411), Αντιπηκτικά & Νευραξονικός (v432), TCI / Στοχευμένη έγχυση (v375), Γρήγοροι υπολογιστές (v355), Νεφρική λειτουργία (CrCl / eGFR) (v407), MAC πτητικών (κατά ηλικία) (v378), Αερισμός & Μηχανική πνεύμονα (v407), Καρδιακή παροχή (Fick / SvO₂) (v357), Μετατροπή οπιοειδών (v412), Υγρά & Αίμα (περιεγχειρητικά) (v407), Context-Sensitive Half-Time (v375), Περιεγχειρητική ιατρική (v433), Αντιβιοτική προφύλαξη (v362), Recruitment manoeuvres (v384), Low-flow αναισθησία (v388), Glasgow Coma Scale (GCS / GCS-P) (v386), Μη επεμβατικός αερισμός μετεγχειρητικά (v393)
 
-**Καρτέλα (1):** Παιδιατρική (v436)
+**Καρτέλα (1):** Παιδιατρική (v439)
 
 **Κλίμακα (9):** Apfel (v351), STOP-Bang (v351), RCRI (v351), ARISCAT (v379), Clinical Frailty Scale (v351), Child-Pugh (v351), PSSS (παιδιατρική καταστολή) (v364), Aldrete (v351), PADSS (v351)
 
-**Checklist (37):** vfvt (v277), asystole_pea (v277), brady (v420), svt_stable (v420), svt_unstable (v432), difficult_airway (v415), das_ati (v414), das_extubation (v277), laryngospasm (v432), bronchospasm (v432), hypoxemia (v432), aspiration (v432), pneumothorax (v420), scoop (v417), hypotension (v277), hemorrhage (v417), ischemia (v277), vae (v432), anaphylaxis (v420), last (v420), mh (v420), hyperkalaemia (v436), transfusion (v277), total_spinal (v432), afe (v417), or_fire (v432), o2_failure (v277), power_failure (v277), delayed_emergence (v432), rsi (v432), newborn (v436), airway_pressure (v277), hypocapnia (v277), hypercapnia (v277), lv_shock (v432), rv_shock (v277), hypertension_ddx (v277)
+**Checklist (43):** vfvt (v277), asystole_pea (v277), brady (v420), svt_stable (v420), svt_unstable (v443), difficult_airway (v415), das_ati (v414), das_extubation (v277), laryngospasm (v432), bronchospasm (v432), hypoxemia (v432), aspiration (v432), pneumothorax (v420), scoop (v417), hypotension (v441), hemorrhage (v417), ischemia (v277), vae (v432), anaphylaxis (v420), last (v420), mh (v420), hyperkalaemia (v441), transfusion (v277), total_spinal (v440), afe (v441), or_fire (v432), o2_failure (v277), power_failure (v277), delayed_emergence (v432), rsi (v432), newborn (v436), airway_pressure (v277), hypocapnia (v277), hypercapnia (v277), lv_shock (v445), rv_shock (v444), hypertension_ddx (v277), post_rosc (v442), cardiac_surgery_arrest (v442), lvad_arrest (v442), asthma_arrest (v442), hypokalaemia (v442), maternal_arrest (v442)
 
-**Φάρμακο (95):** Propofol (v355), Etomidate (v286), Ketamine (v287), Midazolam (v411), Remimazolam (Byfavo) (v289), Cipepofol (Cypsedo) (v340), Thiopental (v290), Sevoflurane (v352), Desflurane (v352), Isoflurane (v352), Nitrous oxide (N₂O) (v433), Fentanyl (v293), Sufentanil (v293), Alfentanil (v294), Remifentanil (v295), Morphine (v295), Oxycodone (v278), Rocuronium (v421), Succinylcholine (v297), Cisatracurium (v298), Sugammadex (v411), Neostigmine + Glycopyrrolate (v411), Tramadol (v301), Nalbuphine (v302), Amiodarone (v436), Adenosine (v415), Vasopressin (argipressin) (v305), Dopamine (v306), Calcium chloride / gluconate (v412), Sodium bicarbonate 8.4% (v436), Insulin (+ glucose) (v412), Salbutamol (v432), Hydrocortisone (v342), Pethidine (Meperidine) (v309), Oxytocin (v311), Carbetocin (v311), Ergometrine / Methylergometrine (v311), Carboprost (Hemabate) (v380), Protamine sulfate (v313), Naloxone (Narcan) (v436), Flumazenil (Anexate) (v433), Atropine (v436), Adrenaline (Epinephrine) (v436), Ephedrine (v316), Phenylephrine (v413), Noradrenaline (v317), Dobutamine (v318), Isoprenaline (isoproterenol) (v380), Labetalol (v319), Esmolol (v320), Landiolol (v395), Metoprolol (v321), Urapidil (Ebrantil) (v322), Hydralazine (v323), Nicardipine (v324), Glyceryl trinitrate (GTN) (v325), Sodium nitroprusside (v326), Clonidine (v327), Dexmedetomidine (Dexdor) (v281), Lidocaine (v341), Ropivacaine (v328), Prilocaine (v329), Bupivacaine (v328), Ondansetron (v339), Metoclopramide (v339), Droperidol (v414), Dexamethasone (v414), Paracetamol (v331), Parecoxib (Dynastat) (v331), Ketorolac (v331), Diclofenac (v332), Ibuprofen (v332), Lornoxicam (Xefo) (v332), Magnesium sulfate (v380), Glycopyrrolate (v333), Ketamine (analgesic) (v432), Lidocaine IV (systemic) (v407), Furosemide (v407), Mannitol (v349), Hypertonic saline (NaCl 3%) (v380), Tranexamic acid (v334), rFVIIa (NovoSeven, eptacog alfa) (v280), Dantrolene (v335), Intralipid 20% (LAST) (v412), Glucagon (GlucaGen) (v380), Methylene blue (methylthioninium chloride) (v380), Fibrinogen concentrate (v416), Prothrombin complex concentrate (4F-PCC) (v415), Vitamin K (phytomenadione, Konakion MM) (v346), Desmopressin (DDAVP) (v336), Idarucizumab (Praxbind) (v339), Andexanet alfa (Ondexxya) (v415), Heparin (unfractionated, UFH) (v349), Milrinone (v337), Levosimendan (v337)
+**Φάρμακο (95):** Propofol (v355), Etomidate (v286), Ketamine (v287), Midazolam (v411), Remimazolam (Byfavo) (v289), Cipepofol (Cypsedo) (v340), Thiopental (v290), Sevoflurane (v352), Desflurane (v352), Isoflurane (v352), Nitrous oxide (N₂O) (v433), Fentanyl (v293), Sufentanil (v293), Alfentanil (v294), Remifentanil (v295), Morphine (v295), Oxycodone (v278), Rocuronium (v421), Succinylcholine (v297), Cisatracurium (v298), Sugammadex (v411), Neostigmine + Glycopyrrolate (v411), Tramadol (v301), Nalbuphine (v302), Amiodarone (v436), Adenosine (v437), Vasopressin (argipressin) (v305), Dopamine (v306), Calcium chloride / gluconate (v437), Sodium bicarbonate 8.4% (v436), Insulin (+ glucose) (v412), Salbutamol (v432), Hydrocortisone (v342), Pethidine (Meperidine) (v309), Oxytocin (v311), Carbetocin (v311), Ergometrine / Methylergometrine (v311), Carboprost (Hemabate) (v380), Protamine sulfate (v313), Naloxone (Narcan) (v436), Flumazenil (Anexate) (v433), Atropine (v436), Adrenaline (Epinephrine) (v436), Ephedrine (v316), Phenylephrine (v413), Noradrenaline (v317), Dobutamine (v318), Isoprenaline (isoproterenol) (v380), Labetalol (v319), Esmolol (v320), Landiolol (v395), Metoprolol (v321), Urapidil (Ebrantil) (v322), Hydralazine (v323), Nicardipine (v324), Glyceryl trinitrate (GTN) (v325), Sodium nitroprusside (v326), Clonidine (v327), Dexmedetomidine (Dexdor) (v281), Lidocaine (v341), Ropivacaine (v328), Prilocaine (v329), Bupivacaine (v328), Ondansetron (v339), Metoclopramide (v339), Droperidol (v414), Dexamethasone (v414), Paracetamol (v331), Parecoxib (Dynastat) (v331), Ketorolac (v331), Diclofenac (v332), Ibuprofen (v332), Lornoxicam (Xefo) (v332), Magnesium sulfate (v380), Glycopyrrolate (v333), Ketamine (analgesic) (v432), Lidocaine IV (systemic) (v407), Furosemide (v407), Mannitol (v349), Hypertonic saline (NaCl 3%) (v446), Tranexamic acid (v334), rFVIIa (NovoSeven, eptacog alfa) (v280), Dantrolene (v335), Intralipid 20% (LAST) (v412), Glucagon (GlucaGen) (v380), Methylene blue (methylthioninium chloride) (v380), Fibrinogen concentrate (v416), Prothrombin complex concentrate (4F-PCC) (v415), Vitamin K (phytomenadione, Konakion MM) (v346), Desmopressin (DDAVP) (v336), Idarucizumab (Praxbind) (v339), Andexanet alfa (Ondexxya) (v415), Heparin (unfractionated, UFH) (v349), Milrinone (v337), Levosimendan (v337)
 
 ## Εκτός ελέγχου
 
-- Εργαλείο · Μηχανική θρομβεκτομή (ΑΕΕ) — Πρωτόκολλο της κλινικής σου — δεν ελέγχεται
+- Εργαλείο · Μηχανική θρομβεκτομή (ΑΕΕ) — v444: παράθυρο 6–24 h κατά ESO-ESMINT 2019
