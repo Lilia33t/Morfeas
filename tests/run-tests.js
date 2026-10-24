@@ -1125,7 +1125,7 @@ check("v436: Part 12: paediatric hyperkalaemia, ERC PLS doses, newborn adrenalin
 
 check("v437: Part 13: peds caps, ETT rounding, calcium gluconate row",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String(run('(function(){ const g=DRUGS.find(d=>d.doses.some(x=>/gluconate 10%, hyperkalaemia ONLY/.test(x.en))); const a=DRUGS.find(d=>d.id==="adenosine").doses.some(x=>x.lo===0.3&&/ERC PLS 2025/.test(x.en)); return !!g && a && doseText({lo:0.1,hi:0.1,unit:"mg/kg"},-5,"en")==="0.1 mg/kg" && PEDS_VITALS.length===13; })()') === true && /Math.floor\(p.ettCuffed \* 2\) \/ 2/.test(T) && /Math.min\(4 \* w, 200\)/.test(T) && /Math.min\(0.01 \* w, 1\)/.test(T) && /Math.min\(Math.max\(0.02 \* w, 0.1\), 0.5\)/.test(T) && !/50% of the adult dose/.test(T)); })(), "true");
+    return String(run('(function(){ const g=DRUGS.find(d=>d.doses.some(x=>/gluconate 10%, hyperkalaemia ONLY/.test(x.en))); const a=DRUGS.find(d=>d.id==="adenosine").doses.some(x=>x.lo===0.3&&/ERC PLS 2025/.test(x.en)); return !!g && a && doseText({lo:0.1,hi:0.1,unit:"mg/kg"},-5,"en")==="0.1 mg/kg" && PEDS_VITALS.length===6; })()') === true && /Math.floor\(p.ettCuffed \* 2\) \/ 2/.test(T) && /Math.min\(4 \* w, 200\)/.test(T) && /Math.min\(0.01 \* w, 1\)/.test(T) && /Math.min\(Math.max\(0.02 \* w, 0.1\), 0.5\)/.test(T) && !/50% of the adult dose/.test(T)); })(), "true");
 
 check("v438: SmPC alignment: naloxone, vasopressin, sugammadex",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
@@ -1166,6 +1166,46 @@ check("v446: adult TBI hypertonic note per NCS 2020, no adult dose",
 check("v447: AHA/ACC 2024 valve echo wording",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
     return String(!/echo if none within the past year/.test(T) && /moderate-to-severe valvular heart disease: transthoracic/.test(T)); })(), "true");
+
+check("v448: cuffed ETT 3/5/7/15 y = 4.0/4.5/5.0/7.0; no paediatric calcium row allows arrest; hyperkalaemia adult labels",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('[3,5,7,15].map(a=>Math.floor(pedsCalc(a,0).ettCuffed*2)/2).join() + "|" + DRUGS.some(d=>d.doses.some(x=>/^Children/.test(x.en) && /calcium|gluconate|CaCl/i.test(x.en) && /arrest/.test(x.en) && !/NOT in arrest|NO calcium/.test(x.en))) + "|" + /SHIFT \u2014 ADULTS/.test(CHECKLISTS.find(c=>c.id==="hyperkalaemia").stepsEn.join())') === '4,4.5,5,7|false|true'); })(), "true");
+
+check("v449: ESO notes on thrombectomy; myasthenia source year; Leventhal wording",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/do not intensively lower SBP below 140 mmHg/.test(T) && !/Orphananesthesia 2019/.test(T) && /coexisting pulmonary disease/.test(T) && /Khan 2024/.test(T)); })(), "true");
+
+check("v450: vascular card: no unsourced MAP/shunt claim, no device-specific NIRS thresholds, ESVS 2026 CSF",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(!/reduced shunt need by 80%/.test(T) && !/NIRS \\u2014 \\u0394rSO\\u2082 \\(Foresight\\)/.test(T) && !/Foresight/.test(T) && /ESVS 2026/.test(T) && /Mille 2004/.test(T)); })(), "true");
+
+check("v451: carotid per ESVS 2023: no routine carotid sinus blockade; protamine; post-CEA BP 3\u20136 h",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(/routine carotid sinus nerve blockade NOT recommended/.test(T) && /consider protamine reversal/.test(T) && /first 3\\u20136 h/.test(T) && !/surgeon infiltrates, atropine ready/.test(T)); })(), "true");
+
+check("v452: paediatric vitals complete (no blanks), ERC PLS 2025 Table 2",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('PEDS_VITALS.every(v=>v.hr!=="\u2014" && v.rr!=="\u2014" && v.sbp!=="\u2014") && PEDS_VITALS[0].hr==="110\u2013180" && PEDS_VITALS[5].sbp==="90/120"') === true); })(), "true");
+
+check("v453: ERC ALS manual details in new checklists; thrombectomy footnote",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('(function(){ const g=id=>CHECKLISTS.find(c=>c.id===id).stepsEn.join(); return g("cardiac_surgery_arrest").includes("amiodarone 300 mg") && g("asthma_arrest").includes("8\u201310 breaths") && g("hypokalaemia").includes("4 mL (8 mmol)") && g("maternal_arrest").includes("0.5\u20131 mm smaller"); })()') === true && /Footnote \\u2014 European guidelines/.test(T)); })(), "true");
+
+check("v454: Greek uses \u03b1\u03c0\u03b9\u03bd\u03af\u03b4\u03c9\u03c3\u03b7, not \u03b5\u03ba\u03ba\u03ad\u03bd\u03c9\u03c3\u03b7, for shocks",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('JSON.stringify(CHECKLISTS) + JSON.stringify(DRUGS.map(d=>d.doses))').replace(/εκκένωση του αιματώματος/g,'').search(/εκκεν[ώω]σ/) < 0 && !/\\u03B5\\u03BA\\u03BA\\u03B5\\u03BD\\u03CE\\u03C3/.test(T)); })(), "true");
+
+check("v455: glucose shown in mg/dL, not mmol/L",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('JSON.stringify(CHECKLISTS) + JSON.stringify(DRUGS)').indexOf('<7 mmol/L') < 0 && !/6\\u201310 mmol\/L/.test(T) && /acceptable up to 216 mg\/dL/.test(T)); })(), "true");
+
+check("v456: status epilepticus checklist doses and maxima",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('(function(){ const c=CHECKLISTS_SHOWN.find(x=>x.id==="status_epilepticus"); const t=c.stepsEn.join(); return !!c && c.stepsEl.length===c.stepsEn.length && t.includes("lorazepam 4 mg IV") && t.includes("levetiracetam 60 mg/kg (max 4500 mg)") && t.includes("phenytoin 20 mg/kg (max 2000 mg)") && t.includes("valproate 40 mg/kg (max 3000 mg)"); })()') === true); })(), "true");
+
+check("v457: status epilepticus lacosamide 5 mg/kg with AV block contraindication",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('(function(){ const c=CHECKLISTS_SHOWN.find(x=>x.id==="status_epilepticus"); const t=c.stepsEn.join(); return c.stepsEl.length===8 && c.stepsEn.length===8 && t.includes("Lacosamide (DGN 2020)") && t.includes("5 mg/kg IV over 15") && t.includes("AV block") && c.srcEn.includes("AWMF 030-079"); })()') === true); })(), "true");
 
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
