@@ -381,43 +381,81 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
   };
   const readerStop = () => { try { window.speechSynthesis.cancel(); } catch (e) {} setReader(false); };
   useEffect(() => () => { try { window.speechSynthesis.cancel(); } catch (e) {} }, []);
-  // Metronome: Web Audio clicks scheduled slightly ahead for steady timing, plus a flashing dot for
-  // noisy or silent rooms. It starts only on a tap (browsers require one) and stops when the screen closes.
+  // Metronome. On iPhone, Web Audio is silenced by the ring/silent switch and often stays mute unless
+  // a sound starts during the tap, so the clicks are rendered once into a ~12 s WAV that an <audio>
+  // element loops: media playback ignores the silent switch, like music. Web Audio (clicks scheduled
+  // slightly ahead) is the fallback. A flashing dot shows the beat in noisy or silent rooms. It starts
+  // only on a tap (browsers require one) and stops when the screen closes.
   const [metro, setMetro] = useState(0);
   const [metroRate, setMetroRate] = useState(110);
-  const audioRef = useRef({ ctx: null, timer: null });
-  const stopMetro = () => { const a = audioRef.current; if (a.timer) clearInterval(a.timer); a.timer = null; setMetro(0); };
-  const startMetro = (bpm) => {
+  const audioRef = useRef({ ctx: null, timer: null, el: null, url: null });
+  const clickWav = (bpm) => {
+    const sr = 16000, period = Math.round(sr * 60 / bpm), beats = Math.max(8, Math.round(12 * bpm / 60)), n = period * beats;
+    const buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+    const str = (o, t) => { for (let i = 0; i < t.length; i++) v.setUint8(o + i, t.charCodeAt(i)); };
+    str(0, "RIFF"); v.setUint32(4, 36 + n * 2, true); str(8, "WAVE"); str(12, "fmt "); v.setUint32(16, 16, true);
+    v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true);
+    v.setUint16(32, 2, true); v.setUint16(34, 16, true); str(36, "data"); v.setUint32(40, n * 2, true);
+    const len = Math.round(sr * 0.06);
+    for (let b = 0; b < beats; b++) for (let i = 0; i < len; i++) {
+      const t = i / sr, env = Math.min(1, t / 0.003) * Math.exp(-t / 0.015);
+      v.setInt16(44 + (b * period + i) * 2, Math.round((Math.sin(2 * Math.PI * 1100 * t) >= 0 ? 1 : -1) * 0.6 * env * 32767), true);
+    }
+    return new Blob([buf], { type: "audio/wav" });
+  };
+  const stopSound = () => {
     const a = audioRef.current;
     if (a.timer) clearInterval(a.timer);
     a.timer = null;
-    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
+    if (a.el) { try { a.el.pause(); } catch (e) {} }
+    if (a.url) { try { URL.revokeObjectURL(a.url); } catch (e) {} a.url = null; }
+  };
+  const webAudioClicks = (bpm) => {
+    const a = audioRef.current;
     try {
       const AC = window.AudioContext || window.webkitAudioContext;
-      if (AC) {
-        if (!a.ctx) a.ctx = new AC();
-        const ctx = a.ctx;
-        if (ctx.state === "suspended") ctx.resume();
-        const period = 60 / bpm;
-        let next = ctx.currentTime + 0.06;
-        a.timer = setInterval(() => {
-          while (next < ctx.currentTime + 0.15) {
-            const o = ctx.createOscillator(), g = ctx.createGain();
-            o.type = "square";
-            o.frequency.value = 1100;
-            g.gain.setValueAtTime(0.0001, next);
-            g.gain.exponentialRampToValueAtTime(0.35, next + 0.003);
-            g.gain.exponentialRampToValueAtTime(0.0001, next + 0.06);
-            o.connect(g); g.connect(ctx.destination);
-            o.start(next); o.stop(next + 0.07);
-            next += period;
-          }
-        }, 25);
-      }
+      if (!AC) return;
+      if (!a.ctx) a.ctx = new AC();
+      const ctx = a.ctx;
+      if (ctx.state !== "running") ctx.resume();
+      const period = 60 / bpm;
+      let next = ctx.currentTime + 0.06;
+      a.timer = setInterval(() => {
+        while (next < ctx.currentTime + 0.15) {
+          const o = ctx.createOscillator(), g = ctx.createGain();
+          o.type = "square";
+          o.frequency.value = 1100;
+          g.gain.setValueAtTime(0.0001, next);
+          g.gain.exponentialRampToValueAtTime(0.35, next + 0.003);
+          g.gain.exponentialRampToValueAtTime(0.0001, next + 0.06);
+          o.connect(g); g.connect(ctx.destination);
+          o.start(next); o.stop(next + 0.07);
+          next += period;
+        }
+      }, 25);
     } catch (e) {}
+  };
+  const stopMetro = () => { stopSound(); setMetro(0); };
+  const startMetro = (bpm) => {
+    const a = audioRef.current;
+    stopSound();
+    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
+    let started = false;
+    try {
+      if (typeof Audio !== "undefined" && typeof URL !== "undefined" && URL.createObjectURL) {
+        if (!a.el) a.el = new Audio();
+        a.url = URL.createObjectURL(clickWav(bpm));
+        a.el.loop = true;
+        a.el.src = a.url;
+        const p = a.el.play();
+        started = true;
+        if (p && p.catch) p.catch(() => { if (audioRef.current.url && !audioRef.current.timer) webAudioClicks(bpm); });
+      }
+    } catch (e) { started = false; }
+    if (!started) webAudioClicks(bpm);
     setMetro(bpm);
   };
-  useEffect(() => () => { const a = audioRef.current; if (a.timer) clearInterval(a.timer); try { a.ctx && a.ctx.close(); } catch (e) {} }, []);
+  useEffect(() => () => { stopSound(); try { audioRef.current.ctx && audioRef.current.ctx.close(); } catch (e) {} }, []);
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 500);
     let lock = null;

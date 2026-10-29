@@ -867,7 +867,7 @@ check("v371: transplant & FLACC lines restored with sources",
 
 check("v372: pregnancy steroids & myasthenia dosing restored with sources",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String(/24 0\/7 .u2013 33 6\/7 weeks at high risk of preterm delivery/.test(T) && /reduce the dose 2.u20138-fold/.test(T) && /ezt641/.test(T) && !/start at 10.u201320% of the dose/.test(T)); })(), "true");
+    return String(/24\+0 to 33\+6 weeks, at risk of preterm delivery within 7 days/.test(T) && /reduce the dose 2.u20138-fold/.test(T) && /ezt641/.test(T) && !/start at 10.u201320% of the dose/.test(T)); })(), "true");
 
 check("v373: renal/dialysis lines restored with sources",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
@@ -1255,6 +1255,22 @@ check("v468: reader: speech text spells out units, routes, ranges, ratios",
 check("v469: eight kept cards checked against their sources",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
     return String(!T.includes("CICO / RSI") && T.includes("TOFr < 0.4 (ASA 2023)") && T.includes("Math.min(0.07 * w, 5)") && T.includes("(SIBICC 2019)") && T.includes("per institutional protocol (EACTS 2024") && T.includes("protamine-to-heparin ratio < 1.0") && T.includes("8.3% versus 2.0%") && !T.includes("mPAP <35") && T.includes("(Miller, per Zhang 2021)") && !T.includes('id: "wedge"') && T.includes("FDA (septic shock): 0.05") && /id: "adr",[\s\S]{0,120}hi: 2,/.test(T) && T.includes("40 mcg IV every 2") && T.includes("doi:10.1093/ejcts/ezae354")); })(), "true");
+
+check("v470: home screen without the version/offline card; version still in About",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){var R=require("fs").readFileSync(require("path").join(__dirname,"..","src","root.js"),"utf8");return !/useOfflineStatus|Offline use is not supported/.test(R) && T.includes('version " + APP_VERSION');})()); })(), "true");
+
+check("v471: metronome plays a looping WAV through an audio element, Web Audio fallback",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(P.includes('a.el.loop = true') && P.includes('type: "audio/wav"') && P.includes('ctx.createOscillator()') && P.includes('navigator.audioSession.type = "playback"')); })(), "true");
+
+check("v472: antenatal corticosteroids 24+0 to 33+6 weeks, risk of delivery within 7 days (ACOG CO 713)",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(T.includes('24+0 to 33+6 weeks, at risk of preterm delivery within 7 days') && !T.includes('33 6/7 weeks at high risk')); })(), "true");
+
+check("v473: audit part 17: ASA depths and neostigmine cap, SIBICC Na, ACCP wording, flow as practice, EL/EN pairs matched",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String((function(){var D=T.replace(/\\u([0-9A-Fa-f]{4})/g,function(m,h){return String.fromCharCode(parseInt(h,16));});var re=/el \? "((?:[^"\\]|\\.)*)" : "((?:[^"\\]|\\.)*)"/g,m,bad=[];while((m=re.exec(D))){var a=m[1].length+1,b=m[2].length+1;if((a>40||b>40)&&(a/b>4||b/a>4))bad.push(m[1].slice(0,30));}return bad.length===0;})() && T.includes('v: "PTC 0 (ASA 2023)"') && T.includes("at minimal block") && T.includes("Na < 155 mmol/L (SIBICC 2019)") && T.includes("discuss minimally invasive surgery") && T.includes("usual practice, not a recommendation") && T.includes('"Vasoplegia"), " (') && T.includes("betamethasone may be considered") && T.includes("FFP is less effective (EACTS 2024)")); })(), "true");
 
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).

@@ -108,6 +108,10 @@ Do **not** create a new repository — it breaks the address of installed apps.
   standard-ALS arrest lists (VF/VT, asystole/PEA, pregnancy, asthma) add a
   2-minute cycle clock and the time since the last adrenaline (amber 3–5 min,
   red >5 min), as the lists themselves state (ERC 2025).
+- **Metronome** (arrest checklists, 100/110/120 per minute): the clicks are
+  rendered once into a ~12 s WAV that an `<audio>` element loops, so on iPhone
+  it plays as media and is heard even with the ring/silent switch on (volume =
+  media volume). Web Audio is the fallback. A flashing dot shows the beat.
 - **Reader** (crisis mode): the phone's text-to-speech reads the highlighted
   step; "Done → next" ticks it and reads the next one. `speechText()` in
   `src/formulas.js` spells out units, routes, ranges and ratios for the voice
@@ -139,7 +143,8 @@ Do **not** create a new repository — it breaks the address of installed apps.
   cards were checked point by point against their sources; cardiac, thoracic,
   neuro, spirometry and TOF were corrected with her approval and are now
   ordinary reviewed entries. Vascular (carotid clamp pressure), vasoactives
-  (dilutions) and the sedation calculator (naloxone 40 µg) stay "kept by
+  (dilutions), the sedation calculator (naloxone 40 µg) and two points of the
+  cardiac card (inotrope adrenaline range, Hct after CPB) stay "kept by
   decision".
 
 ## Known gaps
