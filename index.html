@@ -73,8 +73,22 @@
     #boot { background: #11161C; color: #E6EDF5; }
   }
   #boot svg { width: 54px; height: 54px; }
+  /* Printing a checklist: only the print copy (#aa-print) is shown, black on white, on A4. */
+  #aa-print { display: none; }
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    html, body { background: #fff !important; }
+    body > *:not(#aa-print) { display: none !important; }
+    #aa-print { display: block !important; color: #000; font-family: "Morfeas Sans", -apple-system, "Segoe UI", sans-serif; }
+  }
+  /* Respect the phone's "reduce motion" setting. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  }
   #boot .pulse { animation: dash 1.4s ease-in-out infinite; }
   @keyframes dash { 0%,100% { opacity:.35 } 50% { opacity:1 } }
+  /* Metronome dot in crisis mode: bright for the first half of each beat. */
+  @keyframes aa-beat { 0% { opacity: 1; transform: scale(1.25); } 50% { opacity: .25; transform: scale(1); } }
 </style>
 </head>
 <body>
@@ -113,6 +127,9 @@
   // Service worker for offline use
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
+      // A first install also activates while this page is open; that is not an
+      // update, so the banner is only for pages that already had a worker.
+      var hadController = !!navigator.serviceWorker.controller;
       navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {
         function showUpdateBanner() {
           if (document.getElementById("upd-banner")) return;
@@ -130,7 +147,7 @@
           var nw = reg.installing;
           if (!nw) return;
           nw.addEventListener("statechange", function () {
-            if (nw.state === "activated" && navigator.serviceWorker.controller) showUpdateBanner();
+            if (nw.state === "activated" && hadController) showUpdateBanner();
           });
         });
         // Re-check for updates when the app is reopened / brought to foreground

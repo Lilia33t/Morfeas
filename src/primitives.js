@@ -1,13 +1,15 @@
 function PatientBar(props) {
-  const w = parseFloat(props.weight) || 0, h = parseFloat(props.height) || 0, a = parseFloat(props.age) || 0;
   const el = props.lang === "el";
+  const chk = patientCheck(props.weight, props.age, props.height);
   const bad = [];
-  if (w && (w < 0.3 || w > 300)) bad.push(el ? "\u03B2\u03AC\u03C1\u03BF\u03C2" : "weight");
-  if (h && (h < 25 || h > 230)) bad.push(el ? "\u03CD\u03C8\u03BF\u03C2" : "height");
-  if (a && a > 120) bad.push(el ? "\u03B7\u03BB\u03B9\u03BA\u03AF\u03B1" : "age");
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(PatientBarCore, props), bad.length ? /* @__PURE__ */ React.createElement("div", { role: "alert", style: { fontSize: 12, color: S.red, fontWeight: 700, padding: "4px 4px 0" } }, "\u26A0 ", el ? "\u0395\u03BB\u03AD\u03B3\u03BE\u03C4\u03B5: " : "Check: ", bad.join(", "), el ? " \u03B5\u03BA\u03C4\u03CC\u03C2 \u03BB\u03BF\u03B3\u03B9\u03BA\u03CE\u03BD \u03BF\u03C1\u03AF\u03C9\u03BD" : " outside plausible limits") : null);
+  if (chk.w) bad.push(el ? "\u03B2\u03AC\u03C1\u03BF\u03C2 (0.3\u2013300 kg)" : "weight (0.3\u2013300 kg)");
+  if (chk.h) bad.push(el ? "\u03CD\u03C8\u03BF\u03C2 (25\u2013230 cm)" : "height (25\u2013230 cm)");
+  if (chk.a) bad.push(el ? "\u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 (0\u2013120 \u03AD\u03C4\u03B7)" : "age (0\u2013120 y)");
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(PatientBarCore, { ...props, bad: chk }), bad.length ? /* @__PURE__ */ React.createElement("div", { role: "alert", style: { fontSize: 13, color: S.red, fontWeight: 700, padding: "4px 4px 0", lineHeight: 1.35 } }, "\u26A0 ", el ? "\u0395\u03BA\u03C4\u03CC\u03C2 \u03BB\u03BF\u03B3\u03B9\u03BA\u03CE\u03BD \u03BF\u03C1\u03AF\u03C9\u03BD: " : "Outside plausible limits: ", bad.join(", "), el ? " \u2014 \u03BA\u03B1\u03BD\u03AD\u03BD\u03B1\u03C2 \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B4\u03B5\u03BD \u03C4\u03B7 \u03C7\u03C1\u03B7\u03C3\u03B9\u03BC\u03BF\u03C0\u03BF\u03B9\u03B5\u03AF \u03BC\u03AD\u03C7\u03C1\u03B9 \u03BD\u03B1 \u03B4\u03B9\u03BF\u03C1\u03B8\u03C9\u03B8\u03B5\u03AF" : " \u2014 no calculation uses this value until it is corrected") : null);
 }
-function PatientBarCore({ lang, weight, setWeight, age, setAge, height, setHeight, sex, setSex }) {
+function PatientBarCore({ lang, weight, setWeight, age, setAge, height, setHeight, sex, setSex, bad }) {
+  const B = bad || {};
+  const badStyle = (x) => x ? { border: `2px solid ${S.red}`, background: S.tintDanger } : null;
   const t = T[lang];
   const fieldStyle = { ...inputStyle, background: S.cardAlt, border: `1.5px solid ${S.line}`, color: S.ink, padding: "8px 6px", fontSize: 14 };
   const [ageUnit, setAgeUnit] = useState("y");
@@ -27,35 +29,35 @@ function PatientBarCore({ lang, weight, setWeight, age, setAge, height, setHeigh
   return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, background: S.card, padding: "10px 12px", borderRadius: 16, boxShadow: "0 1px 3px rgba(80,64,48,0.06)", border: `1.5px solid ${S.line}` } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "center" } }, /* @__PURE__ */ React.createElement("svg", { width: "24", height: "24", viewBox: "0 0 26 26", style: { flexShrink: 0 } }, /* @__PURE__ */ React.createElement("polyline", { points: "1,15 6,15 8,8 11,21 14,11 16,15 25,15", fill: "none", stroke: S.teal, strokeWidth: "2", strokeLinejoin: "round", strokeLinecap: "round" })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, display: "flex", gap: 6 } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", flex: 1.15, minWidth: 0 } }, /* @__PURE__ */ React.createElement(
     "input",
     {
-      type: "number",
+      type: "text",
       inputMode: "decimal",
       value: weight,
-      onChange: (e) => setWeight(e.target.value),
+      onChange: (e) => setWeight(numIn(e.target.value)),
       placeholder: t.weight,
       "aria-label": t.weight,
-      style: { ...fieldStyle, width: "100%", paddingRight: 25 }
+      style: { ...fieldStyle, width: "100%", paddingRight: 25, ...badStyle(B.w) }, "aria-invalid": B.w ? "true" : void 0
     }
   ), /* @__PURE__ */ React.createElement("span", { "aria-hidden": "true", style: { position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)", fontSize: 9.5, fontWeight: 700, color: S.muted, pointerEvents: "none" } }, "kg")), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", flex: 1.1, minWidth: 0 } }, /* @__PURE__ */ React.createElement(
     "input",
     {
-      type: "number",
+      type: "text",
       inputMode: "decimal",
       value: ageDisplay,
-      onChange: (e) => onAgeChange(e.target.value),
+      onChange: (e) => onAgeChange(numIn(e.target.value)),
       placeholder: ageUnit === "m" ? lang === "el" ? "\u0397\u03BB\u03B9\u03BA\u03AF\u03B1 (\u03BC)" : "Age (mo)" : t.age,
       "aria-label": t.age,
-      style: { ...fieldStyle, width: "100%", paddingRight: 25 }
+      style: { ...fieldStyle, width: "100%", paddingRight: 25, ...badStyle(B.a) }, "aria-invalid": B.a ? "true" : void 0
     }
   ), /* @__PURE__ */ React.createElement("span", { "aria-hidden": "true", style: { position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)", fontSize: 9.5, fontWeight: 700, color: S.muted, pointerEvents: "none" } }, ageUnit === "m" ? (lang === "el" ? "\u03BC\u03AE\u03BD." : "mo") : (lang === "el" ? "\u03AD\u03C4\u03B7" : "y"))), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", flex: 1.1, minWidth: 0 } }, /* @__PURE__ */ React.createElement(
     "input",
     {
-      type: "number",
+      type: "text",
       inputMode: "decimal",
       value: height,
-      onChange: (e) => setHeight(e.target.value),
+      onChange: (e) => setHeight(numIn(e.target.value)),
       placeholder: t.height,
       "aria-label": t.height,
-      style: { ...fieldStyle, width: "100%", paddingRight: 25 }
+      style: { ...fieldStyle, width: "100%", paddingRight: 25, ...badStyle(B.h) }, "aria-invalid": B.h ? "true" : void 0
     }
   ), /* @__PURE__ */ React.createElement("span", { "aria-hidden": "true", style: { position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)", fontSize: 9.5, fontWeight: 700, color: S.muted, pointerEvents: "none" } }, "cm")), /* @__PURE__ */ React.createElement(
     "button",
@@ -157,8 +159,79 @@ const doseAgeGroup = (ds) => {
   if (a && !p && !/adolescent/i.test(t)) return "adult";
   return null;
 };
-function MedsTab({ lang, weight, height, sex, age, focus }) {
+// Favourites: tools, drugs and checklists in one list, at most FAV_MAX, kept
+// on the phone. Every tab reads the same store; a window event keeps them in step.
+const FAV_MAX = 10;
+const FAV_EVT = "aa-favs";
+function favsGet() {
+  let f = storeGet("aa_favs");
+  if (!Array.isArray(f)) {
+    // First run after the update: carry over the old tool-only favourites.
+    const old = storeGet("aa_tool_favs") || [];
+    f = (Array.isArray(old) ? old : []).map((id) => ({ k: "tool", id })).slice(0, FAV_MAX);
+    storeSet("aa_favs", f);
+  }
+  return f.filter((x) => x && x.k && x.id);
+}
+function useFavs() {
+  const [favs, setFavs] = useState(favsGet);
+  useEffect(() => {
+    const on = () => setFavs(favsGet());
+    window.addEventListener(FAV_EVT, on);
+    return () => window.removeEventListener(FAV_EVT, on);
+  }, []);
+  const isFav = (k, id) => favs.some((f) => f.k === k && f.id === id);
+  // Returns false when the list is full and nothing was added.
+  const toggle = (k, id) => {
+    const cur = favsGet();
+    let next;
+    if (cur.some((f) => f.k === k && f.id === id)) next = cur.filter((f) => !(f.k === k && f.id === id));
+    else {
+      if (cur.length >= FAV_MAX) return false;
+      next = cur.concat({ k, id });
+    }
+    storeSet("aa_favs", next);
+    setFavs(next);
+    try { window.dispatchEvent(new Event(FAV_EVT)); } catch (e) {}
+    return true;
+  };
+  return { favs, isFav, toggle };
+}
+// Where a favourite lives and what it is called, in the current language.
+function favInfo(f, lang) {
+  const el = lang === "el";
+  try {
+    if (f.k === "drug") { const d = DRUGS.find((x) => x.id === f.id); return d ? { tab: "meds", title: d.name, kind: "drug" } : null; }
+    if (f.k === "list") { const c = CHECKLISTS_SHOWN.find((x) => x.id === f.id); return c ? { tab: "lists", title: el ? c.titleEl : c.titleEn, kind: "list", color: c.color } : null; }
+    if (f.k === "tool") { const t = TOOL_SECTIONS.find((x) => x.id === f.id); return t && toolVisible(t.id) ? { tab: "tools", title: el ? t.el : t.en, kind: "tool" } : null; }
+  } catch (e) {}
+  return null;
+}
+function FavStar({ k, id, lang, fav }) {
+  const el = lang === "el";
+  const [full, setFull] = useState(false);
+  const on = fav.isFav(k, id);
+  const click = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!fav.toggle(k, id)) { setFull(true); setTimeout(() => setFull(false), 2500); }
+  };
+  const label = on ? (el ? "\u0391\u03C6\u03B1\u03AF\u03C1\u03B5\u03C3\u03B7 \u03B1\u03C0\u03CC \u03C4\u03B1 \u03B1\u03B3\u03B1\u03C0\u03B7\u03BC\u03AD\u03BD\u03B1" : "Remove from favourites") : (el ? "\u03A0\u03C1\u03BF\u03C3\u03B8\u03AE\u03BA\u03B7 \u03C3\u03C4\u03B1 \u03B1\u03B3\u03B1\u03C0\u03B7\u03BC\u03AD\u03BD\u03B1" : "Add to favourites");
+  return React.createElement("span", { role: "button", tabIndex: 0, "aria-pressed": on ? "true" : "false", "aria-label": label, title: label, onClick: click, onKeyDown: (e) => { if (e.key === "Enter" || e.key === " ") click(e); }, style: { display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4, minWidth: 40, minHeight: 40, margin: "-8px 0", fontSize: 21, lineHeight: 1, cursor: "pointer", color: on ? S.amber : S.muted, flexShrink: 0 } },
+    full && React.createElement("span", { role: "status", style: { fontSize: 11.5, fontWeight: 800, color: S.red, whiteSpace: "nowrap" } }, el ? "\u03AD\u03C9\u03C2 " + FAV_MAX : "max " + FAV_MAX),
+    on ? "\u2605" : "\u2606");
+}
+// Favourites of one kind as chips at the top of their tab.
+function FavChips({ k, lang, fav, onPick }) {
+  const items = fav.favs.filter((f) => f.k === k).map((f) => ({ id: f.id, info: favInfo(f, lang) })).filter((x) => x.info);
+  if (!items.length) return null;
+  return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 6 } },
+    React.createElement("div", { style: { fontWeight: 800, fontSize: 12, color: S.muted, letterSpacing: 0.6, padding: "2px 4px 0" } }, upGr("\u2605 " + (lang === "el" ? "\u0391\u03B3\u03B1\u03C0\u03B7\u03BC\u03AD\u03BD\u03B1" : "Favourites"))),
+    React.createElement("div", { style: { display: "flex", gap: 6, flexWrap: "wrap" } }, items.map((x) => React.createElement("button", { key: x.id, onClick: () => onPick(x.id), style: { padding: "9px 12px", borderRadius: 10, border: `1.5px solid ${S.line}`, background: S.card, fontSize: 14, fontWeight: 700, color: S.ink, cursor: "pointer", fontFamily: "inherit", minHeight: 40 } }, x.info.title))));
+}
+function MedsTab({ lang, weight, height, sex, age, focus, wBad }) {
   const t = T[lang];
+  const fav = useFavs();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("all");
   const [open, setOpen] = useState(null);
@@ -207,7 +280,7 @@ function MedsTab({ lang, weight, height, sex, age, focus }) {
     background: cat === c.id ? S.teal : S.card,
     color: cat === c.id ? S.card : S.muted,
     boxShadow: cat === c.id ? "none" : `inset 0 0 0 1.5px ${S.line}`
-  } }, c[lang]))), !w && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: S.amber, fontWeight: 600, padding: "2px 4px" } }, "\u2696 ", t.weightNeeded), list.map((d) => {
+  } }, c[lang]))), wBad ? /* @__PURE__ */ React.createElement("div", { role: "alert", style: { fontSize: 14, color: S.red, fontWeight: 800, padding: "8px 10px", border: `2px solid ${S.red}`, borderRadius: 10, background: S.tintDanger } }, "\u26A0 ", lang === "el" ? "\u0392\u03AC\u03C1\u03BF\u03C2 \u03B5\u03BA\u03C4\u03CC\u03C2 \u03BB\u03BF\u03B3\u03B9\u03BA\u03CE\u03BD \u03BF\u03C1\u03AF\u03C9\u03BD \u2014 \u03B4\u03B5\u03BD \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9 \u03BA\u03B1\u03BC\u03AF\u03B1 \u03B4\u03CC\u03C3\u03B7. \u0394\u03B9\u03BF\u03C1\u03B8\u03CE\u03C3\u03C4\u03B5 \u03C4\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2." : "Weight outside plausible limits \u2014 no dose is calculated. Correct the weight.") : !w && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: S.amber, fontWeight: 600, padding: "2px 4px" } }, "\u2696 ", t.weightNeeded), !q && /* @__PURE__ */ React.createElement(FavChips, { k: "drug", lang, fav, onPick: (id) => { setQ(""); setCat("all"); setOpen(id); } }), list.map((d) => {
     const isOpen = open === d.id;
     return /* @__PURE__ */ React.createElement("div", { key: d.id, ref: focus && focus.id === d.id ? focusRef : null, style: { background: S.card, borderRadius: 14, border: `1.5px solid ${isOpen ? S.teal : S.line}`, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpen(isOpen ? null : d.id), style: {
       width: "100%",
@@ -218,15 +291,17 @@ function MedsTab({ lang, weight, height, sex, age, focus }) {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
+      gap: 8,
+      textAlign: "left",
       fontFamily: "inherit"
-    } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 15.5, color: S.ink } }, d.name), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 10 } }, d.doses.filter((ds) => !isPendingErc(ds)).map((ds, i) => {
+    } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 15.5, color: S.ink, minWidth: 0, overflowWrap: "anywhere" } }, d.name), /* @__PURE__ */ React.createElement("span", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ React.createElement(FavStar, { k: "drug", id: d.id, lang, fav }), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A"))), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 10 } }, d.doses.filter((ds) => !isPendingErc(ds)).map((ds, i) => {
       const wd = wFor(ds);
       const dt = doseText(ds, wd, lang);
       const isStr = typeof dt === "string";
       const og = w > 0 && !ds.fixed ? offAge(ds) : null;
       const ageNote = og ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 600 } }, og === "peds" ? (lang === "el" ? "\u0394\u03B5\u03BD \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9 \u2014 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC, \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2 \u226518 \u03B5\u03C4\u03CE\u03BD" : "Not calculated \u2014 paediatric row, patient \u226518 years") : (lang === "el" ? "\u0394\u03B5\u03BD \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9 \u2014 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03B5\u03BD\u03AE\u03BB\u03B9\u03BA\u03B5\u03C2, \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2 <18 \u03B5\u03C4\u03CE\u03BD" : "Not calculated \u2014 adult row, patient <18 years")) : null;
       const ibwNote = !og && ds.basis === "ibw" && w > 0 ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: wd ? S.muted : S.amber, fontWeight: 700 } }, wd ? (lang === "el" ? "\u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03C3\u03B5 \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 %s kg (consensus: \u03CD\u03C8\u03BF\u03C2 \u2212 100 \u2642 / \u2212 105 \u2640)" : "Calculated on ideal body weight %s kg (consensus: height \u2212 100 \u2642 / \u2212 105 \u2640)").replace("%s", fmt(wd)) + (wd > w ? (lang === "el" ? " \u00B7 \u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 \u03B5\u03AF\u03BD\u03B1\u03B9 \u03BC\u03B9\u03BA\u03C1\u03CC\u03C4\u03B5\u03C1\u03BF" : " \u00B7 actual weight is lower") : "") : (lang === "el" ? "\u03A3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03CD\u03C8\u03BF\u03C2 \u03B3\u03B9\u03B1 \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC \u03C3\u03B5 \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2" : "Enter height to calculate on ideal body weight")) : null;
-      return /* @__PURE__ */ React.createElement("div", { key: i, style: { background: S.bg, borderRadius: 10, padding: "9px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: S.muted, fontWeight: 600, letterSpacing: 0.4 } }, upGr(ds[lang])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 4 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14.5, color: S.ink } }, isStr ? emphNums(dt) : dt.base), !isStr && wd > 0 && /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 16.5, color: dt.capped ? S.amber : S.teal, fontVariantNumeric: "tabular-nums" } }, "= ", dt.calc, dt.capped ? ` (${t.maxLabel})` : "")), ageNote, ibwNote, ds.max && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 600 } }, t.maxLabel, ": ", ds.max, " ", ds.unit.replace("/kg", "")));
+      return /* @__PURE__ */ React.createElement("div", { key: i, style: { background: S.bg, borderRadius: 10, padding: "9px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.muted, fontWeight: 700, letterSpacing: 0.4 } }, upGr(ds[lang])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 4 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14.5, color: S.ink, minWidth: 0, flex: "1 1 auto" } }, isStr ? emphNums(dt) : dt.base), !isStr && wd > 0 && /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 16.5, color: dt.capped ? S.amber : S.teal, fontVariantNumeric: "tabular-nums" } }, "= ", dt.calc, dt.capped ? ` (${t.maxLabel})` : "")), !isStr && wd > 0 && dt.expl && /* @__PURE__ */ React.createElement("div", { "aria-label": lang === "el" ? "\u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2" : "Calculation", style: { fontSize: 13, color: dt.capped ? S.amber : S.muted, fontWeight: 700, fontVariantNumeric: "tabular-nums", marginTop: 2 } }, dt.expl), ageNote, ibwNote, ds.max && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: S.muted, fontWeight: 600 } }, t.maxLabel, ": ", ds.max, " ", ds.unit.replace("/kg", "")));
     }), (() => {
       const ns = noteSections(lang === "el" ? d.notesEl : d.notesEn);
       if (!ns) return /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: S.ink, lineHeight: 1.45 } }, /* @__PURE__ */ React.createElement("strong", { style: { color: S.teal } }, t.notes, ": "), lang === "el" ? d.notesEl : d.notesEn);
@@ -236,12 +311,113 @@ function MedsTab({ lang, weight, height, sex, age, focus }) {
 }
 // Crisis mode: one checklist full-screen, large text, high contrast, running timer and event marks,
 // screen kept awake where the browser allows it. Steps share the tick state of the Lists tab.
+// Arrest checklists get two more clocks: the 2-minute CPR cycle and the time since the last
+// adrenaline. Both intervals are in the checklists themselves ("\u039A\u03CD\u03BA\u03BB\u03BF\u03B9 2 min", "q3\u20135 min", ERC 2025).
+// Adrenaline colouring applies only where the list gives standard ALS adrenaline every 3\u20135 min.
+// Only lists that follow the standard ALS algorithm (VF/VT, asystole/PEA, and pregnancy and asthma, which state
+// "standard BLS/ALS"); the cardiac-surgery list has its own sequence (3 shocks, resternotomy <5 min) and is left out.
+const CRISIS_CYCLE = { vfvt: 1, asystole_pea: 1, maternal_arrest: 1, asthma_arrest: 1 };
+const CRISIS_ADR_35 = { vfvt: 1, asystole_pea: 1, maternal_arrest: 1, asthma_arrest: 1 };
+const CRISIS_TTL = 12 * 3600 * 1e3;
+// Compression metronome on every checklist with chest compressions. Rate 100\u2013120/min as the
+// arrest checklists state (ERC 2025); 110 is the middle of the range.
+const CRISIS_METRO = { vfvt: 1, asystole_pea: 1, maternal_arrest: 1, asthma_arrest: 1, cardiac_surgery_arrest: 1, lvad_arrest: 1 };
+const METRO_RATES = [100, 110, 120];
 function CrisisMode({ c, lang, done, toggle, onClose }) {
   const el = lang === "el";
   const steps = el ? c.stepsEl : c.stepsEn;
-  const [t0] = useState(() => Date.now());
+  const key = "aa_crisis_" + c.id;
+  // Timer, marks, cycle and adrenaline times survive closing the screen or switching tabs (12 h).
+  const [st, setSt] = useState(() => {
+    const saved = storeGet(key);
+    return saved && saved.t0 ? saved : { t0: Date.now(), marks: [], cyc: Date.now(), adr: [] };
+  });
+  const save = (next) => { setSt(next); storeSet(key, next, CRISIS_TTL); };
+  useEffect(() => { storeSet(key, st, CRISIS_TTL); }, []);
   const [now, setNow] = useState(() => Date.now());
-  const [marks, setMarks] = useState([]);
+  const [askRestart, setAskRestart] = useState(false);
+  // Reader (as in the QRH): the phone's own voice reads the highlighted step; "Next" ticks it and
+  // reads the following one. Text-to-speech runs on the device, so it works offline once a voice is installed.
+  const canSpeak = typeof window !== "undefined" && "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
+  const [reader, setReader] = useState(false);
+  const [voiceNote, setVoiceNote] = useState("");
+  const stepRefs = useRef([]);
+  const pickVoice = () => {
+    try {
+      const vs = window.speechSynthesis.getVoices() || [];
+      if (!vs.length) return null;
+      const L = (v) => String(v.lang || "").toLowerCase().replace("_", "-");
+      return el ? (vs.find((v) => L(v).startsWith("el")) || false) : (vs.find((v) => L(v) === "en-gb") || vs.find((v) => L(v).startsWith("en")) || false);
+    } catch (e) { return null; }
+  };
+  const say = (text) => {
+    if (!canSpeak) return;
+    try {
+      const ss = window.speechSynthesis;
+      ss.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = el ? "el-GR" : "en-GB";
+      u.rate = 0.95;
+      const v = pickVoice();
+      if (v) u.voice = v;
+      if (v === false) setVoiceNote(el ? "\u0394\u03B5\u03BD \u03B2\u03C1\u03AD\u03B8\u03B7\u03BA\u03B5 \u03B5\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AE \u03C6\u03C9\u03BD\u03AE \u03C3\u03C4\u03BF \u03BA\u03B9\u03BD\u03B7\u03C4\u03CC \u2014 \u03B5\u03B3\u03BA\u03B1\u03C4\u03B1\u03C3\u03C4\u03AE\u03C3\u03C4\u03B5 \u03C4\u03B7\u03BD \u03B1\u03C0\u03CC \u03C4\u03B9\u03C2 \u03C1\u03C5\u03B8\u03BC\u03AF\u03C3\u03B5\u03B9\u03C2 (\u03A0\u03C1\u03BF\u03C3\u03B2\u03B1\u03C3\u03B9\u03BC\u03CC\u03C4\u03B7\u03C4\u03B1 / \u039C\u03B5\u03C4\u03B1\u03C4\u03C1\u03BF\u03C0\u03AE \u03BA\u03B5\u03B9\u03BC\u03AD\u03BD\u03BF\u03C5 \u03C3\u03B5 \u03BF\u03BC\u03B9\u03BB\u03AF\u03B1)." : "No English voice found on this phone \u2014 install one in the phone's settings.");
+      ss.speak(u);
+    } catch (e) {}
+  };
+  const readStep = (i, intro) => {
+    if (i < 0) { say(el ? "\u03A4\u03AD\u03BB\u03BF\u03C2 \u03C4\u03B7\u03C2 \u03BB\u03AF\u03C3\u03C4\u03B1\u03C2." : "End of the checklist."); return; }
+    // A step that already names its own step (e.g. "STEP 1") is not numbered again.
+    const own = /^(\u0392\u0397\u039C\u0391|STEP)\s/i.test(steps[i]);
+    say((intro ? speechText(el ? c.titleEl : c.titleEn, lang) + ". " : "") + (own ? "" : (el ? "\u0392\u03AE\u03BC\u03B1 " : "Step ") + (i + 1) + ". ") + speechText(steps[i], lang));
+    try { const n = stepRefs.current[i]; if (n) n.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) {}
+  };
+  const readerNext = () => {
+    if (next < 0) { readStep(-1); return; }
+    toggle(c.id, next);
+    let j = -1;
+    for (let k = next + 1; k < steps.length; k++) if (!done[c.id + ":" + k]) { j = k; break; }
+    if (j < 0) for (let k = 0; k < next; k++) if (!done[c.id + ":" + k]) { j = k; break; }
+    readStep(j);
+  };
+  const readerStop = () => { try { window.speechSynthesis.cancel(); } catch (e) {} setReader(false); };
+  useEffect(() => () => { try { window.speechSynthesis.cancel(); } catch (e) {} }, []);
+  // Metronome: Web Audio clicks scheduled slightly ahead for steady timing, plus a flashing dot for
+  // noisy or silent rooms. It starts only on a tap (browsers require one) and stops when the screen closes.
+  const [metro, setMetro] = useState(0);
+  const [metroRate, setMetroRate] = useState(110);
+  const audioRef = useRef({ ctx: null, timer: null });
+  const stopMetro = () => { const a = audioRef.current; if (a.timer) clearInterval(a.timer); a.timer = null; setMetro(0); };
+  const startMetro = (bpm) => {
+    const a = audioRef.current;
+    if (a.timer) clearInterval(a.timer);
+    a.timer = null;
+    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) {
+        if (!a.ctx) a.ctx = new AC();
+        const ctx = a.ctx;
+        if (ctx.state === "suspended") ctx.resume();
+        const period = 60 / bpm;
+        let next = ctx.currentTime + 0.06;
+        a.timer = setInterval(() => {
+          while (next < ctx.currentTime + 0.15) {
+            const o = ctx.createOscillator(), g = ctx.createGain();
+            o.type = "square";
+            o.frequency.value = 1100;
+            g.gain.setValueAtTime(0.0001, next);
+            g.gain.exponentialRampToValueAtTime(0.35, next + 0.003);
+            g.gain.exponentialRampToValueAtTime(0.0001, next + 0.06);
+            o.connect(g); g.connect(ctx.destination);
+            o.start(next); o.stop(next + 0.07);
+            next += period;
+          }
+        }, 25);
+      }
+    } catch (e) {}
+    setMetro(bpm);
+  };
+  useEffect(() => () => { const a = audioRef.current; if (a.timer) clearInterval(a.timer); try { a.ctx && a.ctx.close(); } catch (e) {} }, []);
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 500);
     let lock = null;
@@ -251,36 +427,102 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
   const mmss = (ms) => { const s = Math.max(0, Math.floor(ms / 1000)); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
   const nDone = steps.filter((_, i) => done[c.id + ":" + i]).length;
   const next = steps.findIndex((_, i) => !done[c.id + ":" + i]);
+  const marks = st.marks || [];
   const lastMark = marks.length ? marks[marks.length - 1] : null;
-  const BG = "#0E1B30", CARD = "#17294A", INK = "#FFFFFF", MUTED = "#B9C8DC";
+  const BG = "#0E1B30", CARD = "#17294A", INK = "#FFFFFF", MUTED = "#B9C8DC", RED = "#FF8A80", AMBER = "#FFC46B";
   const btn = { border: "none", borderRadius: 12, fontFamily: "inherit", fontWeight: 800, cursor: "pointer" };
+  const isArrest = !!CRISIS_CYCLE[c.id];
+  const cycLeft = 120000 - (now - (st.cyc || st.t0));
+  const adr = st.adr || [];
+  const lastAdr = adr.length ? adr[adr.length - 1] : null;
+  const sinceAdr = lastAdr ? now - lastAdr : null;
+  const adrCol = !lastAdr || !CRISIS_ADR_35[c.id] ? INK : sinceAdr >= 300000 ? RED : sinceAdr >= 180000 ? AMBER : INK;
+  const adrHint = !lastAdr ? (el ? "\u03B4\u03B5\u03BD \u03AD\u03C7\u03B5\u03B9 \u03BA\u03B1\u03C4\u03B1\u03B3\u03C1\u03B1\u03C6\u03B5\u03AF" : "none recorded")
+    : !CRISIS_ADR_35[c.id] ? (el ? "\u03B4\u03CC\u03C3\u03B5\u03B9\u03C2: " : "doses: ") + adr.length
+    : (sinceAdr >= 300000 ? (el ? "\u03C0\u03AD\u03C1\u03B1\u03C3\u03B1\u03BD >5 min" : ">5 min elapsed") : sinceAdr >= 180000 ? (el ? "\u03C3\u03C4\u03BF \u03B4\u03B9\u03AC\u03C3\u03C4\u03B7\u03BC\u03B1 3\u20135 min" : "within the 3\u20135 min window") : (el ? "\u03B5\u03C0\u03CC\u03BC\u03B5\u03BD\u03B7 \u03C3\u03B5 3\u20135 min" : "next in 3\u20135 min")) + " \u00B7 " + (el ? "\u03B4\u03CC\u03C3\u03B5\u03B9\u03C2: " : "doses: ") + adr.length;
   return React.createElement("div", { role: "dialog", "aria-modal": "true", "aria-label": el ? c.titleEl : c.titleEn, style: { position: "fixed", inset: 0, zIndex: 10000, background: BG, color: INK, display: "flex", flexDirection: "column", fontFamily: "'Morfeas Sans', -apple-system, system-ui, sans-serif" } },
     React.createElement("div", { style: { padding: "calc(12px + env(safe-area-inset-top, 0px)) 16px 10px", borderBottom: "4px solid " + c.color } },
       React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } },
         React.createElement("span", { style: { width: 14, height: 14, borderRadius: 99, background: c.color, flexShrink: 0 } }),
         React.createElement("div", { style: { flex: 1, fontSize: 19, fontWeight: 800, lineHeight: 1.2 } }, el ? c.titleEl : c.titleEn),
+        React.createElement("button", { onClick: () => { if (askRestart) { const t = Date.now(); save({ t0: t, marks: [], cyc: t, adr: [] }); setAskRestart(false); } else { setAskRestart(true); setTimeout(() => setAskRestart(false), 4000); } }, "aria-label": el ? "\u039D\u03AD\u03B1 \u03AD\u03BD\u03B1\u03C1\u03BE\u03B7 \u03C7\u03C1\u03BF\u03BD\u03BF\u03BC\u03AD\u03C4\u03C1\u03BF\u03C5" : "Restart timer", style: { ...btn, background: askRestart ? "#B3403F" : CARD, color: INK, fontSize: 13, padding: "0 10px", height: 44 } }, askRestart ? (el ? "\u03A3\u03AF\u03B3\u03BF\u03C5\u03C1\u03B1;" : "Sure?") : "\u27F2"),
         React.createElement("button", { onClick: onClose, "aria-label": el ? "\u039A\u03BB\u03B5\u03AF\u03C3\u03B9\u03BC\u03BF" : "Close", style: { ...btn, background: CARD, color: INK, fontSize: 20, width: 44, height: 44 } }, "\u2715")),
       React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginTop: 10 } },
-        React.createElement("div", { style: { fontSize: 40, fontWeight: 800, fontVariantNumeric: "tabular-nums", letterSpacing: 1, lineHeight: 1 } }, mmss(now - t0)),
+        React.createElement("div", { "aria-live": "off", style: { fontSize: 40, fontWeight: 800, fontVariantNumeric: "tabular-nums", letterSpacing: 1, lineHeight: 1 } }, mmss(now - st.t0)),
         React.createElement("div", { style: { flex: 1, fontSize: 12.5, color: MUTED, fontWeight: 600, lineHeight: 1.35 } }, lastMark ? (el ? "\u0391\u03C0\u03CC \u03C4\u03B7 \u03C3\u03AE\u03BC\u03B1\u03BD\u03C3\u03B7 " : "Since mark ") + marks.length + ": " : (el ? "\u03A7\u03C1\u03CC\u03BD\u03BF\u03C2 \u03B1\u03C0\u03CC \u03C4\u03B7\u03BD \u03AD\u03BD\u03B1\u03C1\u03BE\u03B7" : "Time since start"), lastMark && React.createElement("b", { style: { color: INK, fontSize: 18, fontVariantNumeric: "tabular-nums" } }, mmss(now - lastMark))),
-        React.createElement("button", { onClick: () => setMarks((m) => [...m, Date.now()]), style: { ...btn, background: c.color, color: "#FFFFFF", fontSize: 14, padding: "12px 14px" } }, el ? "\u23F1 \u03A3\u03AE\u03BC\u03B1\u03BD\u03C3\u03B7" : "\u23F1 Mark")),
+        React.createElement("button", { onClick: () => save({ ...st, marks: [...marks, Date.now()] }), style: { ...btn, background: c.color, color: "#FFFFFF", fontSize: 14, padding: "12px 14px" } }, el ? "\u23F1 \u03A3\u03AE\u03BC\u03B1\u03BD\u03C3\u03B7" : "\u23F1 Mark")),
+      isArrest && React.createElement("div", { style: { display: "flex", gap: 8, marginTop: 10 } },
+        React.createElement("button", { onClick: () => save({ ...st, cyc: Date.now() }), "aria-label": el ? "\u039D\u03AD\u03BF\u03C2 \u03BA\u03CD\u03BA\u03BB\u03BF\u03C2 2 \u03BB\u03B5\u03C0\u03C4\u03CE\u03BD" : "New 2-minute cycle", style: { ...btn, flex: 1, background: cycLeft <= 0 ? "#B3403F" : CARD, color: INK, padding: "10px 10px", textAlign: "left", display: "flex", flexDirection: "column", gap: 2 } },
+          React.createElement("span", { style: { fontSize: 11.5, color: cycLeft <= 0 ? INK : MUTED, fontWeight: 700 } }, el ? "\u039A\u03CD\u03BA\u03BB\u03BF\u03C2 2 min \u00B7 \u03C0\u03B1\u03C4\u03AE\u03C3\u03C4\u03B5 \u03B3\u03B9\u03B1 \u03BD\u03AD\u03BF" : "2-min cycle \u00B7 tap for new"),
+          React.createElement("span", { style: { fontSize: 24, fontVariantNumeric: "tabular-nums", lineHeight: 1.1 } }, cycLeft <= 0 ? (el ? "\u0395\u039B\u0395\u0393\u03A7\u039F\u03A3 \u03A1\u03A5\u0398\u039C\u039F\u03A5" : "RHYTHM CHECK") : mmss(cycLeft))),
+        React.createElement("button", { onClick: () => save({ ...st, adr: [...adr, Date.now()] }), "aria-label": el ? "\u039A\u03B1\u03C4\u03B1\u03B3\u03C1\u03B1\u03C6\u03AE \u03B4\u03CC\u03C3\u03B7\u03C2 \u03B1\u03B4\u03C1\u03B5\u03BD\u03B1\u03BB\u03AF\u03BD\u03B7\u03C2" : "Record adrenaline dose", style: { ...btn, flex: 1, background: CARD, color: INK, padding: "10px 10px", textAlign: "left", display: "flex", flexDirection: "column", gap: 2, boxShadow: adrCol === INK ? "none" : "inset 0 0 0 2px " + adrCol } },
+          React.createElement("span", { style: { fontSize: 11.5, color: MUTED, fontWeight: 700 } }, el ? "\u{1F489} \u0391\u03B4\u03C1\u03B5\u03BD\u03B1\u03BB\u03AF\u03BD\u03B7 \u00B7 \u03C0\u03B1\u03C4\u03AE\u03C3\u03C4\u03B5 \u03CC\u03C4\u03B1\u03BD \u03B4\u03BF\u03B8\u03B5\u03AF" : "\u{1F489} Adrenaline \u00B7 tap when given"),
+          React.createElement("span", { style: { fontSize: 24, fontVariantNumeric: "tabular-nums", lineHeight: 1.1, color: adrCol } }, lastAdr ? mmss(sinceAdr) : "\u2014"),
+          React.createElement("span", { style: { fontSize: 11.5, color: adrCol === INK ? MUTED : adrCol, fontWeight: 700 } }, adrHint))),
+      CRISIS_METRO[c.id] && React.createElement("div", { style: { display: "flex", gap: 6, marginTop: 8, alignItems: "stretch" } },
+        React.createElement("button", { onClick: () => metro ? stopMetro() : startMetro(metroRate), "aria-pressed": metro ? "true" : "false", "aria-label": el ? (metro ? "\u0394\u03B9\u03B1\u03BA\u03BF\u03C0\u03AE \u03BC\u03B5\u03C4\u03C1\u03BF\u03BD\u03CC\u03BC\u03BF\u03C5" : "\u0388\u03BD\u03B1\u03C1\u03BE\u03B7 \u03BC\u03B5\u03C4\u03C1\u03BF\u03BD\u03CC\u03BC\u03BF\u03C5 \u03B8\u03C9\u03C1\u03B1\u03BA\u03B9\u03BA\u03CE\u03BD \u03C3\u03C5\u03BC\u03C0\u03B9\u03AD\u03C3\u03B5\u03C9\u03BD") : (metro ? "Stop metronome" : "Start chest-compression metronome"), style: { ...btn, flex: 1, display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: metro ? "#1F6F54" : CARD, color: INK, textAlign: "left", minHeight: 48 } },
+          React.createElement("span", { "aria-hidden": "true", style: { width: 16, height: 16, borderRadius: 99, flexShrink: 0, background: metro ? "#7CF0B8" : MUTED, animation: metro ? "aa-beat " + (60 / metro).toFixed(3) + "s steps(1, end) infinite" : "none" } }),
+          React.createElement("span", { style: { display: "flex", flexDirection: "column", gap: 1 } },
+            React.createElement("span", { style: { fontSize: 15 } }, (el ? "\u039C\u03B5\u03C4\u03C1\u03BF\u03BD\u03CC\u03BC\u03BF\u03C2 " : "Metronome ") + (metro ? metro + "/min \u00B7 " + (el ? "ON" : "ON") : (el ? "OFF" : "OFF"))),
+            React.createElement("span", { style: { fontSize: 11, color: MUTED, fontWeight: 600 } }, el ? "\u03C3\u03C5\u03BC\u03C0\u03B9\u03AD\u03C3\u03B5\u03B9\u03C2 100\u2013120/min (ERC 2025)" : "compressions 100\u2013120/min (ERC 2025)"))),
+        METRO_RATES.map((r) => React.createElement("button", { key: r, onClick: () => { setMetroRate(r); if (metro) startMetro(r); }, "aria-pressed": metroRate === r ? "true" : "false", "aria-label": r + (el ? " \u03B1\u03BD\u03AC \u03BB\u03B5\u03C0\u03C4\u03CC" : " per minute"), style: { ...btn, width: 48, minHeight: 48, fontSize: 15, background: metroRate === r ? INK : CARD, color: metroRate === r ? BG : INK } }, r))),
       React.createElement("div", { style: { height: 6, borderRadius: 99, background: CARD, marginTop: 10, overflow: "hidden" } }, React.createElement("div", { style: { width: (100 * nDone / steps.length) + "%", height: "100%", background: c.color } }))),
     React.createElement("div", { style: { flex: 1, overflowY: "auto", padding: "12px 12px 8px", display: "flex", flexDirection: "column", gap: 8 } },
       steps.map((s, i) => {
         const checked = !!done[c.id + ":" + i];
         const isNext = i === next;
-        return React.createElement("button", { key: i, onClick: () => toggle(c.id, i), style: { ...btn, display: "flex", alignItems: "flex-start", gap: 12, textAlign: "left", padding: "14px 14px", background: isNext ? "#22406E" : CARD, boxShadow: isNext ? "inset 0 0 0 2px " + c.color : "none", color: checked ? MUTED : INK, fontWeight: 600 } },
+        return React.createElement("button", { key: i, ref: (n) => { stepRefs.current[i] = n; }, onClick: () => toggle(c.id, i), "aria-pressed": checked ? "true" : "false", style: { ...btn, display: "flex", alignItems: "flex-start", gap: 12, textAlign: "left", padding: "14px 14px", background: isNext ? "#22406E" : CARD, boxShadow: isNext ? "inset 0 0 0 2px " + c.color : "none", color: checked ? MUTED : INK, fontWeight: 600 } },
           React.createElement("span", { style: { width: 30, height: 30, borderRadius: 9, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: checked ? c.color : "transparent", boxShadow: checked ? "none" : "inset 0 0 0 2px " + MUTED, fontSize: checked ? 18 : 14, fontWeight: 900, color: checked ? "#FFFFFF" : MUTED } }, checked ? "\u2713" : i + 1),
           React.createElement("span", { style: { fontSize: 18, lineHeight: 1.4, flex: 1, textDecoration: checked ? "line-through" : "none" } }, s));
       })),
-    React.createElement("div", { style: { padding: "8px 16px calc(10px + env(safe-area-inset-bottom, 0px))", fontSize: 11, color: MUTED, fontWeight: 600, lineHeight: 1.4 } }, nDone + "/" + steps.length + (el ? " \u03B2\u03AE\u03BC\u03B1\u03C4\u03B1" : " steps") + (c.srcEl ? " \u00B7 " + (el ? "\u03A0\u03B7\u03B3\u03AE: " + c.srcEl : "Source: " + c.srcEn) : "")));
+    canSpeak && React.createElement("div", { style: { padding: "8px 12px 0", display: "flex", flexDirection: "column", gap: 6, borderTop: "1px solid " + CARD } },
+      reader
+        ? React.createElement("div", { style: { display: "flex", gap: 6 } },
+          React.createElement("button", { onClick: () => readStep(next), "aria-label": el ? "\u0391\u03BD\u03AC\u03B3\u03BD\u03C9\u03C3\u03B7 \u03BE\u03B1\u03BD\u03AC" : "Read again", style: { ...btn, background: CARD, color: INK, fontSize: 15, padding: "0 12px", minHeight: 52 } }, el ? "\u{1F501} \u039E\u03B1\u03BD\u03AC" : "\u{1F501} Again"),
+          React.createElement("button", { onClick: readerNext, "aria-label": el ? "\u0388\u03B3\u03B9\u03BD\u03B5 \u2014 \u03B5\u03C0\u03CC\u03BC\u03B5\u03BD\u03BF \u03B2\u03AE\u03BC\u03B1" : "Done \u2014 next step", style: { ...btn, flex: 1, background: c.color, color: "#FFFFFF", fontSize: 17, minHeight: 52 } }, next < 0 ? (el ? "\u2713 \u03A4\u03AD\u03BB\u03BF\u03C2 \u03BB\u03AF\u03C3\u03C4\u03B1\u03C2" : "\u2713 End of list") : (el ? "\u2713 \u0388\u03B3\u03B9\u03BD\u03B5 \u2192 \u03B5\u03C0\u03CC\u03BC\u03B5\u03BD\u03BF" : "\u2713 Done \u2192 next")),
+          React.createElement("button", { onClick: readerStop, "aria-label": el ? "\u03A4\u03AD\u03BB\u03BF\u03C2 \u03B1\u03BD\u03AC\u03B3\u03BD\u03C9\u03C3\u03B7\u03C2" : "Stop reading", style: { ...btn, background: CARD, color: INK, fontSize: 18, width: 52, minHeight: 52 } }, "\u25A0"))
+        : React.createElement("button", { onClick: () => { setReader(true); readStep(next, true); }, style: { ...btn, background: CARD, color: INK, fontSize: 15.5, minHeight: 50, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 } }, el ? "\u{1F50A} \u0391\u03BD\u03AC\u03B3\u03BD\u03C9\u03C3\u03B7 \u03C6\u03C9\u03BD\u03B1\u03C7\u03C4\u03AC (reader)" : "\u{1F50A} Read aloud (reader)"),
+      voiceNote && React.createElement("div", { role: "status", style: { fontSize: 12, color: AMBER, fontWeight: 700, lineHeight: 1.35 } }, voiceNote)),
+    React.createElement("div", { style: { padding: "8px 16px calc(10px + env(safe-area-inset-bottom, 0px))", fontSize: 11, color: MUTED, fontWeight: 600, lineHeight: 1.4 } }, nDone + "/" + steps.length + (el ? " \u03B2\u03AE\u03BC\u03B1\u03C4\u03B1" : " steps") + (isArrest ? (el ? " \u00B7 \u03BA\u03CD\u03BA\u03BB\u03BF\u03B9 2 min \u03BA\u03B1\u03B9 \u03B1\u03B4\u03C1\u03B5\u03BD\u03B1\u03BB\u03AF\u03BD\u03B7 \u03BA\u03AC\u03B8\u03B5 3\u20135 min \u03CC\u03C0\u03C9\u03C2 \u03C3\u03C4\u03B7 \u03BB\u03AF\u03C3\u03C4\u03B1 (ERC 2025)" : " \u00B7 2-min cycles and adrenaline every 3\u20135 min as in the checklist (ERC 2025)") : "") + (c.srcEl ? " \u00B7 " + (el ? "\u03A0\u03B7\u03B3\u03AE: " + c.srcEl : "Source: " + c.srcEn) : "")));
+}
+// A4 print of one checklist, for the resuscitation trolley. Plain black on white, empty tick boxes.
+function PrintChecklist({ c, lang }) {
+  if (!c) return null;
+  const el = lang === "el";
+  const steps = el ? c.stepsEl : c.stepsEn;
+  const d = new Date();
+  const date = String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0") + "/" + d.getFullYear();
+  return React.createElement("div", { id: "aa-print" },
+    React.createElement("div", { style: { borderBottom: "6px solid " + c.color, paddingBottom: "4mm", marginBottom: "5mm" } },
+      React.createElement("div", { style: { fontSize: "22pt", fontWeight: 800, lineHeight: 1.15 } }, el ? c.titleEl : c.titleEn)),
+    React.createElement("ol", { style: { listStyle: "none", margin: 0, padding: 0 } },
+      steps.map((s, i) => React.createElement("li", { key: i, style: { display: "flex", gap: "4mm", alignItems: "flex-start", padding: "2.6mm 0", borderBottom: "0.3mm solid #BBB", breakInside: "avoid" } },
+        React.createElement("span", { style: { width: "7mm", height: "7mm", border: "0.6mm solid #000", borderRadius: "1.5mm", flexShrink: 0, marginTop: "0.5mm" } }),
+        React.createElement("span", { style: { fontWeight: 800, minWidth: "7mm", fontSize: "14pt" } }, i + 1 + "."),
+        React.createElement("span", { style: { fontSize: "14pt", lineHeight: 1.35 } }, s)))),
+    c.srcEl && React.createElement("div", { style: { marginTop: "5mm", fontSize: "9.5pt", color: "#333" } }, (el ? "\u03A0\u03B7\u03B3\u03AE: " + c.srcEl : "Source: " + c.srcEn)),
+    React.createElement("div", { style: { marginTop: "3mm", fontSize: "9pt", color: "#555" } }, "Morfeas v" + APP_VERSION + " \u00B7 " + (el ? "\u03B5\u03BA\u03C0\u03B1\u03B9\u03B4\u03B5\u03C5\u03C4\u03B9\u03BA\u03CC \u03B2\u03BF\u03AE\u03B8\u03B7\u03BC\u03B1 \u2014 \u03B5\u03C0\u03B1\u03BB\u03B7\u03B8\u03B5\u03CD\u03C3\u03C4\u03B5 \u03BC\u03B5 \u03C4\u03B1 \u03C4\u03BF\u03C0\u03B9\u03BA\u03AC \u03C0\u03C1\u03C9\u03C4\u03CC\u03BA\u03BF\u03BB\u03BB\u03B1 \u00B7 \u03B5\u03BA\u03C4\u03CD\u03C0\u03C9\u03C3\u03B7 " : "educational aid \u2014 verify against local protocols \u00B7 printed ") + date));
 }
 function ChecklistTab({ lang, focus }) {
+  const fav = useFavs();
   const [crisis, setCrisis] = useState(null);
   const [open, setOpen] = useState(null);
   const [cat, setCat] = useState("all");
   const [q, setQ] = useState("");
-  const [done, setDone] = useState({});
+  // Ticks survive switching tabs or closing the app for 12 h, then clear themselves.
+  const [done, setDone] = useState(() => storeGet("aa_ticks") || {});
+  useEffect(() => {
+    if (Object.keys(done).some((k) => done[k])) storeSet("aa_ticks", done, CRISIS_TTL);
+    else storeDel("aa_ticks");
+  }, [done]);
+  // Printing: a print-only copy of one checklist is rendered into <body>; the rest of the page is hidden by @media print.
+  const [printing, setPrinting] = useState(null);
+  useEffect(() => {
+    const after = () => setPrinting(null);
+    window.addEventListener("afterprint", after);
+    return () => window.removeEventListener("afterprint", after);
+  }, []);
+  const doPrint = (id) => { setPrinting(id); setTimeout(() => { try { window.print(); } catch (e) {} }, 200); };
   useEffect(() => {
     if (!focus) return;
     setQ("");
@@ -322,7 +564,7 @@ function ChecklistTab({ lang, focus }) {
     return (cat === "all" || c.cat === cat) && title.includes(q.toLowerCase());
   });
   const crisisC = crisis ? CHECKLISTS.find((x) => x.id === crisis) : null;
-  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } }, crisisC && /* @__PURE__ */ React.createElement(CrisisMode, { c: crisisC, lang, done, toggle: toggleStep, onClose: () => setCrisis(null) }), /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } }, printing && ReactDOM.createPortal(/* @__PURE__ */ React.createElement(PrintChecklist, { c: CHECKLISTS.find((x) => x.id === printing), lang }), document.body), crisisC && ReactDOM.createPortal(/* @__PURE__ */ React.createElement(CrisisMode, { c: crisisC, lang, done, toggle: toggleStep, onClose: () => setCrisis(null) }), document.body), /* @__PURE__ */ React.createElement(
     "input",
     {
       value: q,
@@ -330,7 +572,7 @@ function ChecklistTab({ lang, focus }) {
       placeholder: lang === "el" ? "\u0391\u03BD\u03B1\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7 \u03BA\u03B1\u03C4\u03AC\u03C3\u03C4\u03B1\u03C3\u03B7\u03C2\u2026" : "Search emergency\u2026",
       style: inputStyle
     }
-  ), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4, WebkitOverflowScrolling: "touch" } }, CL_CATS.map((c) => /* @__PURE__ */ React.createElement("button", { key: c.id, ref: focus && focus.id === c.id ? focusRef : null, onClick: () => setCat(c.id), style: {
+  ), !q && /* @__PURE__ */ React.createElement(FavChips, { k: "list", lang, fav, onPick: (id) => { setQ(""); setCat("all"); setOpen(id); } }), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4, WebkitOverflowScrolling: "touch" } }, CL_CATS.map((c) => /* @__PURE__ */ React.createElement("button", { key: c.id, ref: focus && focus.id === c.id ? focusRef : null, onClick: () => setCat(c.id), style: {
     padding: "6px 12px",
     borderRadius: 99,
     border: "none",
@@ -358,7 +600,7 @@ function ChecklistTab({ lang, focus }) {
       gap: 10,
       fontFamily: "inherit",
       textAlign: "left"
-    } }, /* @__PURE__ */ React.createElement("span", { style: { width: 10, height: 10, borderRadius: 99, background: c.color, flexShrink: 0 } }), /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 15.5, color: S.ink, flex: 1 } }, lang === "el" ? c.titleEl : c.titleEn), nDone > 0 && /* @__PURE__ */ React.createElement("span", { style: {
+    } }, /* @__PURE__ */ React.createElement("span", { style: { width: 10, height: 10, borderRadius: 99, background: c.color, flexShrink: 0 } }), /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 15.5, color: S.ink, flex: 1, minWidth: 0, overflowWrap: "anywhere" } }, lang === "el" ? c.titleEl : c.titleEn), nDone > 0 && /* @__PURE__ */ React.createElement("span", { style: {
       fontSize: 12,
       fontWeight: 800,
       fontVariantNumeric: "tabular-nums",
@@ -366,7 +608,7 @@ function ChecklistTab({ lang, focus }) {
       background: complete ? S.teal : S.lineStrong,
       borderRadius: 99,
       padding: "3px 9px"
-    } }, nDone, "/", steps.length), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 6 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setCrisis(c.id), style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px 14px", marginBottom: 4, borderRadius: 12, border: "none", background: c.color, color: "#FFFFFF", fontWeight: 800, fontSize: 15, cursor: "pointer", fontFamily: "inherit" } }, "\u26F6 ", lang === "el" ? "\u039B\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1 \u03BA\u03C1\u03AF\u03C3\u03B7\u03C2 \u2014 \u03C0\u03BB\u03AE\u03C1\u03B7\u03C2 \u03BF\u03B8\u03CC\u03BD\u03B7" : "Crisis mode — full screen"), steps.map((s, i) => {
+    } }, nDone, "/", steps.length), /* @__PURE__ */ React.createElement(FavStar, { k: "list", id: c.id, lang, fav }), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 6 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setCrisis(c.id), style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px 14px", marginBottom: 4, borderRadius: 12, border: "none", background: c.color, color: "#FFFFFF", fontWeight: 800, fontSize: 15, cursor: "pointer", fontFamily: "inherit" } }, "\u26F6 ", lang === "el" ? "\u039B\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1 \u03BA\u03C1\u03AF\u03C3\u03B7\u03C2 \u2014 \u03C0\u03BB\u03AE\u03C1\u03B7\u03C2 \u03BF\u03B8\u03CC\u03BD\u03B7" : "Crisis mode — full screen"), steps.map((s, i) => {
       const checked = !!done[`${c.id}:${i}`];
       return /* @__PURE__ */ React.createElement("button", { key: i, onClick: () => toggleStep(c.id, i), style: {
         display: "flex",
@@ -400,19 +642,7 @@ function ChecklistTab({ lang, focus }) {
         color: checked ? S.muted : S.ink,
         textDecoration: checked ? "line-through" : "none"
       } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, color: checked ? S.muted : c.color, marginRight: 6 } }, i + 1, "."), s));
-    }), /* @__PURE__ */ React.createElement("button", { onClick: () => resetList(c.id, steps.length), style: {
-      alignSelf: "flex-end",
-      marginTop: 4,
-      padding: "7px 16px",
-      borderRadius: 9,
-      border: `1.5px solid ${S.line}`,
-      background: S.card,
-      color: S.muted,
-      fontWeight: 700,
-      fontSize: 13,
-      cursor: "pointer",
-      fontFamily: "inherit"
-    } }, "\u21BA ", lang === "el" ? "\u0395\u03C0\u03B1\u03BD\u03B1\u03C6\u03BF\u03C1\u03AC" : "Reset"), c.srcEl && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: S.muted, fontWeight: 600, lineHeight: 1.45, marginTop: 4, paddingTop: 6, borderTop: "1px solid " + S.line } }, (lang === "el" ? "\u03A0\u03B7\u03B3\u03AE: " : "Source: ") + (lang === "el" ? c.srcEl : c.srcEn))));
+    }), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" } }, nDone > 0 && /* @__PURE__ */ React.createElement("span", { style: { flex: "1 1 140px", fontSize: 12, color: S.muted, fontWeight: 600 } }, lang === "el" ? "\u03A4\u03B1 \u03C3\u03B7\u03BC\u03B5\u03B9\u03C9\u03BC\u03AD\u03BD\u03B1 \u03B2\u03AE\u03BC\u03B1\u03C4\u03B1 \u03BA\u03C1\u03B1\u03C4\u03B9\u03BF\u03CD\u03BD\u03C4\u03B1\u03B9 12 \u03CE\u03C1\u03B5\u03C2" : "Ticked steps are kept for 12 hours"), /* @__PURE__ */ React.createElement("button", { onClick: () => doPrint(c.id), style: { marginTop: 4, padding: "9px 14px", borderRadius: 9, border: `1.5px solid ${S.line}`, background: S.card, color: S.muted, fontWeight: 700, fontSize: 13.5, cursor: "pointer", fontFamily: "inherit", minHeight: 40 } }, "\u{1F5A8} ", lang === "el" ? "\u0395\u03BA\u03C4\u03CD\u03C0\u03C9\u03C3\u03B7 A4" : "Print A4"), /* @__PURE__ */ React.createElement("button", { onClick: () => resetList(c.id, steps.length), style: { marginTop: 4, padding: "9px 14px", borderRadius: 9, border: `1.5px solid ${S.line}`, background: S.card, color: S.muted, fontWeight: 700, fontSize: 13.5, cursor: "pointer", fontFamily: "inherit", minHeight: 40 } }, "\u21BA ", lang === "el" ? "\u039A\u03B1\u03B8\u03B1\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2" : "Clear")), c.srcEl && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: S.muted, fontWeight: 600, lineHeight: 1.45, marginTop: 4, paddingTop: 6, borderTop: "1px solid " + S.line } }, (lang === "el" ? "\u03A0\u03B7\u03B3\u03AE: " : "Source: ") + (lang === "el" ? c.srcEl : c.srcEn))));
   }));
 }
 function TCITab({ lang, weight, age, height, sex }) {

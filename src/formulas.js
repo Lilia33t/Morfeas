@@ -256,6 +256,7 @@ function doseText(d, w, lang) {
   if (!(w > 0)) return base;
   const baseUnit = d.unit.replace(/^(mg|mcg|g|mL|IU|U|mmol|mEq)\/kg/, "$1");
   let lo = d.lo * w, hi = d.hi * w;
+  const rawLo = lo, rawHi = hi;
   let capped = false;
   if (d.max) {
     if (lo > d.max) {
@@ -272,7 +273,153 @@ function doseText(d, w, lang) {
     hi = Math.max(hi, d.minAbs);
   }
   const calc = lo === hi ? fmt(lo) : `${fmt(lo)}\u2013${fmt(hi)}`;
-  return { base, calc: `${calc} ${baseUnit}`, capped };
+  // How the number was reached, so a wrong weight is visible at a glance.
+  // Language-neutral (numbers, units, "max"/"min") on purpose.
+  const raw = rawLo === rawHi ? fmt(rawLo) : `${fmt(rawLo)}\u2013${fmt(rawHi)}`;
+  let expl = `${range} ${d.unit} \xD7 ${fmt(w)} kg = ${raw} ${baseUnit}`;
+  if (capped) expl += ` \u2192 max ${d.max} ${baseUnit}`;
+  if (d.minAbs && (rawLo < d.minAbs || rawHi < d.minAbs)) expl += ` \u2192 min ${d.minAbs} ${baseUnit}`;
+  return { base, calc: `${calc} ${baseUnit}`, capped, expl };
+}
+// Greek keyboards type a comma for the decimal point. Number fields are plain
+// text fields (inputMode "decimal") run through this: comma -> point, one
+// separator, digits only, an optional leading minus.
+function numIn(v) {
+  let s = String(v == null ? "" : v).trim().replace(/,/g, ".");
+  const neg = s.charAt(0) === "-";
+  s = s.replace(/[^0-9.]/g, "");
+  const i = s.indexOf(".");
+  if (i >= 0) s = s.slice(0, i + 1) + s.slice(i + 1).replace(/\./g, "");
+  return (neg ? "-" : "") + s;
+}
+// Read-aloud ("reader" role, as in the QRH): turns a checklist step into text a phone voice
+// pronounces well \u2014 units, routes and symbols spelled out. Plain regular expressions only
+// (no look-behind), so older iPhones can still load the app.
+const SPEECH_RULES = {
+  el: [
+    [/[\u2080-\u2089]/g, (d) => String("\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089".indexOf(d))],
+    [/(^|[^\d])([1-5])(\u03B7|\u03B7\u03C2)(?![\u03B1-\u03C9\u03AC-\u03CE])/g, (m, a, n, e) => a + ["\u03C0\u03C1\u03CE\u03C4\u03B7", "\u03B4\u03B5\u03CD\u03C4\u03B5\u03C1\u03B7", "\u03C4\u03C1\u03AF\u03C4\u03B7", "\u03C4\u03AD\u03C4\u03B1\u03C1\u03C4\u03B7", "\u03C0\u03AD\u03BC\u03C0\u03C4\u03B7"][n - 1] + (e === "\u03B7\u03C2" ? "\u03C2" : "")],
+    [/&/g, " \u03BA\u03B1\u03B9 "],
+    [/([^\s\d])\s?\u2013\s?(\d)/g, "$1 \u03AD\u03C9\u03C2 $2"],
+    [/q\s?(\d+)\s?[\u2013-]\s?(\d+)\s?min/g, "\u03BA\u03AC\u03B8\u03B5 $1 \u03AD\u03C9\u03C2 $2 \u03BB\u03B5\u03C0\u03C4\u03AC"],
+    [/q\s?(\d+)\s?min/g, "\u03BA\u03AC\u03B8\u03B5 $1 \u03BB\u03B5\u03C0\u03C4\u03AC"],
+    [/(\u00B5g|\u03BCg|mcg)\/kg\/min/g, " \u03BC\u03B9\u03BA\u03C1\u03BF\u03B3\u03C1\u03B1\u03BC\u03BC\u03AC\u03C1\u03B9\u03B1 \u03B1\u03BD\u03AC \u03BA\u03B9\u03BB\u03CC \u03B1\u03BD\u03AC \u03BB\u03B5\u03C0\u03C4\u03CC"],
+    [/mg\/kg\/h/g, " \u03C7\u03B9\u03BB\u03B9\u03BF\u03C3\u03C4\u03CC\u03B3\u03C1\u03B1\u03BC\u03BC\u03B1 \u03B1\u03BD\u03AC \u03BA\u03B9\u03BB\u03CC \u03C4\u03B7\u03BD \u03CE\u03C1\u03B1"],
+    [/(\u00B5g|\u03BCg|mcg)\/kg/g, " \u03BC\u03B9\u03BA\u03C1\u03BF\u03B3\u03C1\u03B1\u03BC\u03BC\u03AC\u03C1\u03B9\u03B1 \u03B1\u03BD\u03AC \u03BA\u03B9\u03BB\u03CC"],
+    [/mg\/kg/g, " \u03C7\u03B9\u03BB\u03B9\u03BF\u03C3\u03C4\u03CC\u03B3\u03C1\u03B1\u03BC\u03BC\u03B1 \u03B1\u03BD\u03AC \u03BA\u03B9\u03BB\u03CC"],
+    [/mL\/kg/g, " \u03C7\u03B9\u03BB\u03B9\u03BF\u03C3\u03C4\u03CC\u03BB\u03B9\u03C4\u03C1\u03B1 \u03B1\u03BD\u03AC \u03BA\u03B9\u03BB\u03CC"],
+    [/J\/kg/g, " \u03C4\u03B6\u03AC\u03BF\u03C5\u03BB \u03B1\u03BD\u03AC \u03BA\u03B9\u03BB\u03CC"],
+    [/L\/min/g, " \u03BB\u03AF\u03C4\u03C1\u03B1 \u03B1\u03BD\u03AC \u03BB\u03B5\u03C0\u03C4\u03CC"],
+    [/cmH2O/g, " \u03B5\u03BA\u03B1\u03C4\u03BF\u03C3\u03C4\u03AC \u03BD\u03B5\u03C1\u03BF\u03CD"],
+    [/mmHg/g, " \u03C7\u03B9\u03BB\u03B9\u03BF\u03C3\u03C4\u03AC \u03C5\u03B4\u03C1\u03B1\u03C1\u03B3\u03CD\u03C1\u03BF\u03C5"],
+    [/kPa/g, " \u03BA\u03B9\u03BB\u03BF\u03C0\u03B1\u03C3\u03BA\u03AC\u03BB"],
+    [/mmol/g, " \u03BC\u03B9\u03BB\u03B9\u03BC\u03CC\u03BB"],
+    [/(\d)\s?(\u00B5g|\u03BCg|mcg)(?![A-Za-z])/g, "$1 \u03BC\u03B9\u03BA\u03C1\u03BF\u03B3\u03C1\u03B1\u03BC\u03BC\u03AC\u03C1\u03B9\u03B1"],
+    [/(\d)\s?mg(?![A-Za-z])/g, "$1 \u03C7\u03B9\u03BB\u03B9\u03BF\u03C3\u03C4\u03CC\u03B3\u03C1\u03B1\u03BC\u03BC\u03B1"],
+    [/(\d)\s?mL(?![A-Za-z])/g, "$1 \u03C7\u03B9\u03BB\u03B9\u03BF\u03C3\u03C4\u03CC\u03BB\u03B9\u03C4\u03C1\u03B1"],
+    [/(\d)\s?kg(?![A-Za-z])/g, "$1 \u03BA\u03B9\u03BB\u03AC"],
+    [/(\d)\s?g(?![A-Za-z])/g, "$1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AC\u03C1\u03B9\u03B1"],
+    [/(\d)\s?cm(?![A-Za-z])/g, "$1 \u03B5\u03BA\u03B1\u03C4\u03BF\u03C3\u03C4\u03AC"],
+    [/(\d)\s?J(?![A-Za-z])/g, "$1 \u03C4\u03B6\u03AC\u03BF\u03C5\u03BB"],
+    [/(\d)\s?(IU|U)(?![A-Za-z])/g, "$1 \u03BC\u03BF\u03BD\u03AC\u03B4\u03B5\u03C2"],
+    [/\/min/g, " \u03B1\u03BD\u03AC \u03BB\u03B5\u03C0\u03C4\u03CC"],
+    [/(\d)\s?min(?![A-Za-z])/g, "$1 \u03BB\u03B5\u03C0\u03C4\u03AC"],
+    [/(\d)\s?s(?![A-Za-z])/g, "$1 \u03B4\u03B5\u03C5\u03C4\u03B5\u03C1\u03CC\u03BB\u03B5\u03C0\u03C4\u03B1"],
+    [/(\d)\s?h(?![A-Za-z])/g, "$1 \u03CE\u03C1\u03B5\u03C2"],
+    [/\bIV\/IO\b/g, "\u03B5\u03BD\u03B4\u03BF\u03C6\u03BB\u03AD\u03B2\u03B9\u03B1 \u03AE \u03B5\u03BD\u03B4\u03BF\u03BF\u03C3\u03C4\u03B9\u03BA\u03AC"],
+    [/\bIV\b/g, "\u03B5\u03BD\u03B4\u03BF\u03C6\u03BB\u03AD\u03B2\u03B9\u03B1"],
+    [/\bIO\b/g, "\u03B5\u03BD\u03B4\u03BF\u03BF\u03C3\u03C4\u03B9\u03BA\u03AC"],
+    [/\bIM\b/g, "\u03B5\u03BD\u03B4\u03BF\u03BC\u03C5\u03CA\u03BA\u03AC"],
+    [/\bSC\b/g, "\u03C5\u03C0\u03BF\u03B4\u03CC\u03C1\u03B9\u03B1"],
+    [/\bmax\b/g, "\u03BC\u03AD\u03B3\u03B9\u03C3\u03C4\u03BF"],
+    [/\bO2\b/g, "\u03BF\u03BE\u03C5\u03B3\u03CC\u03BD\u03BF"],
+    [/(^|[^\d.])1\s+(\u03BB\u03B5\u03C0\u03C4\u03AC|\u03BC\u03B9\u03BA\u03C1\u03BF\u03B3\u03C1\u03B1\u03BC\u03BC\u03AC\u03C1\u03B9\u03B1|\u03B3\u03C1\u03B1\u03BC\u03BC\u03AC\u03C1\u03B9\u03B1|\u03C7\u03B9\u03BB\u03B9\u03BF\u03C3\u03C4\u03CC\u03B3\u03C1\u03B1\u03BC\u03BC\u03B1|\u03C7\u03B9\u03BB\u03B9\u03BF\u03C3\u03C4\u03CC\u03BB\u03B9\u03C4\u03C1\u03B1|\u03BA\u03B9\u03BB\u03AC|\u03CE\u03C1\u03B5\u03C2|\u03B4\u03B5\u03C5\u03C4\u03B5\u03C1\u03CC\u03BB\u03B5\u03C0\u03C4\u03B1|\u03BC\u03BF\u03BD\u03AC\u03B4\u03B5\u03C2)/g, (m, a, u) => a + "1 " + { "\u03BB\u03B5\u03C0\u03C4\u03AC": "\u03BB\u03B5\u03C0\u03C4\u03CC", "\u03BC\u03B9\u03BA\u03C1\u03BF\u03B3\u03C1\u03B1\u03BC\u03BC\u03AC\u03C1\u03B9\u03B1": "\u03BC\u03B9\u03BA\u03C1\u03BF\u03B3\u03C1\u03B1\u03BC\u03BC\u03AC\u03C1\u03B9\u03BF", "\u03B3\u03C1\u03B1\u03BC\u03BC\u03AC\u03C1\u03B9\u03B1": "\u03B3\u03C1\u03B1\u03BC\u03BC\u03AC\u03C1\u03B9\u03BF", "\u03C7\u03B9\u03BB\u03B9\u03BF\u03C3\u03C4\u03CC\u03B3\u03C1\u03B1\u03BC\u03BC\u03B1": "\u03C7\u03B9\u03BB\u03B9\u03BF\u03C3\u03C4\u03CC\u03B3\u03C1\u03B1\u03BC\u03BC\u03BF", "\u03C7\u03B9\u03BB\u03B9\u03BF\u03C3\u03C4\u03CC\u03BB\u03B9\u03C4\u03C1\u03B1": "\u03C7\u03B9\u03BB\u03B9\u03BF\u03C3\u03C4\u03CC\u03BB\u03B9\u03C4\u03C1\u03BF", "\u03BA\u03B9\u03BB\u03AC": "\u03BA\u03B9\u03BB\u03CC", "\u03CE\u03C1\u03B5\u03C2": "\u03CE\u03C1\u03B1", "\u03B4\u03B5\u03C5\u03C4\u03B5\u03C1\u03CC\u03BB\u03B5\u03C0\u03C4\u03B1": "\u03B4\u03B5\u03C5\u03C4\u03B5\u03C1\u03CC\u03BB\u03B5\u03C0\u03C4\u03BF", "\u03BC\u03BF\u03BD\u03AC\u03B4\u03B5\u03C2": "\u03BC\u03BF\u03BD\u03AC\u03B4\u03B1" }[u]],
+    [/1:(\d+)\.(\d{3})(?!\d)/g, "1 \u03C0\u03C1\u03BF\u03C2 $1$2"],
+    [/1:(\d+)/g, "1 \u03C0\u03C1\u03BF\u03C2 $1"],
+    [/(\d)\.(\d)/g, "$1 \u03BA\u03CC\u03BC\u03BC\u03B1 $2"],
+    [/(\d)\s?[\u2013-]\s?(\d)/g, "$1 \u03AD\u03C9\u03C2 $2"],
+    [/%/g, " \u03C4\u03BF\u03B9\u03C2 \u03B5\u03BA\u03B1\u03C4\u03CC"],
+    [/\u2265/g, " \u03C4\u03BF\u03C5\u03BB\u03AC\u03C7\u03B9\u03C3\u03C4\u03BF\u03BD "],
+    [/\u2264/g, " \u03AD\u03C9\u03C2 "],
+    [/>/g, " \u03C0\u03AC\u03BD\u03C9 \u03B1\u03C0\u03CC "],
+    [/</g, " \u03BA\u03AC\u03C4\u03C9 \u03B1\u03C0\u03CC "],
+    [/\u00B1/g, " \u03BC\u03B5 \u03AE \u03C7\u03C9\u03C1\u03AF\u03C2 "],
+    [/~/g, " \u03C0\u03B5\u03C1\u03AF\u03C0\u03BF\u03C5 "],
+    [/\u2192/g, ", \u03BC\u03B5\u03C4\u03AC, "],
+    [/[\u00B7\u2022]/g, ". "],
+    [/\s?[\u2014\u2013]\s?/g, ", "],
+    [/[()\u00AB\u00BB"]/g, ", "],
+    [/\//g, " \u03AE "]
+  ],
+  en: [
+    [/[\u2080-\u2089]/g, (d) => String("\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089".indexOf(d))],
+    [/&/g, " and "],
+    [/([^\s\d])\s?\u2013\s?(\d)/g, "$1 to $2"],
+    [/q\s?(\d+)\s?[\u2013-]\s?(\d+)\s?min/g, "every $1 to $2 minutes"],
+    [/q\s?(\d+)\s?min/g, "every $1 minutes"],
+    [/(\u00B5g|\u03BCg|mcg)\/kg\/min/g, " micrograms per kilogram per minute"],
+    [/mg\/kg\/h/g, " milligrams per kilogram per hour"],
+    [/(\u00B5g|\u03BCg|mcg)\/kg/g, " micrograms per kilogram"],
+    [/mg\/kg/g, " milligrams per kilogram"],
+    [/mL\/kg/g, " millilitres per kilogram"],
+    [/J\/kg/g, " joules per kilogram"],
+    [/L\/min/g, " litres per minute"],
+    [/cmH2O/g, " centimetres of water"],
+    [/mmHg/g, " millimetres of mercury"],
+    [/kPa/g, " kilopascals"],
+    [/mmol/g, " millimoles"],
+    [/(\d)\s?(\u00B5g|\u03BCg|mcg)(?![A-Za-z])/g, "$1 micrograms"],
+    [/(\d)\s?mg(?![A-Za-z])/g, "$1 milligrams"],
+    [/(\d)\s?mL(?![A-Za-z])/g, "$1 millilitres"],
+    [/(\d)\s?kg(?![A-Za-z])/g, "$1 kilograms"],
+    [/(\d)\s?g(?![A-Za-z])/g, "$1 grams"],
+    [/(\d)\s?cm(?![A-Za-z])/g, "$1 centimetres"],
+    [/(\d)\s?J(?![A-Za-z])/g, "$1 joules"],
+    [/(\d)\s?(IU|U)(?![A-Za-z])/g, "$1 units"],
+    [/\/min/g, " per minute"],
+    [/(\d)\s?min(?![A-Za-z])/g, "$1 minutes"],
+    [/(\d)\s?s(?![A-Za-z])/g, "$1 seconds"],
+    [/(\d)\s?h(?![A-Za-z])/g, "$1 hours"],
+    [/\bIV\/IO\b/g, "I.V. or I.O."],
+    [/\bIV\b/g, "I.V."],
+    [/\bIO\b/g, "I.O."],
+    [/\bIM\b/g, "I.M."],
+    [/\bSC\b/g, "subcutaneous"],
+    [/\bmax\b/g, "maximum"],
+    [/(^|[^\d.])1\s+(milligrams|micrograms|grams|millilitres|kilograms|minutes|seconds|hours|units|joules)/g, (m, a, u) => a + "1 " + u.slice(0, -1)],
+    [/1:(\d+)[.,](\d{3})(?!\d)/g, "1 in $1$2"],
+    [/1:(\d+)/g, "1 in $1"],
+    [/(\d)\s?[\u2013-]\s?(\d)/g, "$1 to $2"],
+    [/%/g, " percent"],
+    [/\u2265/g, " at least "],
+    [/\u2264/g, " up to "],
+    [/>/g, " more than "],
+    [/</g, " less than "],
+    [/\u00B1/g, " with or without "],
+    [/~/g, " about "],
+    [/\u2192/g, ", then, "],
+    [/[\u00B7\u2022]/g, ". "],
+    [/\s?[\u2014\u2013]\s?/g, ", "],
+    [/[()\u00AB\u00BB\u201C\u201D"]/g, ", "],
+    [/\//g, " or "]
+  ]
+};
+function speechText(s, lang) {
+  let t = String(s == null ? "" : s);
+  for (const [re, rep] of SPEECH_RULES[lang === "en" ? "en" : "el"]) t = t.replace(re, rep);
+  return t.replace(/\s+/g, " ").replace(/\s([,.:])/g, "$1").replace(/,(\s*,)+/g, ",").replace(/,\s*([.:])/g, "$1").replace(/\.(\s*\.)+/g, ".").replace(/^[\s,.]+|[\s,]+$/g, "").trim();
+}
+// Plausible patient values. Outside them no dose is calculated at all: a
+// typo (700 kg, 0 kg, 150 years) must not produce a confident number.
+const PATIENT_LIMITS = { w: [0.3, 300], h: [25, 230], a: [0, 120] };
+function patientCheck(weight, age, height) {
+  const w = parseFloat(weight), a = parseFloat(age), h = parseFloat(height);
+  const out = (v, r) => !isNaN(v) && (v < r[0] || v > r[1]);
+  return {
+    w: String(weight).trim() !== "" && (isNaN(w) || out(w, PATIENT_LIMITS.w) || w === 0),
+    a: String(age).trim() !== "" && (isNaN(a) || out(a, PATIENT_LIMITS.a)),
+    h: String(height).trim() !== "" && (isNaN(h) || out(h, PATIENT_LIMITS.h) || h === 0)
+  };
 }
 // Palette. `S` is deliberately a *mutable* object: every component reads
 // S.token at render time, so swapping the values in place and re-rendering
@@ -292,8 +439,9 @@ const LIGHT = {
   cardAlt: "#F8FAFC",
   line: "#E1E7EE",
   lineStrong: "#E4E9F0",
-  red: "#BC4238",
-  amber: "#A9661B",
+  // Text colours meet WCAG AA (4.5:1) on every light background they are used on.
+  red: "#B54036",
+  amber: "#955A17",
   muted: "#49535F",
   // pale panels + their text
   tintInfo: "#E8F0F7",   tintInfoFg: "#1E3A5F",
