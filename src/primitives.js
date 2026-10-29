@@ -323,6 +323,24 @@ const CRISIS_TTL = 12 * 3600 * 1e3;
 // arrest checklists state (ERC 2025); 110 is the middle of the range.
 const CRISIS_METRO = { vfvt: 1, asystole_pea: 1, maternal_arrest: 1, asthma_arrest: 1, cardiac_surgery_arrest: 1, lvad_arrest: 1 };
 const METRO_RATES = [100, 110, 120];
+// AAC click tracks (audio/metro-<rate>.m4a), read once into blobs when the app opens, so a tap on the
+// metronome finds them ready and the service worker never has to answer a byte-range request.
+// Only where the phone can play AAC. They stay for the life of the page (about 100 KB in all).
+const METRO_AAC = {};
+function metroPrefetch() {
+  if (metroPrefetch.done) return;
+  metroPrefetch.done = true;
+  try {
+    if (typeof fetch === "undefined" || typeof URL === "undefined" || !URL.createObjectURL) return;
+    const t = document.createElement("audio");
+    if (!(t.canPlayType && t.canPlayType('audio/mp4; codecs="mp4a.40.2"'))) return;
+    METRO_RATES.forEach((r) => {
+      fetch("audio/metro-" + r + ".m4a").then((res) => (res.ok ? res.blob() : null)).then((b) => {
+        if (b) METRO_AAC[r] = URL.createObjectURL(new Blob([b], { type: "audio/mp4" }));
+      }).catch(() => {});
+    });
+  } catch (e) {}
+}
 function CrisisMode({ c, lang, done, toggle, onClose }) {
   const el = lang === "el";
   const steps = el ? c.stepsEl : c.stepsEn;
@@ -384,13 +402,15 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
   // Metronome. On iPhone, Web Audio is silenced by the ring/silent switch and often stays mute unless
   // a sound starts during the tap, so the clicks play through an <audio> element that loops a ~12 s
   // track: media playback ignores the silent switch, like music. First choice is the AAC track in
-  // audio/ (fetched into a blob when the screen opens, so the service worker never has to answer a
-  // byte-range request); Lockdown Mode blocks Web Audio and allows only some media types, AAC among
-  // them. Second choice is a WAV rendered here; Web Audio (clicks scheduled slightly ahead) is last. A flashing dot shows the beat in noisy or silent rooms. It starts
-  // only on a tap (browsers require one) and stops when the screen closes.
+  // audio/ (METRO_AAC, read when the app opens); Lockdown Mode blocks Web Audio and allows only some
+  // media types, AAC among them. Second choice is a WAV rendered here; Web Audio (clicks scheduled
+  // slightly ahead) is last. If none can start, the screen says so and the flashing dot carries the
+  // beat. It starts only on a tap (browsers require one) and stops when the screen closes. Each start
+  // gets a generation number, so a late rejection from an earlier rate cannot replace the sound.
   const [metro, setMetro] = useState(0);
   const [metroRate, setMetroRate] = useState(110);
-  const audioRef = useRef({ ctx: null, timer: null, el: null, url: null, aac: null, on: false });
+  const [metroMute, setMetroMute] = useState(false);
+  const audioRef = useRef({ ctx: null, timer: null, el: null, url: null, on: false, gen: 0 });
   const clickWav = (bpm) => {
     const sr = 16000, period = Math.round(sr * 60 / bpm), beats = Math.max(8, Math.round(12 * bpm / 60)), n = period * beats;
     const buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
@@ -417,7 +437,7 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
     const a = audioRef.current;
     try {
       const AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return;
+      if (!AC) return false;
       if (!a.ctx) a.ctx = new AC();
       const ctx = a.ctx;
       if (ctx.state !== "running") ctx.resume();
@@ -436,64 +456,54 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
           next += period;
         }
       }, 25);
-    } catch (e) {}
+      return true;
+    } catch (e) { return false; }
   };
-  const fallbackSound = (bpm, triedAac) => {
+  const lastResort = (bpm) => { if (!webAudioClicks(bpm)) setMetroMute(true); };
+  const fallbackSound = (bpm, triedAac, gen) => {
     const a = audioRef.current;
-    if (!a.on || a.timer) return;
+    if (!a.on || a.timer || gen !== a.gen) return;
     if (triedAac) {
       try {
         a.url = URL.createObjectURL(clickWav(bpm));
         a.el.src = a.url;
         const q = a.el.play();
-        if (q && q.catch) q.catch(() => fallbackSound(bpm, false));
+        if (q && q.catch) q.catch(() => fallbackSound(bpm, false, gen));
         return;
       } catch (e) {}
     }
-    webAudioClicks(bpm);
+    lastResort(bpm);
   };
   const stopMetro = () => { stopSound(); setMetro(0); };
   const startMetro = (bpm) => {
     const a = audioRef.current;
     stopSound();
+    const gen = ++a.gen;
+    setMetroMute(false);
     try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
     let started = false;
     try {
       if (typeof Audio !== "undefined" && typeof URL !== "undefined" && URL.createObjectURL) {
         if (!a.el) a.el = new Audio();
-        const pre = a.aac && a.aac[bpm];
+        const pre = METRO_AAC[bpm];
         if (pre) a.el.src = pre;
         else { a.url = URL.createObjectURL(clickWav(bpm)); a.el.src = a.url; }
         a.el.loop = true;
         a.on = true;
         const p = a.el.play();
         started = true;
-        if (p && p.catch) p.catch(() => fallbackSound(bpm, !!pre));
+        if (p && p.catch) p.catch(() => fallbackSound(bpm, !!pre, gen));
       }
     } catch (e) { started = false; }
-    if (!started) webAudioClicks(bpm);
+    if (!started) lastResort(bpm);
     setMetro(bpm);
   };
-  // AAC tracks for this screen, as blobs (see above). Only where the phone can play AAC.
-  useEffect(() => {
-    if (!CRISIS_METRO[c.id] || typeof fetch === "undefined") return;
-    let ok = false;
-    try { const t = document.createElement("audio"); ok = !!(t.canPlayType && t.canPlayType('audio/mp4; codecs="mp4a.40.2"')); } catch (e) {}
-    if (!ok) return;
-    const a = audioRef.current;
-    a.aac = a.aac || {};
-    METRO_RATES.forEach((r) => {
-      fetch("audio/metro-" + r + ".m4a").then((res) => (res.ok ? res.blob() : null)).then((b) => {
-        if (b && audioRef.current.aac) a.aac[r] = URL.createObjectURL(new Blob([b], { type: "audio/mp4" }));
-      }).catch(() => {});
-    });
-  }, []);
+  useEffect(() => { if (CRISIS_METRO[c.id]) metroPrefetch(); }, []);
   useEffect(() => () => {
     const a = audioRef.current;
     stopSound();
+    a.gen++;
     try { a.ctx && a.ctx.close(); } catch (e) {}
-    try { Object.keys(a.aac || {}).forEach((k) => URL.revokeObjectURL(a.aac[k])); } catch (e) {}
-    a.aac = null;
   }, []);
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 500);
@@ -543,6 +553,7 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
             React.createElement("span", { style: { fontSize: 15 } }, (el ? "\u039C\u03B5\u03C4\u03C1\u03BF\u03BD\u03CC\u03BC\u03BF\u03C2 " : "Metronome ") + (metro ? metro + "/min \u00B7 " + (el ? "ON" : "ON") : (el ? "OFF" : "OFF"))),
             React.createElement("span", { style: { fontSize: 11, color: MUTED, fontWeight: 600 } }, el ? "\u03C3\u03C5\u03BC\u03C0\u03B9\u03AD\u03C3\u03B5\u03B9\u03C2 100\u2013120/min (ERC 2025)" : "compressions 100\u2013120/min (ERC 2025)"))),
         METRO_RATES.map((r) => React.createElement("button", { key: r, onClick: () => { setMetroRate(r); if (metro) startMetro(r); }, "aria-pressed": metroRate === r ? "true" : "false", "aria-label": r + (el ? " \u03B1\u03BD\u03AC \u03BB\u03B5\u03C0\u03C4\u03CC" : " per minute"), style: { ...btn, width: 48, minHeight: 48, fontSize: 15, background: metroRate === r ? INK : CARD, color: metroRate === r ? BG : INK } }, r))),
+      CRISIS_METRO[c.id] && metro > 0 && metroMute && React.createElement("div", { role: "status", style: { fontSize: 12.5, color: AMBER, fontWeight: 700, marginTop: 6, lineHeight: 1.4 } }, el ? "\u03A7\u03C9\u03C1\u03AF\u03C2 \u03AE\u03C7\u03BF \u03C3\u03B5 \u03B1\u03C5\u03C4\u03AE \u03C4\u03B7 \u03C3\u03C5\u03C3\u03BA\u03B5\u03C5\u03AE \u2014 \u03B1\u03BA\u03BF\u03BB\u03BF\u03C5\u03B8\u03AE\u03C3\u03C4\u03B5 \u03C4\u03B7\u03BD \u03BA\u03BF\u03C5\u03BA\u03BA\u03AF\u03B4\u03B1" : "No sound on this device \u2014 follow the flashing dot"),
       React.createElement("div", { style: { height: 6, borderRadius: 99, background: CARD, marginTop: 10, overflow: "hidden" } }, React.createElement("div", { style: { width: (100 * nDone / steps.length) + "%", height: "100%", background: c.color } }))),
     React.createElement("div", { style: { flex: 1, overflowY: "auto", padding: "12px 12px 8px", display: "flex", flexDirection: "column", gap: 8 } },
       steps.map((s, i) => {

@@ -1,6 +1,6 @@
 // Morfeas — service worker
 // Bump CACHE whenever anything in APP_SHELL changes, to force an update.
-const CACHE = "anesthesia-v473";
+const CACHE = "anesthesia-v476";
 
 const APP_SHELL = [
   "./",
@@ -20,6 +20,9 @@ const APP_SHELL = [
   "./icons/icon-maskable-512-v2.png",
   "./icons/qr-morfeas.png",
   "./fonts/commissioner.woff",
+  "./audio/metro-100.m4a",
+  "./audio/metro-110.m4a",
+  "./audio/metro-120.m4a",
 ];
 
 // React from the CDN. These URLs carry a fixed version, so their content never

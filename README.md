@@ -27,6 +27,7 @@ opened online.
 | `audit/AUDIT.md` | Human-readable report generated from the registry |
 | `audit/CALC-MODES.md` | Calculation modes |
 | `fonts/`, `icons/` | Self-hosted typeface and app icons |
+| `audio/` | Metronome click tracks (AAC, 100/110/120 per minute, 12 s each) |
 
 The source files are plain classic scripts (no bundler, no ES modules), loaded
 in the order shown in `index.html`; the order matters. Greek text is stored as
@@ -82,7 +83,7 @@ from its icon once while online after each update.
 
 7. Upload **all** changed files to the repository, **including `sw.js`** and
    `index.html`, keeping the folder structure (`src/`, `audit/`, `tests/`,
-   `icons/`). GitHub Pages deploys automatically.
+   `icons/`, `audio/`). GitHub Pages deploys automatically.
 8. Check `sw.js` on the live site (step above).
 
 Do **not** create a new repository — it breaks the address of installed apps.
@@ -108,10 +109,15 @@ Do **not** create a new repository — it breaks the address of installed apps.
   standard-ALS arrest lists (VF/VT, asystole/PEA, pregnancy, asthma) add a
   2-minute cycle clock and the time since the last adrenaline (amber 3–5 min,
   red >5 min), as the lists themselves state (ERC 2025).
-- **Metronome** (arrest checklists, 100/110/120 per minute): the clicks are
-  rendered once into a ~12 s WAV that an `<audio>` element loops, so on iPhone
-  it plays as media and is heard even with the ring/silent switch on (volume =
-  media volume). Web Audio is the fallback. A flashing dot shows the beat.
+- **Metronome** (arrest checklists, 100/110/120 per minute): an `<audio>`
+  element loops a ~12 s click track, so on iPhone it plays as media and is heard
+  even with the ring/silent switch on (volume = media volume). First choice is
+  the AAC track in `audio/metro-<rate>.m4a`, read into a blob when the app
+  opens (iPhone Lockdown Mode blocks Web Audio and allows only some media
+  types; a blob also avoids byte-range requests through the service worker).
+  Then a WAV rendered in the page, then Web Audio. If none can start, the
+  screen says "no sound" and the flashing dot carries the beat. Each start has a
+  generation number, so a late failure from an earlier rate cannot take over.
 - **Reader** (crisis mode): the phone's text-to-speech reads the highlighted
   step; "Done → next" ticks it and reads the next one. `speechText()` in
   `src/formulas.js` spells out units, routes, ranges and ratios for the voice

@@ -1278,7 +1278,11 @@ check("v474: audit part 18: neostigmine ASA cap in the calculation, ACOG conditi
 
 check("v475: metronome AAC tracks present, cached offline and tried first",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String(P.includes('fetch("audio/metro-" + r + ".m4a")') && P.includes("fallbackSound(bpm, !!pre)") && ["100","110","120"].every(function(r){var f=require("path").join(__dirname,"..","audio","metro-"+r+".m4a");return require("fs").existsSync(f) && require("fs").readFileSync(f).slice(4,8).toString()==="ftyp" && require("fs").readFileSync(require("path").join(__dirname,"..","sw.js"),"utf8").includes("./audio/metro-"+r+".m4a");})); })(), "true");
+    return String(P.includes('fetch("audio/metro-" + r + ".m4a")') && P.includes("fallbackSound(bpm, !!pre, gen)") && ["100","110","120"].every(function(r){var f=require("path").join(__dirname,"..","audio","metro-"+r+".m4a");return require("fs").existsSync(f) && require("fs").readFileSync(f).slice(4,8).toString()==="ftyp" && require("fs").readFileSync(require("path").join(__dirname,"..","sw.js"),"utf8").includes("./audio/metro-"+r+".m4a");})); })(), "true");
+
+check("v476: audit part 20: metronome generation guard, AAC ready at app start, no-sound notice; #115 wording; ERC 2025 DOI",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(P.includes("const METRO_AAC = {};") && P.includes("gen !== a.gen") && P.includes("No sound on this device") && require("fs").readFileSync(require("path").join(__dirname,"..","src","root.js"),"utf8").includes("metroPrefetch();") && T.includes("doi:10.1016/j.resuscitation.2025.110769") && !T.replace(/\\u([0-9A-Fa-f]{4})/g,function(m,h){return String.fromCharCode(parseInt(h,16));}).includes("7 ημέρες, και με ρήξη")); })(), "true");
 
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
