@@ -382,13 +382,15 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
   const readerStop = () => { try { window.speechSynthesis.cancel(); } catch (e) {} setReader(false); };
   useEffect(() => () => { try { window.speechSynthesis.cancel(); } catch (e) {} }, []);
   // Metronome. On iPhone, Web Audio is silenced by the ring/silent switch and often stays mute unless
-  // a sound starts during the tap, so the clicks are rendered once into a ~12 s WAV that an <audio>
-  // element loops: media playback ignores the silent switch, like music. Web Audio (clicks scheduled
-  // slightly ahead) is the fallback. A flashing dot shows the beat in noisy or silent rooms. It starts
+  // a sound starts during the tap, so the clicks play through an <audio> element that loops a ~12 s
+  // track: media playback ignores the silent switch, like music. First choice is the AAC track in
+  // audio/ (fetched into a blob when the screen opens, so the service worker never has to answer a
+  // byte-range request); Lockdown Mode blocks Web Audio and allows only some media types, AAC among
+  // them. Second choice is a WAV rendered here; Web Audio (clicks scheduled slightly ahead) is last. A flashing dot shows the beat in noisy or silent rooms. It starts
   // only on a tap (browsers require one) and stops when the screen closes.
   const [metro, setMetro] = useState(0);
   const [metroRate, setMetroRate] = useState(110);
-  const audioRef = useRef({ ctx: null, timer: null, el: null, url: null });
+  const audioRef = useRef({ ctx: null, timer: null, el: null, url: null, aac: null, on: false });
   const clickWav = (bpm) => {
     const sr = 16000, period = Math.round(sr * 60 / bpm), beats = Math.max(8, Math.round(12 * bpm / 60)), n = period * beats;
     const buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
@@ -405,6 +407,7 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
   };
   const stopSound = () => {
     const a = audioRef.current;
+    a.on = false;
     if (a.timer) clearInterval(a.timer);
     a.timer = null;
     if (a.el) { try { a.el.pause(); } catch (e) {} }
@@ -435,6 +438,20 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
       }, 25);
     } catch (e) {}
   };
+  const fallbackSound = (bpm, triedAac) => {
+    const a = audioRef.current;
+    if (!a.on || a.timer) return;
+    if (triedAac) {
+      try {
+        a.url = URL.createObjectURL(clickWav(bpm));
+        a.el.src = a.url;
+        const q = a.el.play();
+        if (q && q.catch) q.catch(() => fallbackSound(bpm, false));
+        return;
+      } catch (e) {}
+    }
+    webAudioClicks(bpm);
+  };
   const stopMetro = () => { stopSound(); setMetro(0); };
   const startMetro = (bpm) => {
     const a = audioRef.current;
@@ -444,18 +461,40 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
     try {
       if (typeof Audio !== "undefined" && typeof URL !== "undefined" && URL.createObjectURL) {
         if (!a.el) a.el = new Audio();
-        a.url = URL.createObjectURL(clickWav(bpm));
+        const pre = a.aac && a.aac[bpm];
+        if (pre) a.el.src = pre;
+        else { a.url = URL.createObjectURL(clickWav(bpm)); a.el.src = a.url; }
         a.el.loop = true;
-        a.el.src = a.url;
+        a.on = true;
         const p = a.el.play();
         started = true;
-        if (p && p.catch) p.catch(() => { if (audioRef.current.url && !audioRef.current.timer) webAudioClicks(bpm); });
+        if (p && p.catch) p.catch(() => fallbackSound(bpm, !!pre));
       }
     } catch (e) { started = false; }
     if (!started) webAudioClicks(bpm);
     setMetro(bpm);
   };
-  useEffect(() => () => { stopSound(); try { audioRef.current.ctx && audioRef.current.ctx.close(); } catch (e) {} }, []);
+  // AAC tracks for this screen, as blobs (see above). Only where the phone can play AAC.
+  useEffect(() => {
+    if (!CRISIS_METRO[c.id] || typeof fetch === "undefined") return;
+    let ok = false;
+    try { const t = document.createElement("audio"); ok = !!(t.canPlayType && t.canPlayType('audio/mp4; codecs="mp4a.40.2"')); } catch (e) {}
+    if (!ok) return;
+    const a = audioRef.current;
+    a.aac = a.aac || {};
+    METRO_RATES.forEach((r) => {
+      fetch("audio/metro-" + r + ".m4a").then((res) => (res.ok ? res.blob() : null)).then((b) => {
+        if (b && audioRef.current.aac) a.aac[r] = URL.createObjectURL(new Blob([b], { type: "audio/mp4" }));
+      }).catch(() => {});
+    });
+  }, []);
+  useEffect(() => () => {
+    const a = audioRef.current;
+    stopSound();
+    try { a.ctx && a.ctx.close(); } catch (e) {}
+    try { Object.keys(a.aac || {}).forEach((k) => URL.revokeObjectURL(a.aac[k])); } catch (e) {}
+    a.aac = null;
+  }, []);
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 500);
     let lock = null;
@@ -602,7 +641,7 @@ function ChecklistTab({ lang, focus }) {
     return (cat === "all" || c.cat === cat) && title.includes(q.toLowerCase());
   });
   const crisisC = crisis ? CHECKLISTS.find((x) => x.id === crisis) : null;
-  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } }, printing && ReactDOM.createPortal(/* @__PURE__ */ React.createElement(PrintChecklist, { c: CHECKLISTS.find((x) => x.id === printing), lang }), document.body), crisisC && ReactDOM.createPortal(/* @__PURE__ */ React.createElement(CrisisMode, { c: crisisC, lang, done, toggle: toggleStep, onClose: () => setCrisis(null) }), document.body), /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } }, printing && ReactDOM.createPortal(/* @__PURE__ */ React.createElement(PrintChecklist, { c: CHECKLISTS.find((x) => x.id === printing), lang }), document.body), crisisC && ReactDOM.createPortal(/* @__PURE__ */ React.createElement(CrisisMode, { key: crisisC.id, c: crisisC, lang, done, toggle: toggleStep, onClose: () => setCrisis(null) }), document.body), /* @__PURE__ */ React.createElement(
     "input",
     {
       value: q,

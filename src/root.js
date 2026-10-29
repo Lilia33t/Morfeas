@@ -234,37 +234,10 @@ function LineIcon({ name, size }) {
   const parts = LINE_ICONS[name] || TOOL_ICON_PATHS[name] || [];
   return /* @__PURE__ */ React.createElement("svg", { width: size || 24, height: size || 24, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true" }, parts.map(([tag, props], i) => React.createElement(tag, { key: i, ...props })));
 }
-// Offline readiness: are the page and every script it loads in the cache?
-// caches.match looks in every cache, so this is what the phone really has.
-function useOfflineStatus() {
-  const [st, setSt] = useState(() => ({ online: typeof navigator === "undefined" || navigator.onLine !== false, cached: null }));
-  useEffect(() => {
-    let alive = true;
-    const check = async () => {
-      let cached = "na";
-      try {
-        if (typeof caches !== "undefined" && navigator.serviceWorker) {
-          const need = ["./index.html"].concat(Array.from(document.scripts).map((x) => x.src).filter(Boolean));
-          let n = 0;
-          for (const u of need) if (await caches.match(u, { ignoreVary: true })) n++;
-          cached = n === need.length ? "yes" : n === 0 ? "no" : "partial";
-        }
-      } catch (e) { cached = "na"; }
-      if (alive) setSt({ online: navigator.onLine !== false, cached });
-    };
-    check();
-    const t = setInterval(check, 20000);
-    window.addEventListener("online", check);
-    window.addEventListener("offline", check);
-    return () => { alive = false; clearInterval(t); window.removeEventListener("online", check); window.removeEventListener("offline", check); };
-  }, []);
-  return st;
-}
 const FAV_ICON = { drug: "pill", list: "alert" };
 function HomeScreen({ lang, go, openFav }) {
   const el = lang === "el";
   const fav = useFavs();
-  const off = useOfflineStatus();
   const favItems = fav.favs.map((f) => ({ f, info: favInfo(f, lang) })).filter((x) => x.info).slice(0, FAV_MAX);
   const KIND = { drug: el ? "\u03A6\u03AC\u03C1\u03BC\u03B1\u03BA\u03BF" : "Drug", list: el ? "\u039B\u03AF\u03C3\u03C4\u03B1" : "Checklist", tool: el ? "\u0395\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03BF" : "Tool" };
   const TILES = [
@@ -274,10 +247,6 @@ function HomeScreen({ lang, go, openFav }) {
     { id: "peds", icon: "child", el: "\u03A0\u03B1\u03B9\u03B4\u03B9\u03B1\u03C4\u03C1\u03B9\u03BA\u03AE \u03BA\u03AC\u03C1\u03C4\u03B1", en: "Paediatric card", subEl: "\u03B1\u03B5\u03C1\u03B1\u03B3\u03C9\u03B3\u03CC\u03C2, \u03B6\u03C9\u03C4\u03B9\u03BA\u03AC, \u03B5\u03C0\u03B5\u03AF\u03B3\u03BF\u03BD\u03C4\u03B1", subEn: "airway, vitals, emergencies" },
     { id: "about", icon: "info", el: "\u03A3\u03C7\u03B5\u03C4\u03B9\u03BA\u03AC & \u03C0\u03B7\u03B3\u03AD\u03C2", en: "About & sources", subEl: "\u03BF\u03B4\u03B7\u03B3\u03AF\u03B5\u03C2, \u03B2\u03B9\u03B2\u03BB\u03B9\u03BF\u03B3\u03C1\u03B1\u03C6\u03AF\u03B1, \u03CC\u03C1\u03B9\u03B1", subEn: "guidelines, references, limits" }
   ];
-  const offTxt = off.cached === "yes" ? (el ? "\u2713 \u0394\u03B9\u03B1\u03B8\u03AD\u03C3\u03B9\u03BC\u03BF offline \u2014 \u03CC\u03BB\u03B1 \u03C4\u03B1 \u03B1\u03C1\u03C7\u03B5\u03AF\u03B1 \u03B5\u03AF\u03BD\u03B1\u03B9 \u03B1\u03C0\u03BF\u03B8\u03B7\u03BA\u03B5\u03C5\u03BC\u03AD\u03BD\u03B1 \u03C3\u03C4\u03B7 \u03C3\u03C5\u03C3\u03BA\u03B5\u03C5\u03AE" : "\u2713 Available offline \u2014 every file is stored on this device")
-    : off.cached === "partial" || off.cached === "no" ? (el ? "\u26A0 \u0394\u03B5\u03BD \u03AD\u03C7\u03BF\u03C5\u03BD \u03B1\u03C0\u03BF\u03B8\u03B7\u03BA\u03B5\u03C5\u03C4\u03B5\u03AF \u03CC\u03BB\u03B1 \u03C4\u03B1 \u03B1\u03C1\u03C7\u03B5\u03AF\u03B1 \u2014 \u03B1\u03BD\u03BF\u03AF\u03BE\u03C4\u03B5 \u03C4\u03B7\u03BD \u03B5\u03C6\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03BC\u03B5 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7 \u03BA\u03B1\u03B9 \u03C0\u03B5\u03C1\u03B9\u03BC\u03AD\u03BD\u03B5\u03C4\u03B5 \u03BB\u03AF\u03B3\u03B1 \u03B4\u03B5\u03C5\u03C4\u03B5\u03C1\u03CC\u03BB\u03B5\u03C0\u03C4\u03B1" : "\u26A0 Not every file is stored yet \u2014 open the app online and wait a few seconds")
-    : off.cached === "na" ? (el ? "\u0397 \u03BB\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1 offline \u03B4\u03B5\u03BD \u03C5\u03C0\u03BF\u03C3\u03C4\u03B7\u03C1\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9 \u03B5\u03B4\u03CE" : "Offline use is not supported here") : (el ? "\u0388\u03BB\u03B5\u03B3\u03C7\u03BF\u03C2 \u03B1\u03C0\u03BF\u03B8\u03AE\u03BA\u03B5\u03C5\u03C3\u03B7\u03C2\u2026" : "Checking storage\u2026");
-  const offCol = off.cached === "yes" ? S.teal : off.cached === "partial" || off.cached === "no" ? S.amber : S.muted;
   // Favourites live behind one tile that opens into a list (remembered per phone).
   const [favOpen, setFavOpen] = useState(() => storeGet("aa_favs_open") === true);
   const toggleFavOpen = () => { const v = !favOpen; setFavOpen(v); storeSet("aa_favs_open", v); };
@@ -315,10 +284,7 @@ function HomeScreen({ lang, go, openFav }) {
       React.createElement("span", { style: { display: "flex", flexDirection: "column", gap: 2, flex: 1 } },
         React.createElement("span", { style: { fontWeight: 800, fontSize: 15.5 } }, el ? x.el : x.en),
         React.createElement("span", { style: { fontSize: 12.5, color: x.urgent ? S.tintDangerFg : S.muted, fontWeight: 600 } }, el ? x.subEl : x.subEn)),
-      React.createElement("span", { style: { fontSize: 18, color: S.muted, fontWeight: 700 } }, "\u203A"))),
-    React.createElement("div", { role: "status", style: { background: S.card, border: "1px solid " + S.line, borderRadius: 12, padding: "10px 12px", display: "flex", flexDirection: "column", gap: 4 } },
-      React.createElement("div", { style: { fontSize: 13.5, fontWeight: 800, color: S.ink } }, (el ? "\u0388\u03BA\u03B4\u03BF\u03C3\u03B7 " : "Version ") + APP_VERSION + (typeof CONTENT_CHECKED !== "undefined" ? (el ? " \u00B7 \u03C0\u03B5\u03C1\u03B9\u03B5\u03C7\u03CC\u03BC\u03B5\u03BD\u03BF \u03B5\u03BB\u03AD\u03B3\u03C7\u03B8\u03B7\u03BA\u03B5 " : " \u00B7 content reviewed ") + CONTENT_CHECKED : "")),
-      React.createElement("div", { style: { fontSize: 13, fontWeight: 700, color: offCol, lineHeight: 1.4 } }, (off.online ? "" : (el ? "\u03A7\u03C9\u03C1\u03AF\u03C2 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7 \u00B7 " : "Offline \u00B7 ")) + offTxt)));
+      React.createElement("span", { style: { fontSize: 18, color: S.muted, fontWeight: 700 } }, "\u203A"))));
 }
 // Recent chips store the title in the language active when they were used;
 // look it up again so they follow a language switch.
