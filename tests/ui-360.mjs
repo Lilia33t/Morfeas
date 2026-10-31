@@ -67,18 +67,26 @@ const overflow = () => page.evaluate(() => {
   });
   return { width: document.documentElement.scrollWidth, bad };
 });
-const small = () => page.evaluate(() => [...document.querySelectorAll("#root button, #root [role=button]")]
+// Touch targets: buttons, links and checkboxes/radios/sliders (a checkbox counts with its label).
+const small = () => page.evaluate(() => [...document.querySelectorAll("#root button, #root [role=button], #root a[href], #root input[type=checkbox], #root input[type=radio], #root input[type=range], #root select")]
+  .map((b) => (b.type === "checkbox" || b.type === "radio") && b.closest("label") ? b.closest("label") : b)
   .filter((b) => { const r = b.getBoundingClientRect(); return r.width > 0 && (r.height < 44 || r.width < 44); }).length);
+const smallList = () => page.evaluate(() => [...document.querySelectorAll("#root button, #root [role=button], #root a[href], #root input[type=checkbox], #root input[type=radio], #root input[type=range], #root select")]
+  .map((b) => (b.type === "checkbox" || b.type === "radio") && b.closest("label") ? b.closest("label") : b)
+  .filter((b) => { const r = b.getBoundingClientRect(); return r.width > 0 && (r.height < 44 || r.width < 44); })
+  .map((b) => b.tagName + " " + Math.round(b.getBoundingClientRect().width) + "x" + Math.round(b.getBoundingClientRect().height) + " " + (b.getAttribute("aria-label") || b.innerText || b.getAttribute("href") || "").slice(0, 40)));
 
 const failures = [];
 let smallMax = 0;
 const check = async (where) => {
   const o = await overflow();
   if (o.width > 360 || o.bad.length) failures.push(`${where}: ${o.bad.slice(0, 2).join(" | ") || "page wider than 360 px"}`);
-  smallMax = Math.max(smallMax, await small());
+  const sm = await small();
+  if (sm > 0 && process.env.UI_LIST_SMALL) console.log(where, (await smallList()).join(" | "));
+  smallMax = Math.max(smallMax, sm);
 };
 const openEach = async (where) => {
-  const items = page.locator('#root div[style*="overflow: hidden"] > button');
+  const items = page.locator('#root div[style*="overflow: hidden"] > div[data-row] > button:first-child');
   const n = await items.count();
   for (let i = 0; i < n; i++) {
     await items.nth(i).click();

@@ -388,7 +388,7 @@ function FluidsCalc({ lang, weight, age, sex }) {
       step: "1",
       value: npo,
       onChange: (e) => setNpo(parseInt(e.target.value)),
-      style: { width: "100%", accentColor: S.teal }
+      style: { width: "100%", height: 44, margin: 0, accentColor: S.teal }
     }
   )), /* @__PURE__ */ React.createElement(SectionLabel, null, el ? "\u038C\u03B3\u03BA\u03BF\u03C2 \u0391\u03AF\u03BC\u03B1\u03C4\u03BF\u03C2 & \u0395\u03C0\u03B9\u03C4\u03C1\u03B5\u03C0\u03C4\u03AE \u0391\u03C0\u03CE\u03BB\u03B5\u03B9\u03B1" : "Blood Volume & Allowable Loss"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8 } }, /* @__PURE__ */ React.createElement(Cell, { label: el ? "\u038C\u03B3\u03BA\u03BF\u03C2 \u03B1\u03AF\u03BC\u03B1\u03C4\u03BF\u03C2 (EBV)" : "Blood volume (EBV)", val: ebv ? `${fmt(ebv)} mL` : "\u2014", sub: ebvK ? `${ebvK.v} mL/kg` : (el ? "\u03C3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 \u03AE \u03B5\u03C0\u03B9\u03BB\u03AD\u03BE\u03C4\u03B5 \u03BA\u03B1\u03C4\u03B7\u03B3\u03BF\u03C1\u03AF\u03B1" : "enter age or choose a category") })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, flexWrap: "wrap" } }, EBV_CATS.map((c) => /* @__PURE__ */ React.createElement("button", { key: c.id, onClick: () => setCat(c.id), style: {
     padding: "5px 9px",
@@ -580,7 +580,7 @@ function VasopressorCalc({ lang, weight }) {
       step: drug.step,
       value: dose,
       onChange: (e) => setDose(parseFloat(e.target.value)),
-      style: { width: "100%", accentColor: S.teal }
+      style: { width: "100%", height: 44, margin: 0, accentColor: S.teal }
     }
   ), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: S.muted, fontWeight: 600 } }, el ? drug.rangeEl : drug.rangeEn)), needW ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: S.amber, fontWeight: 600 } }, "\u2696 ", T[lang].weightNeeded) : /* @__PURE__ */ React.createElement("div", { style: { background: S.card, borderRadius: 12, padding: "12px 14px", boxShadow: `inset 0 0 0 1.5px ${S.teal}`, display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13.5, color: S.ink, fontWeight: 600 } }, el ? "\u03A1\u03C5\u03B8\u03BC\u03CC\u03C2 \u03B1\u03BD\u03C4\u03BB\u03AF\u03B1\u03C2" : "Pump rate"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 900, fontSize: 24, color: S.teal, fontVariantNumeric: "tabular-nums" } }, fmt(rate)), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, color: S.teal, fontWeight: 700 } }, " mL/h"), unitsPerH != null && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: S.muted, fontWeight: 600 } }, " \xB7 ", fmt(unitsPerH), " U/h"))), /* @__PURE__ */ React.createElement("div", { style: { background: S.bg, borderRadius: 10, padding: "9px 12px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: S.muted, fontWeight: 700, letterSpacing: 0.4, marginBottom: 4 } }, upGr(el ? "\u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 \u03B1\u03BD\u03B1\u03C6\u03BF\u03C1\u03AC\u03C2 (mL/h)" : "Reference (mL/h)")), refPts.map((dv, i) => {
     const r = rowRate(dv);
@@ -1957,6 +1957,8 @@ function buildSearchIndex(lang) {
     push("drug", "meds", d.id, d.name, el ? "\u03A6\u03AC\u03C1\u03BC\u03B1\u03BA\u03BF" : "Drug",
       doses + " " + ((el ? d.notesEl : d.notesEn) || ""), d.synEl);
   }
+  push("list", "lists", "preop", el ? "\u0388\u03BB\u03B5\u03B3\u03C7\u03BF\u03C2 \u03C0\u03C1\u03B9\u03BD \u03B1\u03C0\u03CC \u03C4\u03B7\u03BD \u03B1\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03AF\u03B1" : "Pre-anaesthesia check", el ? "\u039B\u03AF\u03C3\u03C4\u03B1 \u03B5\u03BB\u03AD\u03B3\u03C7\u03BF\u03C5" : "Checklist",
+    PREOP.map((x) => (el ? x.el : x.en) + " " + [].concat(...x.groups.map((g) => g.items)).map((i) => el ? i.el : i.en).join(" ")).join(" ") + " AAGBI WHO Sign In two-bag");
   for (const c of CHECKLISTS_SHOWN) {
     push("list", "lists", c.id, el ? c.titleEl : c.titleEn, el ? "\u0395\u03C0\u03B5\u03AF\u03B3\u03BF\u03BD" : "Emergency checklist",
       (el ? c.stepsEl : c.stepsEn).join(" "));
@@ -2054,6 +2056,8 @@ function gastricCalc(csaList, age, weight) {
     n: xs.length, csa, volRaw, vol, perkg,
     zero: volRaw <= 0,
     high: perkg != null && perkg >= GUS.limit - 1e-9,
+    // #120: 2 decimals, but 1.495-1.499 shows 1.49 - never "1.50" next to "< 1.5"
+    perkgTxt: perkg == null ? null : (perkg < GUS.limit - 1e-9 && perkg >= GUS.limit - 0.005 ? (GUS.limit - 0.01).toFixed(2) : perkg.toFixed(2)),
     over: volRaw > GUS.valid
   };
 }
@@ -2124,9 +2128,9 @@ function GastricUSCard({ lang, weight, age }) {
         else if (r && r.noAge) parts.push(React.createElement(Box, { key: "res", tone: "warn" }, el ? "\u03A7\u03C1\u03B5\u03B9\u03AC\u03B6\u03B5\u03C4\u03B1\u03B9 \u03B7 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 (\u03BC\u03C0\u03AC\u03C1\u03B1 \u03B1\u03C3\u03B8\u03B5\u03BD\u03BF\u03CD\u03C2) \u2014 \u03BF \u03C4\u03CD\u03C0\u03BF\u03C2 \u03C4\u03B7\u03BD \u03C0\u03B5\u03C1\u03B9\u03BB\u03B1\u03BC\u03B2\u03AC\u03BD\u03B5\u03B9" : "Enter the age (patient bar) \u2014 the formula uses it"));
         else if (r) {
           const volTxt = r.zero ? "\u2248 0 mL" : Math.round(r.vol) + " mL";
-          const line = "27 + 14.6 \u00D7 " + fmt(r.csa) + " cm\u00B2 \u2212 1.28 \u00D7 " + fmt(a) + (el ? " \u03AD\u03C4\u03B7 = " : " y = ") + (r.zero ? "\u2264 0 \u2192 \u2248 0 mL" : Math.round(r.vol) + " mL") + (r.perkg != null ? " \u00B7 \u00F7 " + fmt(parseFloat(weight)) + " kg = " + r.perkg.toFixed(2) + " mL/kg" : "");
+          const line = "27 + 14.6 \u00D7 " + fmt(r.csa) + " cm\u00B2 \u2212 1.28 \u00D7 " + fmt(a) + (el ? " \u03AD\u03C4\u03B7 = " : " y = ") + (r.zero ? "\u2264 0 \u2192 \u2248 0 mL" : Math.round(r.vol) + " mL") + (r.perkg != null ? " \u00B7 \u00F7 " + fmt(parseFloat(weight)) + " kg = " + r.perkgTxt + " mL/kg" : "");
           parts.push(React.createElement(Box, { key: "res", tone: r.perkg == null ? null : r.high ? "high" : "low" },
-            React.createElement("div", { style: { fontSize: 18, fontWeight: 900 } }, volTxt + (r.perkg != null ? " \u00B7 " + r.perkg.toFixed(2) + " mL/kg" : "")),
+            React.createElement("div", { style: { fontSize: 18, fontWeight: 900 } }, volTxt + (r.perkg != null ? " \u00B7 " + r.perkgTxt + " mL/kg" : "")),
             React.createElement("div", null, r.perkg == null
               ? (el ? "\u03A7\u03C9\u03C1\u03AF\u03C2 \u03B2\u03AC\u03C1\u03BF\u03C2: \u03BC\u03CC\u03BD\u03BF mL, \u03C7\u03C9\u03C1\u03AF\u03C2 \u03B5\u03C1\u03BC\u03B7\u03BD\u03B5\u03AF\u03B1" : "No weight: mL only, no interpretation")
               : r.high
@@ -2178,15 +2182,227 @@ function GastricUSCard({ lang, weight, age }) {
       React.createElement(Bul, null, el ? "\u03A3\u03B5 \u03BA\u03BB\u03B9\u03BD\u03B9\u03BA\u03AE \u03B1\u03B2\u03B5\u03B2\u03B1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B1: \u03B5\u03C5\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03AF\u03B1 1.0, \u03B5\u03B9\u03B4\u03B9\u03BA\u03CC\u03C4\u03B7\u03C4\u03B1 0.975, \u03B8\u03B5\u03C4\u03B9\u03BA\u03AE \u03C0\u03C1\u03BF\u03B3\u03BD\u03C9\u03C3\u03C4\u03B9\u03BA\u03AE \u03B1\u03BE\u03AF\u03B1 0.976, \u03B1\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03AE 1.0" : "In clinical equipoise: sensitivity 1.0, specificity 0.975, positive predictive value 0.976, negative 1.0"),
       React.createElement(Sec, null, el ? "\u0395\u03B9\u03B4\u03B9\u03BA\u03BF\u03AF \u03C0\u03BB\u03B7\u03B8\u03C5\u03C3\u03BC\u03BF\u03AF" : "Special populations"),
       React.createElement(Bul, null, el ? "\u03A0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA\u03AF\u03B1: \u03B1\u03C0\u03B5\u03B9\u03BA\u03CC\u03BD\u03B9\u03C3\u03B7 \u03C3\u03B5 \u0394\u03A0\u039A \u03C3\u03B5 > 90% \u03BC\u03B5 BMI > 40, \u03C0\u03B1\u03C1\u03AC \u03B2\u03AC\u03B8\u03BF\u03C2 > 7 cm \u00B7 \u03BF \u03C4\u03CD\u03C0\u03BF\u03C2 \u03B1\u03C0\u03BF\u03B4\u03AF\u03B4\u03B5\u03B9 \u03BA\u03B1\u03BB\u03AC \u03C3\u03B5 BMI > 35 \u2014 \u03C4\u03BF \u03AC\u03BD\u03C4\u03C1\u03BF \u03B5\u03AF\u03BD\u03B1\u03B9 \u03B2\u03B1\u03B8\u03CD\u03C4\u03B5\u03C1\u03B1" : "Obesity: RLD imaging in > 90% with BMI > 40 despite depth > 7 cm \u00B7 the formula performs well at BMI > 35 \u2014 the antrum lies deeper"),
-      React.createElement(Bul, null, el ? "\u039A\u03CD\u03B7\u03C3\u03B7 (3\u03BF \u03C4\u03C1\u03AF\u03BC\u03B7\u03BD\u03BF): \u03B2\u03B1\u03B8\u03BC\u03CC\u03C2 0 = \u03C7\u03B1\u03BC\u03B7\u03BB\u03CC\u03C2 \u03BA\u03AF\u03BD\u03B4\u03C5\u03BD\u03BF\u03C2, \u03C3\u03C4\u03B5\u03C1\u03B5\u03AC = \u03C5\u03C8\u03B7\u03BB\u03CC\u03C2 \u00B7 \u03BF \u03CC\u03B3\u03BA\u03BF\u03C2 \u03C5\u03C0\u03CC \u03C3\u03C5\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7\u00B7 \u03CC\u03C1\u03B9\u03BF CSA 9.6 cm\u00B2 \u03C3\u03B5 \u03B7\u03BC\u03B9\u03BA\u03B1\u03B8\u03B9\u03C3\u03C4\u03AE \u0394\u03A0\u039A" : "Pregnancy (3rd trimester): grade 0 = low risk, solids = high \u00B7 volume debated; CSA threshold 9.6 cm\u00B2 in semi-recumbent RLD"),
+      React.createElement(Bul, null, el ? "\u039A\u03CD\u03B7\u03C3\u03B7 (3\u03BF \u03C4\u03C1\u03AF\u03BC\u03B7\u03BD\u03BF): \u03B2\u03B1\u03B8\u03BC\u03CC\u03C2 0 (\u03AC\u03B4\u03B5\u03B9\u03BF \u03C3\u03B5 \u03BA\u03B1\u03B8\u03B9\u03C3\u03C4\u03AE \u03B8\u03AD\u03C3\u03B7 \u03BA\u03B1\u03B9 \u0394\u03A0\u039A) = \u03C7\u03B1\u03BC\u03B7\u03BB\u03CC\u03C2 \u03BA\u03AF\u03BD\u03B4\u03C5\u03BD\u03BF\u03C2, \u03C3\u03C4\u03B5\u03C1\u03B5\u03AC = \u03C5\u03C8\u03B7\u03BB\u03CC\u03C2 \u00B7 \u03BF \u03CC\u03B3\u03BA\u03BF\u03C2 \u03C5\u03C0\u03CC \u03C3\u03C5\u03B6\u03AE\u03C4\u03B7\u03C3\u03B7\u00B7 \u03CC\u03C1\u03B9\u03BF CSA 9.6 cm\u00B2 \u03C3\u03B5 \u03B7\u03BC\u03B9\u03BA\u03B1\u03B8\u03B9\u03C3\u03C4\u03AE \u0394\u03A0\u039A" : "Pregnancy (3rd trimester): grade 0 (empty sitting and in RLD) = low risk, solids = high \u00B7 volume debated; CSA threshold 9.6 cm\u00B2 in semi-recumbent RLD"),
       React.createElement(Bul, null, el ? "\u03A0\u03B1\u03B9\u03B4\u03B9\u03AC (< 18 \u03B5\u03C4\u03CE\u03BD): \u03B5\u03BA\u03C4\u03CC\u03C2 \u03BA\u03AC\u03C1\u03C4\u03B1\u03C2" : "Children (< 18 years): outside this card"),
       React.createElement(Sec, null, el ? "\u03A0\u03B5\u03C1\u03B9\u03BF\u03C1\u03B9\u03C3\u03BC\u03BF\u03AF" : "Limitations"),
       React.createElement(Bul, { warn: true }, el ? "\u0391\u03B4\u03B9\u03B5\u03C5\u03BA\u03C1\u03AF\u03BD\u03B9\u03C3\u03C4\u03BF \u03C3\u03B5 2\u20133%, \u03B1\u03BA\u03CC\u03BC\u03B7 \u03BA\u03B1\u03B9 \u03BC\u03B5 \u03C3\u03C9\u03C3\u03C4\u03AE \u03C4\u03B5\u03C7\u03BD\u03B9\u03BA\u03AE \u03BA\u03B1\u03B9 \u03AD\u03BC\u03C0\u03B5\u03B9\u03C1\u03BF \u03C7\u03B5\u03B9\u03C1\u03B9\u03C3\u03C4\u03AE" : "Inconclusive in 2\u20133%, even with adequate technique and an experienced sonographer"),
       React.createElement(Bul, { warn: true }, el ? "\u039C\u03B7 \u03B1\u03BE\u03B9\u03CC\u03C0\u03B9\u03C3\u03C4\u03BF \u03BC\u03B5\u03C4\u03AC \u03B1\u03C0\u03CC \u03C7\u03B5\u03B9\u03C1\u03BF\u03C5\u03C1\u03B3\u03B9\u03BA\u03AE \u03C3\u03C4\u03BF\u03BC\u03AC\u03C7\u03BF\u03C5 \u03BA\u03B1\u03B9 \u03C3\u03B5 \u03BC\u03B5\u03B3\u03AC\u03BB\u03B7 \u03B4\u03B9\u03B1\u03C6\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03BF\u03BA\u03AE\u03BB\u03B7 \u2014 \u03C4\u03BF \u03C0\u03B5\u03C1\u03B9\u03B5\u03C7\u03CC\u03BC\u03B5\u03BD\u03BF \u03BC\u03C0\u03BF\u03C1\u03B5\u03AF \u03BD\u03B1 \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C3\u03C4\u03BF \u03C4\u03BC\u03AE\u03BC\u03B1 \u03C4\u03B7\u03C2 \u03BA\u03AE\u03BB\u03B7\u03C2, \u03B5\u03BA\u03C4\u03CC\u03C2 \u03C0\u03B5\u03B4\u03AF\u03BF\u03C5" : "Unreliable after gastric surgery and with a large hiatus hernia \u2014 content may sit in the herniated part, out of view"),
-      React.createElement(Bul, null, el ? "\u03A0\u03C1\u03B9\u03BD \u03B1\u03C0\u03CC \u03C4\u03B7\u03BD \u03B1\u03C0\u03BF\u03C3\u03C9\u03BB\u03AE\u03BD\u03C9\u03C3\u03B7: \u03BF \u03C1\u03CC\u03BB\u03BF\u03C2 \u03C4\u03BF\u03C5 \u03B4\u03B5\u03BD \u03AD\u03C7\u03B5\u03B9 \u03BC\u03B5\u03BB\u03B5\u03C4\u03B7\u03B8\u03B5\u03AF" : "Before extubation: its role has not been examined"),
+      React.createElement(Bul, null, el ? "\u03A0\u03C1\u03B9\u03BD \u03B1\u03C0\u03CC \u03C4\u03B7\u03BD \u03B1\u03C0\u03BF\u03C3\u03C9\u03BB\u03AE\u03BD\u03C9\u03C3\u03B7: \u03BF \u03C1\u03CC\u03BB\u03BF\u03C2 \u03C4\u03BF\u03C5 \u03B4\u03B5\u03BD \u03AD\u03C7\u03B5\u03B9 \u03BC\u03B5\u03BB\u03B5\u03C4\u03B7\u03B8\u03B5\u03AF \u03C0\u03BB\u03AE\u03C1\u03C9\u03C2" : "Before extubation: its role has not been examined fully"),
       React.createElement(Bul, null, el ? "\u039A\u03B1\u03BC\u03C0\u03CD\u03BB\u03B7 \u03B5\u03BA\u03BC\u03AC\u03B8\u03B7\u03C3\u03B7\u03C2: 33 \u03B5\u03BE\u03B5\u03C4\u03AC\u03C3\u03B5\u03B9\u03C2 \u03C5\u03C0\u03CC \u03B5\u03C0\u03AF\u03B2\u03BB\u03B5\u03C8\u03B7 \u03B3\u03B9\u03B1 \u03B1\u03BA\u03C1\u03AF\u03B2\u03B5\u03B9\u03B1 95% \u03C3\u03C4\u03B7\u03BD \u03C0\u03BF\u03B9\u03BF\u03C4\u03B9\u03BA\u03AE \u03B5\u03BA\u03C4\u03AF\u03BC\u03B7\u03C3\u03B7" : "Learning curve: 33 supervised scans for 95% accuracy in qualitative assessment"),
       React.createElement(Note, null, el ? "\u038C\u03BB\u03B1 \u03B1\u03C0\u03CC BJA Ed 2019 (\u03A0\u03AF\u03BD. 1 \u03BA\u03B1\u03B9 \u03BA\u03B5\u03AF\u03BC\u03B5\u03BD\u03BF)." : "All from BJA Ed 2019 (Table 1 and text).")),
     React.createElement(Note, null, src));
+}
+// Pre-anaesthesia check (spec 31/10/2026, 1st ed.). Three parts:
+//   A = start of list (machine), stored per day under aa_preop until the date changes or "New list";
+//   B = before each patient and C = WHO Sign In, kept only in memory: they clear when the card closes
+//   (author's decision 31/10/2026). Nothing about the patient is ever stored.
+// critical: true | false | "cond" ("cond" items and c.site may be marked N/A, which drops them from the count).
+// src: A = AAGBI 2012 \u00B7 K = Klein 2021 \u00B7 W = WHO 2008 \u00B7 D = DAS 2025 \u00B7 M = EMHG 2020 \u00B7 L = AAGBI LAST 2010 \u00B7 practice = clinical practice
+const PREOP_V = 1;
+const PREOP_KEY = "aa_preop";
+const PREOP = [
+  { id: "A", el: "\u0391 \u00B7 \u0391\u03C1\u03C7\u03AE \u03BB\u03AF\u03C3\u03C4\u03B1\u03C2 \u2014 \u03BC\u03B7\u03C7\u03AC\u03BD\u03B7\u03BC\u03B1", en: "A \u00B7 Start of list \u2014 machine",
+    whenEl: "\u039C\u03AF\u03B1 \u03C6\u03BF\u03C1\u03AC \u03C3\u03C4\u03B7\u03BD \u03B1\u03C1\u03C7\u03AE \u03BA\u03AC\u03B8\u03B5 \u03C7\u03B5\u03B9\u03C1\u03BF\u03C5\u03C1\u03B3\u03B9\u03BA\u03AE\u03C2 \u03BB\u03AF\u03C3\u03C4\u03B1\u03C2, \u03BA\u03B1\u03B9 \u03BC\u03B5\u03C4\u03AC \u03B1\u03C0\u03CC \u03B1\u03BB\u03BB\u03B1\u03B3\u03AE \u03B1\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03B9\u03BF\u03BB\u03CC\u03B3\u03BF\u03C5 \u03AE service",
+    whenEn: "Once at the start of each operating list, and after a change of anaesthetist or servicing",
+    srcEl: "AAGBI 2012", srcEn: "AAGBI 2012",
+    noteEl: "\u0391\u03BA\u03BF\u03BB\u03BF\u03C5\u03B8\u03AE\u03C3\u03C4\u03B5 \u03BA\u03B1\u03B9 \u03C4\u03BF\u03BD \u03B1\u03C5\u03C4\u03CC\u03BC\u03B1\u03C4\u03BF \u03AD\u03BB\u03B5\u03B3\u03C7\u03BF \u03C4\u03BF\u03C5 \u03BA\u03B1\u03C4\u03B1\u03C3\u03BA\u03B5\u03C5\u03B1\u03C3\u03C4\u03AE. \u0391\u03C5\u03C4\u03AE \u03B7 \u03BB\u03AF\u03C3\u03C4\u03B1 \u03B4\u03B5\u03BD \u03C4\u03BF\u03BD \u03B1\u03BD\u03C4\u03B9\u03BA\u03B1\u03B8\u03B9\u03C3\u03C4\u03AC. (\u03BA\u03BB\u03B9\u03BD\u03B9\u03BA\u03AE \u03C0\u03C1\u03B1\u03BA\u03C4\u03B9\u03BA\u03AE)",
+    noteEn: "Also follow the manufacturer's automated check. This list does not replace it. (clinical practice)",
+    groups: [{ items: [
+      { id: "a.power", el: "\u0397\u03BB\u03B5\u03BA\u03C4\u03C1\u03BF\u03B4\u03CC\u03C4\u03B7\u03C3\u03B7 \u03B1\u03C0\u03CC \u03C4\u03BF \u03B4\u03AF\u03BA\u03C4\u03C5\u03BF, \u03BC\u03B7\u03C7\u03AC\u03BD\u03B7\u03BC\u03B1 \u03B1\u03BD\u03BF\u03B9\u03C7\u03C4\u03CC, \u03B5\u03C6\u03B5\u03B4\u03C1\u03B9\u03BA\u03AE \u03BC\u03C0\u03B1\u03C4\u03B1\u03C1\u03AF\u03B1 \u03C6\u03BF\u03C1\u03C4\u03B9\u03C3\u03BC\u03AD\u03BD\u03B7", en: "Mains power on, machine on, backup battery charged", critical: false, src: "A" },
+      { id: "a.gas", el: "\u03A3\u03C9\u03BB\u03B7\u03BD\u03CE\u03C3\u03B5\u03B9\u03C2 \u03B1\u03B5\u03C1\u03AF\u03C9\u03BD: \u03C3\u03C9\u03C3\u03C4\u03AE \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7, tug test, \u03C0\u03AF\u03B5\u03C3\u03B7 400\u2013500 kPa", en: "Gas pipelines: correctly connected, tug test, 400\u2013500 kPa", critical: true, src: "A" },
+      { id: "a.cyl", el: "\u0395\u03C6\u03B5\u03B4\u03C1\u03B9\u03BA\u03AE \u03C6\u03B9\u03AC\u03BB\u03B7 O\u2082 \u03B4\u03B9\u03B1\u03B8\u03AD\u03C3\u03B9\u03BC\u03B7, \u03C4\u03BF\u03C0\u03BF\u03B8\u03B5\u03C4\u03B7\u03BC\u03AD\u03BD\u03B7 \u03BA\u03B1\u03B9 \u03BA\u03BB\u03B5\u03B9\u03C3\u03C4\u03AE", en: "Spare O\u2082 cylinder available, seated, turned off", critical: true, src: "A" },
+      { id: "a.flow", el: "\u03A1\u03BF\u03CC\u03BC\u03B5\u03C4\u03C1\u03B1, \u03C3\u03CD\u03C3\u03C4\u03B7\u03BC\u03B1 \u03B1\u03C0\u03BF\u03C4\u03C1\u03BF\u03C0\u03AE\u03C2 \u03C5\u03C0\u03BF\u03BE\u03B9\u03BA\u03BF\u03CD \u03BC\u03AF\u03B3\u03BC\u03B1\u03C4\u03BF\u03C2, O\u2082 flush", en: "Flowmeters, anti-hypoxia device, O\u2082 flush", critical: true, src: "A" },
+      { id: "a.suct", el: "\u0391\u03BD\u03B1\u03C1\u03C1\u03CC\u03C6\u03B7\u03C3\u03B7: \u03BB\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03B5\u03AF, \u03C3\u03C5\u03BD\u03B4\u03AD\u03C3\u03B5\u03B9\u03C2 \u03C3\u03C4\u03B1\u03B8\u03B5\u03C1\u03AD\u03C2, \u03B4\u03B7\u03BC\u03B9\u03BF\u03C5\u03C1\u03B3\u03B5\u03AF \u03B1\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03AE \u03C0\u03AF\u03B5\u03C3\u03B7", en: "Suction: functioning, connections secure, negative pressure", critical: true, src: "A" },
+      { id: "a.circ", el: "\u039A\u03CD\u03BA\u03BB\u03C9\u03BC\u03B1: \u03C3\u03C5\u03BD\u03B4\u03AD\u03C3\u03B5\u03B9\u03C2 (push-and-twist), \u03B4\u03B9\u03B1\u03C1\u03C1\u03BF\u03AD\u03C2 \u03BA\u03B1\u03B9 \u03B1\u03C0\u03BF\u03C6\u03C1\u03AC\u03BE\u03B5\u03B9\u03C2, leak test", en: "Breathing system: connections (push-and-twist), leaks/obstruction, leak test", critical: true, src: "A" },
+      { id: "a.vap", el: "\u0395\u03BE\u03B1\u03B5\u03C1\u03C9\u03C4\u03AE\u03C1\u03B5\u03C2: \u03C3\u03C9\u03C3\u03C4\u03AC \u03C4\u03BF\u03C0\u03BF\u03B8\u03B5\u03C4\u03B7\u03BC\u03AD\u03BD\u03BF\u03B9 \u03BA\u03B1\u03B9 \u03BA\u03BB\u03B5\u03B9\u03B4\u03C9\u03BC\u03AD\u03BD\u03BF\u03B9, \u03B3\u03B5\u03BC\u03AC\u03C4\u03BF\u03B9 \u03B1\u03BB\u03BB\u03AC \u03CC\u03C7\u03B9 \u03C5\u03C0\u03B5\u03C1\u03C0\u03BB\u03B7\u03C1\u03C9\u03BC\u03AD\u03BD\u03BF\u03B9", en: "Vaporisers: seated and locked, adequately filled but not overfilled", critical: false, src: "A" },
+      { id: "a.co2", el: "\u0391\u03C0\u03BF\u03C1\u03C1\u03BF\u03C6\u03B7\u03C4\u03AE\u03C2 CO\u2082: \u03C0\u03B5\u03C1\u03B9\u03B5\u03C7\u03CC\u03BC\u03B5\u03BD\u03BF, \u03C7\u03C1\u03CE\u03BC\u03B1, \u03C3\u03C5\u03BD\u03B4\u03AD\u03C3\u03B5\u03B9\u03C2", en: "CO\u2082 absorber: contents, colour, connections", critical: false, src: "A" },
+      { id: "a.vent", el: "\u0391\u03BD\u03B1\u03C0\u03BD\u03B5\u03C5\u03C3\u03C4\u03AE\u03C1\u03B1\u03C2: \u03C1\u03C5\u03B8\u03BC\u03AF\u03C3\u03B5\u03B9\u03C2, \u03C0\u03AF\u03B5\u03C3\u03B7, \u03C3\u03C5\u03BD\u03B1\u03B3\u03B5\u03C1\u03BC\u03BF\u03AF, \u03B2\u03B1\u03BB\u03B2\u03AF\u03B4\u03B1 \u03B5\u03BA\u03C4\u03CC\u03BD\u03C9\u03C3\u03B7\u03C2", en: "Ventilator: configuration, pressure, alarms, relief valve", critical: false, src: "A" },
+      { id: "a.2bag", el: "Two-bag test (\u03BC\u03B5\u03C4\u03AC \u03C4\u03BF\u03BD \u03AD\u03BB\u03B5\u03B3\u03C7\u03BF \u03BA\u03C5\u03BA\u03BB\u03CE\u03BC\u03B1\u03C4\u03BF\u03C2, \u03B5\u03BE\u03B1\u03B5\u03C1\u03C9\u03C4\u03AE\u03C1\u03C9\u03BD \u03BA\u03B1\u03B9 \u03B1\u03BD\u03B1\u03C0\u03BD\u03B5\u03C5\u03C3\u03C4\u03AE\u03C1\u03B1)", en: "Two-bag test (after the breathing system, vaporisers and ventilator)", critical: true, src: "A" },
+      { id: "a.scav", el: "\u0391\u03C0\u03B1\u03B3\u03C9\u03B3\u03AE \u03B1\u03B5\u03C1\u03AF\u03C9\u03BD \u03B1\u03BD\u03BF\u03B9\u03C7\u03C4\u03AE \u03BA\u03B1\u03B9 \u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03B7", en: "Scavenging on and connected", critical: false, src: "A" },
+      { id: "a.mon", el: "Monitor \u03BA\u03B1\u03B9 \u03B1\u03BD\u03B1\u03BB\u03C5\u03C4\u03AE\u03C2 \u03B1\u03B5\u03C1\u03AF\u03C9\u03BD/O\u2082 \u03BB\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03BF\u03CD\u03BD\u00B7 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B4\u03B5\u03B9\u03B3\u03BC\u03B1\u03C4\u03BF\u03BB\u03B7\u03C8\u03AF\u03B1\u03C2", en: "Monitors and gas/O\u2082 analyser functioning; sampling line", critical: true, src: "A" },
+      { id: "a.bag", el: "\u0391\u03C3\u03BA\u03CC\u03C2 Ambu \u03BA\u03B1\u03B9 \u03B5\u03BD\u03B1\u03BB\u03BB\u03B1\u03BA\u03C4\u03B9\u03BA\u03AE \u03C0\u03B7\u03B3\u03AE O\u2082 \u03AC\u03BC\u03B5\u03C3\u03B1 \u03B4\u03B9\u03B1\u03B8\u03AD\u03C3\u03B9\u03BC\u03B1", en: "Self-inflating bag and alternative O\u2082 immediately available", critical: true, src: "A" },
+      { id: "a.resus", el: "\u03A4\u03C1\u03B1\u03C0\u03AD\u03B6\u03B9 \u03C0\u03BF\u03C5 \u03B3\u03AD\u03C1\u03BD\u03B5\u03B9 \u03B3\u03C1\u03AE\u03B3\u03BF\u03C1\u03B1 \u03C3\u03B5 \u03B8\u03AD\u03C3\u03B7 Trendelenburg\u00B7 \u03BA\u03B1\u03C1\u03CC\u03C4\u03C3\u03B9 \u03B1\u03BD\u03AC\u03BD\u03B7\u03C8\u03B7\u03C2 \u03BA\u03B1\u03B9 \u03B1\u03C0\u03B9\u03BD\u03B9\u03B4\u03C9\u03C4\u03AE\u03C2", en: "Table tilts head-down rapidly; resuscitation trolley and defibrillator", critical: true, src: "A" },
+      { id: "a.log", el: "\u039F \u03AD\u03BB\u03B5\u03B3\u03C7\u03BF\u03C2 \u03BA\u03B1\u03C4\u03B1\u03B3\u03C1\u03AC\u03C6\u03B7\u03BA\u03B5 \u03C3\u03C4\u03BF \u03B2\u03B9\u03B2\u03BB\u03AF\u03BF \u03C4\u03BF\u03C5 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AE\u03BC\u03B1\u03C4\u03BF\u03C2", en: "Check recorded in the machine logbook", critical: false, src: "A" }
+    ] }] },
+  { id: "B", el: "\u0392 \u00B7 \u03A0\u03C1\u03B9\u03BD \u03B1\u03C0\u03CC \u03BA\u03AC\u03B8\u03B5 \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE", en: "B \u00B7 Before each patient",
+    whenEl: "\u03A3\u03B5 \u03BA\u03AC\u03B8\u03B5 \u03BD\u03AD\u03BF \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE, \u03BA\u03B1\u03B9 \u03CC\u03C4\u03B1\u03BD \u03B1\u03BB\u03BB\u03AC\u03B6\u03B5\u03B9 \u03C4\u03BF \u03BA\u03CD\u03BA\u03BB\u03C9\u03BC\u03B1 \u03AE \u03B7 \u03C0\u03B1\u03C1\u03B1\u03BA\u03BF\u03BB\u03BF\u03CD\u03B8\u03B7\u03C3\u03B7",
+    whenEn: "For each new patient, and whenever the breathing system or monitoring changes",
+    srcEl: "AAGBI 2012 \u00B7 Klein 2021 \u00B7 DAS 2025 \u00B7 AAGBI 2010 \u00B7 EMHG 2020", srcEn: "AAGBI 2012 \u00B7 Klein 2021 \u00B7 DAS 2025 \u00B7 AAGBI 2010 \u00B7 EMHG 2020",
+    groups: [
+      { el: "\u039A\u03CD\u03BA\u03BB\u03C9\u03BC\u03B1", en: "Breathing system", srcEl: "AAGBI 2012", srcEn: "AAGBI 2012", items: [
+        { id: "b.filter", el: "\u039D\u03AD\u03BF \u03C6\u03AF\u03BB\u03C4\u03C1\u03BF \u03BA\u03B1\u03B9 catheter mount (\u03BC\u03AF\u03B1\u03C2 \u03C7\u03C1\u03AE\u03C3\u03B7\u03C2), \u03B2\u03B1\u03C4\u03AC", en: "New single-use filter and catheter mount, patent", critical: true, src: "A" },
+        { id: "b.circ", el: "\u0391\u03BA\u03B5\u03C1\u03B1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B1 \u03BA\u03B1\u03B9 \u03C3\u03C9\u03C3\u03C4\u03AE \u03B4\u03B9\u03AC\u03C4\u03B1\u03BE\u03B7 \u03CC\u03BB\u03BF\u03C5 \u03C4\u03BF\u03C5 \u03BA\u03C5\u03BA\u03BB\u03CE\u03BC\u03B1\u03C4\u03BF\u03C2", en: "Whole breathing system integrity and configuration", critical: true, src: "A" }
+      ] },
+      { el: "\u03A0\u03B1\u03C1\u03B1\u03BA\u03BF\u03BB\u03BF\u03CD\u03B8\u03B7\u03C3\u03B7", en: "Monitoring", srcEl: "Klein 2021", srcEn: "Klein 2021", items: [
+        { id: "b.min", el: "ECG, SpO\u2082, NIBP, \u03BA\u03B1\u03C0\u03BD\u03BF\u03B3\u03C1\u03B1\u03C6\u03AF\u03B1: \u03BB\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03BF\u03CD\u03BD \u03BA\u03B1\u03B9 \u03BE\u03B5\u03BA\u03B9\u03BD\u03BF\u03CD\u03BD \u03C0\u03C1\u03B9\u03BD \u03B1\u03C0\u03CC \u03C4\u03B7\u03BD \u03B5\u03B9\u03C3\u03B1\u03B3\u03C9\u03B3\u03AE", en: "ECG, SpO\u2082, NIBP, capnography: checked and started before induction", critical: true, src: "K" },
+        { id: "b.gas", el: "\u0395\u03B9\u03C3\u03C0\u03BD\u03B5\u03CC\u03BC\u03B5\u03BD\u03BF \u03BA\u03B1\u03B9 \u03B5\u03BA\u03C0\u03BD\u03B5\u03CC\u03BC\u03B5\u03BD\u03BF O\u2082 (\u03BA\u03B1\u03B9 \u03C0\u03C4\u03B7\u03C4\u03B9\u03BA\u03CC) \u03C3\u03C4\u03B7 \u03B3\u03B5\u03BD\u03B9\u03BA\u03AE \u03B1\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03AF\u03B1", en: "Inspired/expired O\u2082 (and vapour) during GA", critical: true, src: "K" },
+        { id: "b.nmt", el: "\u03A0\u03BF\u03C3\u03BF\u03C4\u03B9\u03BA\u03CC\u03C2 \u03BD\u03B5\u03C5\u03C1\u03BF\u03BC\u03C5\u03CA\u03BA\u03CC\u03C2 monitor, \u03B1\u03BD \u03B4\u03BF\u03B8\u03B5\u03AF \u03BC\u03C5\u03BF\u03C7\u03B1\u03BB\u03B1\u03C1\u03C9\u03C4\u03B9\u03BA\u03CC", en: "Quantitative NM monitor if an NMB drug is given", critical: "cond", src: "K" },
+        { id: "b.peeg", el: "pEEG \u03C3\u03B5 TIVA \u03BC\u03B1\u03B6\u03AF \u03BC\u03B5 \u03BC\u03C5\u03BF\u03C7\u03B1\u03BB\u03B1\u03C1\u03C9\u03C4\u03B9\u03BA\u03CC", en: "pEEG when TIVA is given with an NMB drug", critical: "cond", src: "K" },
+        { id: "b.temp", el: "\u0398\u03B5\u03C1\u03BC\u03BF\u03BA\u03C1\u03B1\u03C3\u03AF\u03B1 \u03C0\u03C1\u03B9\u03BD \u03B1\u03C0\u03CC \u03C4\u03B7\u03BD \u03B1\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03AF\u03B1", en: "Temperature before anaesthesia", critical: false, src: "K" },
+        { id: "b.alarm", el: "\u038C\u03C1\u03B9\u03B1 \u03C3\u03C5\u03BD\u03B1\u03B3\u03B5\u03C1\u03BC\u03CE\u03BD \u03B5\u03BE\u03B1\u03C4\u03BF\u03BC\u03B9\u03BA\u03B5\u03C5\u03BC\u03AD\u03BD\u03B1, \u03AE\u03C7\u03BF\u03C2 \u03B5\u03BD\u03B5\u03C1\u03B3\u03CC\u03C2", en: "Patient-specific alarm limits, audible alarms on", critical: true, src: "K" }
+      ] },
+      { el: "\u0391\u03B5\u03C1\u03B1\u03B3\u03C9\u03B3\u03CC\u03C2", en: "Airway", srcEl: "AAGBI 2012 \u00B7 DAS 2025", srcEn: "AAGBI 2012 \u00B7 DAS 2025",
+        seeEl: "\u03B2\u03BB. \u039B\u03AF\u03C3\u03C4\u03B5\u03C2 \u2192 \u0394\u03CD\u03C3\u03BA\u03BF\u03BB\u03B7 \u0394\u03B9\u03B1\u03C3\u03C9\u03BB\u03AE\u03BD\u03C9\u03C3\u03B7 \u2014 DAS 2025", seeEn: "see Lists \u2192 Difficult Intubation \u2014 DAS 2025", items: [
+        { id: "b.laryngo", el: "\u039B\u03B1\u03C1\u03C5\u03B3\u03B3\u03BF\u03C3\u03BA\u03CC\u03C0\u03B9\u03B1 (\u03BA\u03B1\u03B9 \u03B2\u03B9\u03BD\u03C4\u03B5\u03BF\u03BB\u03B1\u03C1\u03C5\u03B3\u03B3\u03BF\u03C3\u03BA\u03CC\u03C0\u03B9\u03BF) \u03BB\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03BF\u03CD\u03BD", en: "Laryngoscopes (incl. videolaryngoscope) working", critical: true, src: "A" },
+        { id: "b.sizes", el: "\u03A4\u03C1\u03B1\u03C7\u03B5\u03B9\u03BF\u03C3\u03C9\u03BB\u03AE\u03BD\u03B5\u03C2 \u03BA\u03B1\u03B9 \u03C5\u03C0\u03B5\u03C1\u03B3\u03BB\u03C9\u03C4\u03C4\u03B9\u03B4\u03B9\u03BA\u03AD\u03C2 \u03C3\u03C5\u03C3\u03BA\u03B5\u03C5\u03AD\u03C2 \u03C3\u03C4\u03B1 \u03C3\u03C9\u03C3\u03C4\u03AC \u03BC\u03B5\u03B3\u03AD\u03B8\u03B7, \u03C3\u03C4\u03BF \u03C3\u03B7\u03BC\u03B5\u03AF\u03BF \u03C7\u03C1\u03AE\u03C3\u03B7\u03C2", en: "Tracheal tubes and SADs in appropriate sizes at point of use", critical: true, src: "A" },
+        { id: "b.diff", el: "\u0395\u03BE\u03BF\u03C0\u03BB\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B4\u03CD\u03C3\u03BA\u03BF\u03BB\u03BF\u03C5 \u03B1\u03B5\u03C1\u03B1\u03B3\u03C9\u03B3\u03BF\u03CD \u03C0\u03C1\u03BF\u03C3\u03B2\u03AC\u03C3\u03B9\u03BC\u03BF\u03C2", en: "Difficult airway equipment accessible", critical: true, src: "A" },
+        { id: "b.plan", el: "\u03A3\u03C7\u03AD\u03B4\u03B9\u03BF \u03B1\u03B5\u03C1\u03B1\u03B3\u03C9\u03B3\u03BF\u03CD Plan A \u2192 B \u2192 C \u2192 D \u03B3\u03BD\u03C9\u03C3\u03C4\u03CC \u03C3\u03C4\u03B7\u03BD \u03BF\u03BC\u03AC\u03B4\u03B1", en: "Airway plan A \u2192 B \u2192 C \u2192 D known to the team", critical: false, src: "D" },
+        { id: "b.fona", el: "Kit \u03B5\u03C0\u03B5\u03AF\u03B3\u03BF\u03C5\u03C3\u03B1\u03C2 \u03C0\u03C1\u03CC\u03C3\u03B2\u03B1\u03C3\u03B7\u03C2 \u03B1\u03C0\u03CC \u03C4\u03BF\u03BD \u03C0\u03C1\u03CC\u03C3\u03B8\u03B9\u03BF \u03C4\u03C1\u03AC\u03C7\u03B7\u03BB\u03BF (eFONA) \u03C0\u03C1\u03BF\u03C3\u03B2\u03AC\u03C3\u03B9\u03BC\u03BF", en: "eFONA kit accessible", critical: true, src: "D" }
+      ] },
+      { el: "\u03A6\u03BB\u03B5\u03B2\u03B9\u03BA\u03AE \u03C0\u03C1\u03CC\u03C3\u03B2\u03B1\u03C3\u03B7", en: "IV access", srcEl: "AAGBI 2012", srcEn: "AAGBI 2012", items: [
+        { id: "b.iv", el: "\u03A6\u03BB\u03B5\u03B2\u03B9\u03BA\u03AE \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B2\u03B1\u03C4\u03AE", en: "IV access patent", critical: true, src: "practice" },
+        { id: "b.tiva", el: "TIVA: \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03BC\u03B5 \u03B2\u03B1\u03BB\u03B2\u03AF\u03B4\u03B1 \u03B1\u03BD\u03C4\u03B5\u03C0\u03B9\u03C3\u03C4\u03C1\u03BF\u03C6\u03AE\u03C2, \u03BF\u03C1\u03B1\u03C4\u03CC \u03C3\u03B7\u03BC\u03B5\u03AF\u03BF \u03AD\u03B3\u03C7\u03C5\u03C3\u03B7\u03C2", en: "TIVA: line with non-return valve, infusion site visible", critical: "cond", src: "A" }
+      ] },
+      { el: "\u03A6\u03AC\u03C1\u03BC\u03B1\u03BA\u03B1", en: "Drugs", srcEl: "AAGBI 2012 \u00B7 AAGBI 2010 \u00B7 EMHG 2020", srcEn: "AAGBI 2012 \u00B7 AAGBI 2010 \u00B7 EMHG 2020", items: [
+        { id: "b.drugs", el: "\u03A5\u03C0\u03BD\u03B1\u03B3\u03C9\u03B3\u03AC, \u03BF\u03C0\u03B9\u03BF\u03B5\u03B9\u03B4\u03AE, \u03BC\u03C5\u03BF\u03C7\u03B1\u03BB\u03B1\u03C1\u03C9\u03C4\u03B9\u03BA\u03CC \u03BA\u03B1\u03B9 \u03B1\u03BD\u03B1\u03C3\u03C4\u03C1\u03BF\u03C6\u03AE: \u03B5\u03C4\u03BF\u03B9\u03BC\u03B1\u03C3\u03BC\u03AD\u03BD\u03B1 \u03BA\u03B1\u03B9 \u03BC\u03B5 \u03B5\u03C4\u03B9\u03BA\u03AD\u03C4\u03B1", en: "Hypnotics, opioids, NMB and reversal: prepared and labelled", critical: false, src: "practice" },
+        { id: "b.emerg", el: "\u03A6\u03AC\u03C1\u03BC\u03B1\u03BA\u03B1 \u03B5\u03C0\u03B5\u03AF\u03B3\u03BF\u03BD\u03C4\u03BF\u03C2 (\u03B1\u03C4\u03C1\u03BF\u03C0\u03AF\u03BD\u03B7, \u03B1\u03B3\u03B3\u03B5\u03B9\u03BF\u03C3\u03C5\u03C3\u03C0\u03B1\u03C3\u03C4\u03B9\u03BA\u03CC, \u03B1\u03B4\u03C1\u03B5\u03BD\u03B1\u03BB\u03AF\u03BD\u03B7) \u03C0\u03C1\u03BF\u03C3\u03B2\u03AC\u03C3\u03B9\u03BC\u03B1", en: "Emergency drugs (atropine, vasopressor, adrenaline) accessible", critical: true, src: "A",
+          subEl: "\u03C4\u03B1 \u03BF\u03BD\u03CC\u03BC\u03B1\u03C4\u03B1 \u03C4\u03C9\u03BD \u03C6\u03B1\u03C1\u03BC\u03AC\u03BA\u03C9\u03BD: \u03BA\u03BB\u03B9\u03BD\u03B9\u03BA\u03AE \u03C0\u03C1\u03B1\u03BA\u03C4\u03B9\u03BA\u03AE", subEn: "drug names: clinical practice" },
+        { id: "b.lipid", el: "\u039B\u03B9\u03C0\u03B9\u03B4\u03B9\u03BA\u03CC \u03B3\u03B1\u03BB\u03AC\u03BA\u03C4\u03C9\u03BC\u03B1 20% (1000 mL) \u03C0\u03C1\u03BF\u03C3\u03B2\u03AC\u03C3\u03B9\u03BC\u03BF \u2014 \u03B1\u03BD \u03B4\u03AF\u03BD\u03BF\u03BD\u03C4\u03B1\u03B9 \u03B4\u03C5\u03BD\u03B7\u03C4\u03B9\u03BA\u03AC \u03BA\u03B1\u03C1\u03B4\u03B9\u03BF\u03C4\u03BF\u03BE\u03B9\u03BA\u03AD\u03C2 \u03B4\u03CC\u03C3\u03B5\u03B9\u03C2 \u03C4\u03BF\u03C0\u03B9\u03BA\u03BF\u03CD \u03B1\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C4\u03B9\u03BA\u03BF\u03CD", en: "20% lipid emulsion (1000 mL) accessible \u2014 if potentially cardiotoxic doses of local anaesthetic are given", critical: "cond", src: "L",
+          subEl: "\u03B2\u03BB. \u03A6\u03AC\u03C1\u03BC\u03B1\u03BA\u03B1 \u2192 Intralipid 20% (LAST) \u00B7 \u039B\u03AF\u03C3\u03C4\u03B5\u03C2 \u2192 LAST", subEn: "see Drugs \u2192 Intralipid 20% (LAST) \u00B7 Lists \u2192 LAST" },
+        { id: "b.dant", el: "\u0394\u03B1\u03BD\u03C4\u03C1\u03BF\u03BB\u03AD\u03BD\u03B7: 36 \u03C6\u03B9\u03B1\u03BB\u03AF\u03B4\u03B9\u03B1 \u03AC\u03BC\u03B5\u03C3\u03B1 (\u03BA\u03B1\u03B9 24 \u03B1\u03BA\u03CC\u03BC\u03B7 \u03BC\u03AD\u03C3\u03B1 \u03C3\u03B5 1 h) \u2014 \u03CC\u03C0\u03BF\u03C5 \u03C7\u03C1\u03B7\u03C3\u03B9\u03BC\u03BF\u03C0\u03BF\u03B9\u03BF\u03CD\u03BD\u03C4\u03B1\u03B9 \u03C0\u03C4\u03B7\u03C4\u03B9\u03BA\u03AC \u03AE \u03C3\u03BF\u03C5\u03BA\u03B9\u03BD\u03C5\u03BB\u03BF\u03C7\u03BF\u03BB\u03AF\u03BD\u03B7", en: "Dantrolene: 36 vials immediately (+24 within 1 h) \u2014 wherever volatiles or succinylcholine are used", critical: "cond", src: "M",
+          subEl: "\u03B2\u03BB. \u03A6\u03AC\u03C1\u03BC\u03B1\u03BA\u03B1 \u2192 Dantrolene \u00B7 \u039B\u03AF\u03C3\u03C4\u03B5\u03C2 \u2192 \u039A\u03B1\u03BA\u03BF\u03AE\u03B8\u03B7\u03C2 \u03A5\u03C0\u03B5\u03C1\u03C0\u03C5\u03C1\u03B5\u03BE\u03AF\u03B1", subEn: "see Drugs \u2192 Dantrolene \u00B7 Lists \u2192 Malignant Hyperthermia" }
+      ] }
+    ] },
+  { id: "C", el: "\u0393 \u00B7 Sign In (WHO)", en: "C \u00B7 Sign In (WHO)",
+    whenEl: "\u03A0\u03C1\u03B9\u03BD \u03B1\u03C0\u03CC \u03C4\u03B7\u03BD \u03B5\u03B9\u03C3\u03B1\u03B3\u03C9\u03B3\u03AE \u03C3\u03C4\u03B7\u03BD \u03B1\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03AF\u03B1, \u03BC\u03B5 \u03C4\u03BF\u03BD \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE", whenEn: "Before induction of anaesthesia, with the patient",
+    srcEl: "WHO 2008", srcEn: "WHO 2008",
+    groups: [{ items: [
+      { id: "c.id", el: "\u039F \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2 \u03B5\u03C0\u03B9\u03B2\u03B5\u03B2\u03B1\u03AF\u03C9\u03C3\u03B5 \u03C4\u03B1\u03C5\u03C4\u03CC\u03C4\u03B7\u03C4\u03B1, \u03B8\u03AD\u03C3\u03B7, \u03B5\u03C0\u03AD\u03BC\u03B2\u03B1\u03C3\u03B7 \u03BA\u03B1\u03B9 \u03C3\u03C5\u03BD\u03B1\u03AF\u03BD\u03B5\u03C3\u03B7", en: "Patient has confirmed identity, site, procedure and consent", critical: true, src: "W" },
+      { id: "c.site", el: "\u03A3\u03AE\u03BC\u03B1\u03BD\u03C3\u03B7 \u03B8\u03AD\u03C3\u03B7\u03C2", en: "Site marked", critical: true, src: "W", na: true },
+      { id: "c.check", el: "\u039F \u03AD\u03BB\u03B5\u03B3\u03C7\u03BF\u03C2 \u03B1\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03AF\u03B1\u03C2 \u03BF\u03BB\u03BF\u03BA\u03BB\u03B7\u03C1\u03CE\u03B8\u03B7\u03BA\u03B5 (\u03C4\u03BC\u03AE\u03BC\u03B1\u03C4\u03B1 \u0391 \u03BA\u03B1\u03B9 \u0392)", en: "Anaesthesia safety check completed (parts A and B)", critical: true, src: "W" },
+      { id: "c.spo2", el: "\u039F\u03BE\u03CD\u03BC\u03B5\u03C4\u03C1\u03BF \u03C3\u03C4\u03BF\u03BD \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE \u03BA\u03B1\u03B9 \u03BB\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03B5\u03AF", en: "Pulse oximeter on patient and functioning", critical: true, src: "W" },
+      { id: "c.allergy", el: "\u0393\u03BD\u03C9\u03C3\u03C4\u03AE \u03B1\u03BB\u03BB\u03B5\u03C1\u03B3\u03AF\u03B1;", en: "Known allergy?", critical: true, src: "W", yn: true },
+      { id: "c.airway", el: "\u0394\u03CD\u03C3\u03BA\u03BF\u03BB\u03BF\u03C2 \u03B1\u03B5\u03C1\u03B1\u03B3\u03C9\u03B3\u03CC\u03C2 / \u03BA\u03AF\u03BD\u03B4\u03C5\u03BD\u03BF\u03C2 \u03B5\u03B9\u03C3\u03C1\u03CC\u03C6\u03B7\u03C3\u03B7\u03C2;", en: "Difficult airway / aspiration risk?", critical: true, src: "W", yn: true,
+        yesEl: "\u039D\u03B1\u03B9 \u2014 \u03B5\u03BE\u03BF\u03C0\u03BB\u03B9\u03C3\u03BC\u03CC\u03C2 \u03BA\u03B1\u03B9 \u03B2\u03BF\u03AE\u03B8\u03B5\u03B9\u03B1 \u03B4\u03B9\u03B1\u03B8\u03AD\u03C3\u03B9\u03BC\u03B1", yesEn: "Yes \u2014 equipment and assistance available",
+        subEl: "\u03B2\u03BB. \u03A3\u03C7\u03B5\u03C4\u03B9\u03BA\u03AC & \u03C0\u03B7\u03B3\u03AD\u03C2 \u2192 \u039A\u03B1\u03C4\u03B5\u03C5\u03B8\u03C5\u03BD\u03C4\u03AE\u03C1\u03B9\u03B5\u03C2 \u2192 \u03A0\u03C1\u03BF\u03B5\u03B3\u03C7\u03B5\u03B9\u03C1\u03B7\u03C4\u03B9\u03BA\u03AE \u03BD\u03B7\u03C3\u03C4\u03B5\u03AF\u03B1 \u00B7 \u0395\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03B1 \u2192 \u0393\u03B1\u03C3\u03C4\u03C1\u03B9\u03BA\u03CC \u03C5\u03C0\u03B5\u03C1\u03B7\u03C7\u03BF\u03B3\u03C1\u03AC\u03C6\u03B7\u03BC\u03B1", subEn: "see About & sources \u2192 Guidelines \u2192 Preoperative fasting \u00B7 Tools \u2192 Gastric ultrasound" },
+      { id: "c.blood", el: "\u039A\u03AF\u03BD\u03B4\u03C5\u03BD\u03BF\u03C2 \u03B1\u03C0\u03CE\u03BB\u03B5\u03B9\u03B1\u03C2 > 500 mL \u03B1\u03AF\u03BC\u03B1\u03C4\u03BF\u03C2 (7 mL/kg \u03C3\u03C4\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC);", en: "Risk of > 500 mL blood loss (7 mL/kg in children)?", critical: true, src: "W", yn: true,
+        yesEl: "\u039D\u03B1\u03B9 \u2014 \u03B5\u03C0\u03B1\u03C1\u03BA\u03AE\u03C2 \u03C6\u03BB\u03B5\u03B2\u03B9\u03BA\u03AE \u03C0\u03C1\u03CC\u03C3\u03B2\u03B1\u03C3\u03B7 \u03BA\u03B1\u03B9 \u03C5\u03B3\u03C1\u03AC", yesEn: "Yes \u2014 adequate IV access and fluids planned" }
+    ] }] }
+];
+const PREOP_REFS = [
+  "Hartle A, et al. Checking Anaesthetic Equipment 2012: Association of Anaesthetists of Great Britain and Ireland. Anaesthesia 2012;67:660\u20138. doi:10.1111/j.1365-2044.2012.07163.x",
+  "Klein AA, et al. Recommendations for standards of monitoring during anaesthesia and recovery 2021. Anaesthesia 2021;76:1212\u201323. doi:10.1111/anae.15501",
+  "World Health Organization. Implementation Manual: WHO Surgical Safety Checklist, 1st ed. 2008 (WHO/IER/PSP/2008.05)",
+  "Ahmad I, et al. Difficult Airway Society 2025 guidelines for management of unanticipated difficult tracheal intubation in adults. Br J Anaesth 2026;136:283\u2013307. doi:10.1016/j.bja.2025.10.006",
+  "Glahn KPE, Bendixen D, Girard T, et al. Availability of dantrolene for the management of malignant hyperthermia crises: European Malignant Hyperthermia Group guidelines. Br J Anaesth 2020;125:133\u201340. doi:10.1016/j.bja.2020.04.089",
+  "AAGBI Safety Guideline. Management of Severe Local Anaesthetic Toxicity. 2010"
+];
+const PREOP_SRC = { A: "AAGBI 2012", K: "Klein 2021", W: "WHO 2008", D: "DAS 2025", M: "EMHG 2020", L: "AAGBI 2010" };
+const preopItems = (secId) => { const s = PREOP.find((x) => x.id === secId); return s ? [].concat(...s.groups.map((g) => g.items)) : []; };
+const preopCanNA = (it) => it.critical === "cond" || !!it.na;
+// Local calendar date, so part A clears at local midnight.
+const preopToday = (now) => { const d = new Date(now == null ? Date.now() : now); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+// Stored part A -> its items, or {} when missing, malformed, from another list version or another day.
+function preopLoadA(rec, today) {
+  if (!rec || typeof rec !== "object" || rec.v !== PREOP_V || rec.date !== today || !rec.items || typeof rec.items !== "object") return {};
+  const ok = {}, ids = preopItems("A").map((x) => x.id);
+  for (const k of Object.keys(rec.items)) if (ids.indexOf(k) >= 0 && (rec.items[k] === "ok" || rec.items[k] === "na")) ok[k] = rec.items[k];
+  return ok;
+}
+// Count for one part: done / total (N/A leaves the total), critical items still open.
+function preopCount(secId, st) {
+  let done = 0, total = 0, crit = 0;
+  for (const it of preopItems(secId)) {
+    const v = st[it.id];
+    if (v === "na" && preopCanNA(it)) continue;
+    total++;
+    if (v === "ok" || (it.yn && (v === "no" || v === "yes"))) done++;
+    else if (it.critical) crit++;
+  }
+  return { done, total, crit, all: total > 0 && done === total };
+}
+// WHO blood-loss threshold: 7 mL/kg in children (< 18 y, weight from the patient bar), else 500 mL.
+function preopBloodTxt(age, weight) {
+  const a = parseFloat(age), w = parseFloat(weight);
+  if (isFinite(a) && a < 18) return isFinite(w) && w > 0 ? Math.round(7 * w) + " mL" : null;
+  return "500 mL";
+}
+const preopHM = (t) => { const d = new Date(t); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
+function PreAnaesthCheck({ lang, age, weight }) {
+  const el = lang === "el";
+  const today = preopToday();
+  const [a, setA] = React.useState(() => { const r = storeGet(PREOP_KEY); return { items: preopLoadA(r, today), t: r && r.v === PREOP_V && r.date === today ? r.t || null : null }; });
+  const [bc, setBc] = React.useState({ items: {}, t: {} });
+  const [openSec, setOpenSec] = React.useState(() => ({ A: !preopCount("A", a.items).all, B: true, C: true }));
+  const [confirm, setConfirm] = React.useState(null);
+  React.useEffect(() => {
+    if (Object.keys(a.items).length) storeSet(PREOP_KEY, { v: PREOP_V, date: today, t: a.t, items: a.items });
+    else storeDel(PREOP_KEY);
+  }, [a]);
+  React.useEffect(() => { if (!confirm) return; const t = setTimeout(() => setConfirm(null), 4000); return () => clearTimeout(t); }, [confirm]);
+  const stOf = (sec) => sec === "A" ? a.items : bc.items;
+  const setItem = (sec, id, v) => {
+    const tog = (items) => { const n = { ...items }; if (n[id] === v || v == null) delete n[id]; else n[id] = v; return n; };
+    if (sec === "A") setA((prev) => ({ items: tog(prev.items), t: Date.now() }));
+    else setBc((prev) => ({ items: tog(prev.items), t: { ...prev.t, [sec]: Date.now() } }));
+  };
+  const reset = (which) => {
+    if (confirm !== which) { setConfirm(which); return; }
+    setConfirm(null);
+    if (which === "A") setA({ items: {}, t: null }); else setBc({ items: {}, t: {} });
+  };
+  const box = (on, na) => React.createElement("span", { "aria-hidden": "true", style: { width: 22, height: 22, flexShrink: 0, borderRadius: 6, border: "2px solid " + (on ? S.teal : S.line), background: on ? S.teal : "transparent", color: S.onAccent, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 900, opacity: na ? 0.4 : 1 } }, on ? "\u2713" : "");
+  const pill = (on, txt, onClick, label, tone, grow) => React.createElement("button", { type: "button", onClick, "aria-pressed": on ? "true" : "false", "aria-label": label, style: { flex: grow || "0 0 auto", minWidth: 44, minHeight: 44, padding: "6px 10px", borderRadius: 10, border: "1.5px solid " + (on ? (tone || S.teal) : S.line), background: on ? (tone || S.teal) : S.card, color: on ? S.onAccent : S.ink, fontWeight: 800, fontSize: 12.5, fontFamily: "inherit", cursor: "pointer", flexShrink: 0 } }, txt);
+  const blood = preopBloodTxt(age, weight);
+  const row = (sec, it) => {
+    const v = stOf(sec)[it.id];
+    const isNA = v === "na" && preopCanNA(it);
+    const title = el ? it.el : it.en;
+    const tag = it.critical ? React.createElement("span", { style: { fontSize: 10.5, fontWeight: 900, color: S.red, marginRight: 6, letterSpacing: 0.3 } }, it.critical === "cond" ? (el ? "\u039A\u03A1\u0399\u03A3\u0399\u039C\u039F*" : "CRITICAL*") : (el ? "\u039A\u03A1\u0399\u03A3\u0399\u039C\u039F" : "CRITICAL")) : null;
+    const subs = [];
+    if (it.src === "practice") subs.push(el ? "\u03BA\u03BB\u03B9\u03BD\u03B9\u03BA\u03AE \u03C0\u03C1\u03B1\u03BA\u03C4\u03B9\u03BA\u03AE" : "clinical practice");
+    if (it.subEl) subs.push(el ? it.subEl : it.subEn);
+    if (it.id === "c.blood") subs.push(blood ? (el ? "\u03CC\u03C1\u03B9\u03BF: " : "threshold: ") + blood + (parseFloat(age) < 18 ? (el ? " (7 \u00D7 \u03B2\u03AC\u03C1\u03BF\u03C2)" : " (7 \u00D7 weight)") : "") : (el ? "\u03C0\u03B1\u03B9\u03B4\u03AF: \u03C3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03B2\u03AC\u03C1\u03BF\u03C2 \u03C3\u03C4\u03B7 \u03BC\u03C0\u03AC\u03C1\u03B1 \u03B3\u03B9\u03B1 \u03C4\u03BF \u03CC\u03C1\u03B9\u03BF (7 mL/kg)" : "child: enter weight in the patient bar for the threshold (7 mL/kg)"));
+    const sub = subs.length ? React.createElement("div", { style: { fontSize: 11.5, color: S.muted, fontWeight: 600, marginTop: 2, lineHeight: 1.4 } }, subs.join(" \u00B7 ")) : null;
+    const wrap = { display: "flex", alignItems: "center", gap: 8, borderTop: "1px solid " + S.line, padding: "4px 0" };
+    if (it.yn) {
+      return React.createElement("div", { key: it.id, style: { ...wrap, flexDirection: "column", alignItems: "stretch", padding: "8px 0" } },
+        React.createElement("div", { style: { minWidth: 0, fontSize: 13.5, color: S.ink, fontWeight: 600, lineHeight: 1.4, marginBottom: 6 } }, tag, title, sub),
+        React.createElement("div", { role: "group", "aria-label": title, style: { display: "flex", gap: 6 } },
+          pill(v === "no", el ? "\u038C\u03C7\u03B9" : "No", () => setItem(sec, it.id, "no"), title + " " + (el ? "\u038C\u03C7\u03B9" : "No"), null, "1 1 30%"),
+          pill(v === "yes", it.yesEl ? (el ? it.yesEl : it.yesEn) : (el ? "\u039D\u03B1\u03B9" : "Yes"), () => setItem(sec, it.id, "yes"), title + " " + (el ? "\u039D\u03B1\u03B9" : "Yes"), S.amber, "1 1 70%")));
+    }
+    return React.createElement("div", { key: it.id, style: wrap },
+      React.createElement("button", { type: "button", role: "checkbox", "aria-checked": v === "ok" ? "true" : "false", disabled: isNA, onClick: () => setItem(sec, it.id, "ok"),
+        style: { flex: 1, minWidth: 0, minHeight: 44, display: "flex", alignItems: "center", gap: 10, textAlign: "left", background: "none", border: "none", padding: "6px 0", cursor: isNA ? "default" : "pointer", fontFamily: "inherit", color: S.ink, opacity: isNA ? 0.5 : 1 } },
+        box(v === "ok", isNA),
+        React.createElement("span", { style: { flex: 1, minWidth: 0, fontSize: 13.5, fontWeight: 600, lineHeight: 1.4, textDecoration: isNA ? "line-through" : "none" } }, tag, title, sub)),
+      preopCanNA(it) ? pill(isNA, el ? "\u0394/\u0395" : "N/A", () => setItem(sec, it.id, "na"), title + " " + (el ? "\u03B4\u03B5\u03BD \u03B5\u03C6\u03B1\u03C1\u03BC\u03CC\u03B6\u03B5\u03C4\u03B1\u03B9" : "not applicable"), S.muted) : null);
+  };
+  const section = (s) => {
+    const st = stOf(s.id), c = preopCount(s.id, st), t = s.id === "A" ? a.t : bc.t[s.id] || null;
+    const open = openSec[s.id];
+    return React.createElement("div", { key: s.id, style: { background: S.bg, borderRadius: 12, padding: "4px 12px 10px", marginBottom: 10 } },
+      React.createElement("button", { type: "button", "aria-expanded": open ? "true" : "false", onClick: () => setOpenSec((o) => ({ ...o, [s.id]: !o[s.id] })),
+        style: { width: "100%", minHeight: 44, display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", padding: "8px 0", cursor: "pointer", fontFamily: "inherit", textAlign: "left", color: S.ink } },
+        React.createElement("span", { style: { flex: 1, minWidth: 0 } },
+          React.createElement("span", { style: { display: "block", fontWeight: 800, fontSize: 14.5, color: S.teal } }, el ? s.el : s.en),
+          React.createElement("span", { style: { display: "block", fontSize: 11.5, color: S.muted, fontWeight: 700, marginTop: 2 } },
+            c.done + " / " + c.total,
+            c.crit > 0 ? React.createElement("span", { style: { color: S.red, marginLeft: 8 } }, (el ? "\u039A\u03C1\u03AF\u03C3\u03B9\u03BC\u03B1 \u03B1\u03BD\u03BF\u03B9\u03C7\u03C4\u03AC: " : "Critical open: ") + c.crit) : null,
+            t ? React.createElement("span", { style: { marginLeft: 8 } }, (el ? "\u03A4\u03B5\u03BB\u03B5\u03C5\u03C4\u03B1\u03AF\u03BF\u03C2 \u03AD\u03BB\u03B5\u03B3\u03C7\u03BF\u03C2: " : "Last check: ") + (s.id === "A" ? (el ? "\u03C3\u03AE\u03BC\u03B5\u03C1\u03B1 " : "today ") : "") + preopHM(t)) : null)),
+        React.createElement("span", { "aria-hidden": "true", style: { color: S.muted, fontSize: 18, fontWeight: 700, transform: open ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")),
+      open && React.createElement(React.Fragment, null,
+        React.createElement("div", { style: { fontSize: 11.5, color: S.muted, fontWeight: 600, lineHeight: 1.45, marginBottom: 4 } }, (el ? s.whenEl : s.whenEn) + " \u00B7 " + (el ? "\u03A0\u03B7\u03B3\u03AE: " : "Source: ") + (el ? s.srcEl : s.srcEn)),
+        s.noteEl ? React.createElement("div", { style: { fontSize: 12, color: S.tintWarnFg, background: S.tintWarn, borderRadius: 8, padding: "6px 10px", fontWeight: 700, lineHeight: 1.45, margin: "4px 0 6px" } }, el ? s.noteEl : s.noteEn) : null,
+        s.groups.map((g, gi) => React.createElement("div", { key: gi },
+          g.el ? React.createElement("div", { style: { fontSize: 12, fontWeight: 900, color: S.ink, letterSpacing: 0.2, margin: "8px 0 2px" } }, (el ? g.el : g.en), React.createElement("span", { style: { fontWeight: 700, color: S.muted } }, " \u00B7 " + (el ? g.srcEl : g.srcEn) + (g.seeEl ? " \u00B7 " + (el ? g.seeEl : g.seeEn) : ""))) : null,
+          g.items.map((it) => row(s.id, it)))),
+        c.all ? React.createElement("div", { role: "status", style: { fontSize: 12.5, fontWeight: 800, color: S.teal, marginTop: 6 } }, (el ? "\u038C\u03BB\u03B1 \u03C3\u03B7\u03BC\u03B5\u03B9\u03CE\u03B8\u03B7\u03BA\u03B1\u03BD \u00B7 " : "All marked \u00B7 ") + preopHM(t || Date.now())) : null,
+        s.id !== "C" ? React.createElement("button", { type: "button", onClick: () => reset(s.id === "A" ? "A" : "BC"),
+          style: { marginTop: 8, minHeight: 44, width: "100%", borderRadius: 10, border: "1.5px solid " + (confirm === (s.id === "A" ? "A" : "BC") ? S.red : S.line), background: S.card, color: confirm === (s.id === "A" ? "A" : "BC") ? S.red : S.teal, fontWeight: 800, fontSize: 13, fontFamily: "inherit", cursor: "pointer" } },
+          confirm === (s.id === "A" ? "A" : "BC") ? (el ? "\u03A0\u03B1\u03C4\u03AE\u03C3\u03C4\u03B5 \u03BE\u03B1\u03BD\u03AC \u03B3\u03B9\u03B1 \u03B5\u03C0\u03B9\u03B2\u03B5\u03B2\u03B1\u03AF\u03C9\u03C3\u03B7" : "Tap again to confirm") : s.id === "A" ? (el ? "\u039D\u03AD\u03B1 \u03BB\u03AF\u03C3\u03C4\u03B1 (\u03C3\u03B2\u03AE\u03BD\u03B5\u03B9 \u03C4\u03BF \u03C4\u03BC\u03AE\u03BC\u03B1 \u0391)" : "New list (clears part A)") : (el ? "\u039D\u03AD\u03BF\u03C2 \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2 (\u03C3\u03B2\u03AE\u03BD\u03B5\u03B9 \u03C4\u03B1 \u03C4\u03BC\u03AE\u03BC\u03B1\u03C4\u03B1 \u0392 \u03BA\u03B1\u03B9 \u0393)" : "New patient (clears parts B and C)")) : null));
+  };
+  return React.createElement("div", null,
+    React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 600, lineHeight: 1.5, marginBottom: 10 } },
+      el ? "\u03A4\u03BF \u03C4\u03BC\u03AE\u03BC\u03B1 \u0391 \u03BC\u03AD\u03BD\u03B5\u03B9 \u03BC\u03AD\u03C7\u03C1\u03B9 \u03C4\u03BF \u03C4\u03AD\u03BB\u03BF\u03C2 \u03C4\u03B7\u03C2 \u03B7\u03BC\u03AD\u03C1\u03B1\u03C2 \u03AE \u03C4\u03BF \u00AB\u039D\u03AD\u03B1 \u03BB\u03AF\u03C3\u03C4\u03B1\u00BB. \u03A4\u03B1 \u03C4\u03BC\u03AE\u03BC\u03B1\u03C4\u03B1 \u0392 \u03BA\u03B1\u03B9 \u0393 \u03C3\u03B2\u03AE\u03BD\u03BF\u03C5\u03BD \u03CC\u03C4\u03B1\u03BD \u03BA\u03BB\u03B5\u03AF\u03C3\u03B5\u03B9 \u03B7 \u03BA\u03AC\u03C1\u03C4\u03B1. \u039A\u03A1\u0399\u03A3\u0399\u039C\u039F: \u00ABmust\u00BB \u03AE \u03B5\u03BB\u03AC\u03C7\u03B9\u03C3\u03C4\u03B7 \u03B1\u03C0\u03B1\u03AF\u03C4\u03B7\u03C3\u03B7 \u03C3\u03C4\u03B7\u03BD \u03C0\u03B7\u03B3\u03AE \u00B7 * \u03CC\u03C0\u03BF\u03C5 \u03B5\u03C6\u03B1\u03C1\u03BC\u03CC\u03B6\u03B5\u03C4\u03B1\u03B9 (\u0394/\u0395 \u03B1\u03BB\u03BB\u03B9\u03CE\u03C2). \u0394\u03B5\u03BD \u03B1\u03C0\u03BF\u03B8\u03B7\u03BA\u03B5\u03CD\u03B5\u03C4\u03B1\u03B9 \u03BA\u03B1\u03BD\u03AD\u03BD\u03B1 \u03C3\u03C4\u03BF\u03B9\u03C7\u03B5\u03AF\u03BF \u03B1\u03C3\u03B8\u03B5\u03BD\u03BF\u03CD\u03C2."
+        : "Part A stays until the end of the day or \u201CNew list\u201D. Parts B and C clear when the card closes. CRITICAL: \u201Cmust\u201D or a minimum requirement in the source \u00B7 * where applicable (N/A otherwise). No patient data is stored."),
+    PREOP.map(section),
+    React.createElement("div", { style: { fontSize: 12, color: S.tintWarnFg, background: S.tintWarn, borderRadius: 10, padding: "8px 12px", fontWeight: 700, lineHeight: 1.5, marginBottom: 8 } },
+      el ? "\u0395\u03BA\u03C0\u03B1\u03B9\u03B4\u03B5\u03C5\u03C4\u03B9\u03BA\u03CC \u03B2\u03BF\u03AE\u03B8\u03B7\u03BC\u03B1 \u2014 \u03C4\u03B1 \u03C4\u03BF\u03C0\u03B9\u03BA\u03AC \u03C0\u03C1\u03C9\u03C4\u03CC\u03BA\u03BF\u03BB\u03BB\u03B1 \u03BA\u03B1\u03B9 \u03BF \u03AD\u03BB\u03B5\u03B3\u03C7\u03BF\u03C2 \u03C4\u03BF\u03C5 \u03BA\u03B1\u03C4\u03B1\u03C3\u03BA\u03B5\u03C5\u03B1\u03C3\u03C4\u03AE \u03C5\u03C0\u03B5\u03C1\u03B9\u03C3\u03C7\u03CD\u03BF\u03C5\u03BD" : "Educational aid \u2014 local protocols and the manufacturer's check take precedence"),
+    React.createElement("div", { style: { fontSize: 11, color: S.muted, fontWeight: 600, lineHeight: 1.5 } },
+      React.createElement("div", { style: { fontWeight: 800, marginBottom: 2 } }, el ? "\u0392\u03B9\u03B2\u03BB\u03B9\u03BF\u03B3\u03C1\u03B1\u03C6\u03AF\u03B1" : "References"),
+      PREOP_REFS.map((r, i) => React.createElement("div", { key: i }, (i + 1) + ". " + r))));
 }
 // Spirometry & fitness for lung resection.
 // Sub-components live at module scope: defining an <input> wrapper inside the
@@ -2600,11 +2816,11 @@ function RenalFunctionCalc({ lang, weight, age, height, sex }) {
     /* @__PURE__ */ React.createElement("div", { style: { fontSize: 22, fontWeight: 800, color: tone || S.teal } }, val == null ? "\u2014" : Math.round(val), val == null ? null : /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, fontWeight: 600, color: S.muted, marginLeft: 6 } }, unitTxt)),
     hint ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: S.muted, fontWeight: 600, marginTop: 2, lineHeight: 1.4 } }, hint) : null);
   const tone = (v) => v == null ? S.teal : v < 30 ? S.red : v < 60 ? S.amber : S.teal;
-  const btn = (id, txt) => /* @__PURE__ */ React.createElement("button", { onClick: () => setUnit(id), style: { flex: 1, padding: "6px 0", borderRadius: 8, border: "1px solid " + (unit === id ? S.teal : S.line), background: unit === id ? S.teal : "transparent", color: unit === id ? S.onAccent : S.ink, fontWeight: 700, fontSize: 12, fontFamily: "inherit", cursor: "pointer" } }, txt);
+  const btn = (id, txt) => /* @__PURE__ */ React.createElement("button", { onClick: () => setUnit(id), style: { flex: "1 0 auto", padding: "6px 8px", borderRadius: 8, border: "1px solid " + (unit === id ? S.teal : S.line), background: unit === id ? S.teal : "transparent", color: unit === id ? S.onAccent : S.ink, fontWeight: 700, fontSize: 12, fontFamily: "inherit", cursor: "pointer" } }, txt);
   return /* @__PURE__ */ React.createElement(React.Fragment, null,
-    /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "flex-end", marginBottom: 8 } },
+    /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "flex-end", marginBottom: 8, flexWrap: "wrap" } },
       /* @__PURE__ */ React.createElement(VentField, { label: el ? "\u039A\u03C1\u03B5\u03B1\u03C4\u03B9\u03BD\u03AF\u03BD\u03B7 \u03BF\u03C1\u03BF\u03CD" : "Serum creatinine", val: scr, set: setScr, ph: unit === "mgdl" ? "1.0" : "88", unit: unit === "mgdl" ? "mg/dL" : "\u00b5mol/L" }),
-      /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 4, flex: "0 0 150px" } }, btn("mgdl", "mg/dL"), btn("umol", "\u00b5mol/L"))),
+      /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 4, flex: "1 0 150px" } }, btn("mgdl", "mg/dL"), btn("umol", "\u00b5mol/L"))),
     kidNote ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: S.amber, fontWeight: 700, marginBottom: 6, lineHeight: 1.4 } }, kidNote) : null,
     missing.length ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: S.amber, fontWeight: 700, marginBottom: 6 } }, (el ? "\u03A3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03C3\u03C4\u03B7 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B1\u03C3\u03B8\u03B5\u03BD\u03BF\u03CD\u03C2: " : "Enter in the patient bar: ") + missing.join(", ")) : null,
     /* @__PURE__ */ React.createElement(Box, { label: el ? "\u039A\u03AC\u03B8\u03B1\u03C1\u03C3\u03B7 \u03BA\u03C1\u03B5\u03B1\u03C4\u03B9\u03BD\u03AF\u03BD\u03B7\u03C2 \u2014 Cockcroft\u2013Gault" : "Creatinine clearance \u2014 Cockcroft\u2013Gault", val: cg, unitTxt: "mL/min", tone: tone(cg), hint: el ? "\u0391\u03C5\u03C4\u03AE \u03C0\u03BF\u03C5 \u03C7\u03C1\u03B7\u03C3\u03B9\u03BC\u03BF\u03C0\u03BF\u03B9\u03BF\u03CD\u03BD \u03BF\u03B9 SmPC \u03B3\u03B9\u03B1 \u03C0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B4\u03CC\u03C3\u03B7\u03C2 (\u03BD\u03C4\u03B1\u03BC\u03C0\u03B9\u03B3\u03BA\u03B1\u03C4\u03C1\u03AC\u03BD\u03B7, \u03C4\u03C1\u03B1\u03BC\u03B1\u03B4\u03CC\u03BB\u03B7, sugammadex, \u039C\u03A3\u0391\u03A6)." : "What drug SmPCs use for dose adjustment (dabigatran, tramadol, sugammadex, NSAIDs)." }),
@@ -3031,7 +3247,7 @@ function RecruitmentCard({ lang, height, sex, weight }) {
     (el ? P.setEl : P.setEn).map((t, i) => React.createElement("div", { key: i, style: box(false) }, (i + 1) + ". " + t)),
     P.kind === "vtFromCurrent" && React.createElement("div", { style: { margin: "6px 0" } },
       React.createElement("div", { style: { fontSize: 11, color: S.muted, fontWeight: 700, marginBottom: 3 } }, el ? "\u03A4\u03C1\u03AD\u03C7\u03BF\u03BD Vt (mL) \u2014 \u03B1\u03C6\u03B5\u03C4\u03B7\u03C1\u03AF\u03B1 \u03C4\u03B7\u03C2 \u03BA\u03BB\u03B9\u03BC\u03AC\u03BA\u03C9\u03C3\u03B7\u03C2" : "Current Vt (mL) \u2014 starting point of the steps"),
-      React.createElement("input", { type: "text", inputMode: "decimal", value: curVt, onChange: (e) => setCurVt(numIn(e.target.value)), style: { width: "100%", padding: "8px 10px", borderRadius: 10, border: "1px solid " + S.line, background: S.card, color: S.ink, fontSize: 14, fontFamily: "inherit" } })),
+      React.createElement("input", { type: "text", inputMode: "decimal", value: curVt, onChange: (e) => setCurVt(numIn(e.target.value)), style: { width: "100%", padding: "8px 10px", borderRadius: 10, border: "1px solid " + S.line, background: S.card, color: S.ink, fontSize: 14, fontFamily: "inherit", boxSizing: "border-box" } })),
     steps.length > 0 && React.createElement("table", { style: { width: "100%", borderCollapse: "collapse", margin: "6px 0" } },
       React.createElement("thead", null, React.createElement("tr", null, [el ? "\u0392\u03AE\u03BC\u03B1" : "Step", "mL/kg PBW", "Vt (mL)"].map((t) => React.createElement("th", { key: t, style: { ...cell, color: S.muted, fontWeight: 700 } }, t)))),
       React.createElement("tbody", null, steps.map((s) => React.createElement("tr", { key: s.i }, React.createElement("td", { style: cell }, s.i === 0 ? (el ? "\u03B1\u03C1\u03C7\u03AE" : "start") : "+" + s.i), React.createElement("td", { style: cell }, fmt(s.k)), React.createElement("td", { style: { ...cell, fontWeight: 800 } }, s.ml))))),
@@ -3079,7 +3295,7 @@ function LowFlowCard({ lang }) {
   const H = ({ children }) => React.createElement("div", { style: { fontWeight: 800, fontSize: 13, color: S.teal, margin: "8px 0 4px" } }, children);
   const inp = (label, val, set, unit) => React.createElement("div", { style: { flex: "1 1 30%", minWidth: 92 } },
     React.createElement("div", { style: { fontSize: 11, color: S.muted, fontWeight: 700, marginBottom: 3 } }, label + (unit ? " (" + unit + ")" : "")),
-    React.createElement("input", { type: "text", inputMode: "decimal", value: val, onChange: (e) => set(numIn(e.target.value)), style: { width: "100%", padding: "8px 10px", borderRadius: 10, border: "1px solid " + S.line, background: S.card, color: S.ink, fontSize: 14, fontFamily: "inherit" } }));
+    React.createElement("input", { type: "text", inputMode: "decimal", value: val, onChange: (e) => set(numIn(e.target.value)), style: { width: "100%", padding: "8px 10px", borderRadius: 10, border: "1px solid " + S.line, background: S.card, color: S.ink, fontSize: 14, fontFamily: "inherit", boxSizing: "border-box" } }));
   const f = parseFloat(fgf), d = parseFloat(dial), t = parseFloat(dur);
   const vapour = f > 0 && d > 0 ? f * 1000 * d / 100 : null;
   const liqH = vapour != null ? vapour * 60 / A.vap : null;
@@ -3090,8 +3306,8 @@ function LowFlowCard({ lang }) {
   return React.createElement(React.Fragment, null,
     React.createElement(H, null, el ? "\u039F\u03C1\u03B9\u03C3\u03BC\u03BF\u03AF" : "Definitions"),
     B(false, "Low-flow: \u03C1\u03BF\u03AE \u03C6\u03C1\u03AD\u03C3\u03BA\u03C9\u03BD \u03B1\u03B5\u03C1\u03AF\u03C9\u03BD 1.0 L/min \u00B7 Minimal-flow: 0.5 L/min \u00B7 Metabolic-flow: ~0.35 L/min \u03BC\u03B5 \u03BA\u03B1\u03B8\u03B1\u03C1\u03CC O\u2082 \u03C9\u03C2 \u03C6\u03AD\u03C1\u03BF\u03BD \u03B1\u03AD\u03C1\u03B9\u03BF", "Low-flow: fresh gas flow 1.0 L/min \u00B7 Minimal-flow: 0.5 L/min \u00B7 Metabolic-flow: ~0.35 L/min with pure O\u2082 as carrier gas"),
-    React.createElement("div", { style: { display: "flex", gap: 6, margin: "8px 0" } },
-      LF_AGENTS.map((x) => React.createElement("button", { key: x.id, onClick: () => setAid(x.id), style: { flex: 1, padding: "7px 6px", borderRadius: 10, border: "1px solid " + (aid === x.id ? S.teal : S.line), background: aid === x.id ? S.teal : "transparent", color: aid === x.id ? S.onAccent : S.ink, fontWeight: 700, fontSize: 12, fontFamily: "inherit", cursor: "pointer" } }, el ? x.el : x.en))),
+    React.createElement("div", { style: { display: "flex", gap: 6, margin: "8px 0", flexWrap: "wrap" } },
+      LF_AGENTS.map((x) => React.createElement("button", { key: x.id, onClick: () => setAid(x.id), style: { flex: "1 1 auto", padding: "7px 6px", borderRadius: 10, border: "1px solid " + (aid === x.id ? S.teal : S.line), background: aid === x.id ? S.teal : "transparent", color: aid === x.id ? S.onAccent : S.ink, fontWeight: 700, fontSize: 12, fontFamily: "inherit", cursor: "pointer" } }, el ? x.el : x.en))),
     React.createElement(H, null, el ? "\u03A4\u03C5\u03C0\u03BF\u03C0\u03BF\u03B9\u03B7\u03BC\u03AD\u03BD\u03BF \u03C3\u03C7\u03AE\u03BC\u03B1 minimal-flow (O\u2082/\u03B1\u03AD\u03C1\u03B1\u03C2)" : "Standardised minimal-flow scheme (O\u2082/air)"),
     B(false, "1. \u0391\u03C1\u03C7\u03B9\u03BA\u03AE \u03C6\u03AC\u03C3\u03B7: O\u2082 1 L/min + \u03B1\u03AD\u03C1\u03B1\u03C2 3 L/min (4 L/min, 40% O\u2082) \u00B7 \u03B5\u03BE\u03B1\u03C4\u03BC\u03B9\u03C3\u03C4\u03AE\u03C1\u03B1\u03C2 " + A.init + " vol% \u00B7 \u03BC\u03AD\u03C7\u03C1\u03B9 \u03C3\u03C4\u03CC\u03C7\u03BF MAC 0.8\u20131", "1. Initial phase: O\u2082 1 L/min + air 3 L/min (4 L/min, 40% O\u2082) \u00B7 vaporiser " + A.init + " vol% \u00B7 until target MAC 0.8\u20131"),
     B(false, "2. \u039C\u03B5\u03AF\u03C9\u03C3\u03B7 \u03C1\u03BF\u03AE\u03C2: O\u2082 0.3 + \u03B1\u03AD\u03C1\u03B1\u03C2 0.2 L/min (0.5 L/min, ~68% O\u2082) \u00B7 \u03B5\u03BE\u03B1\u03C4\u03BC\u03B9\u03C3\u03C4\u03AE\u03C1\u03B1\u03C2 " + A.after + " vol%", "2. Flow reduction: O\u2082 0.3 + air 0.2 L/min (0.5 L/min, ~68% O\u2082) \u00B7 vaporiser " + A.after + " vol%"),
@@ -3218,7 +3434,7 @@ function NIVCard({ lang }) {
   const box = (warn) => ({ background: warn ? S.tintWarn : S.bg, color: warn ? S.tintWarnFg : S.ink, borderRadius: 10, padding: "7px 11px", marginBottom: 4, fontSize: 12.5, fontWeight: warn ? 700 : 500, lineHeight: 1.45 });
   const H = ({ children }) => React.createElement("div", { style: { fontWeight: 800, fontSize: 13, color: S.teal, margin: "8px 0 4px" } }, children);
   const small = { fontSize: 11, color: S.muted, fontWeight: 600, lineHeight: 1.45 };
-  const inp = { width: "100%", padding: "8px 10px", borderRadius: 10, border: "1px solid " + S.line, background: S.card, color: S.ink, fontSize: 14, fontFamily: "inherit" };
+  const inp = { width: "100%", padding: "8px 10px", borderRadius: 10, border: "1px solid " + S.line, background: S.card, color: S.ink, fontSize: 14, fontFamily: "inherit", boxSizing: "border-box" };
   const field = (lab, val, set) => React.createElement("label", { style: { display: "block", flex: "1 1 45%", minWidth: 120 } },
     React.createElement("div", { style: { fontSize: 12, color: S.muted, fontWeight: 600, marginBottom: 2 } }, lab),
     React.createElement("input", { type: "text", inputMode: "decimal", value: val, onChange: (e) => set(numIn(e.target.value)), style: inp }));
@@ -3247,8 +3463,8 @@ function NIVCard({ lang }) {
     React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 8, margin: "6px 0" } },
       field("PaO\u2082 (mmHg)", po2, setPo2), field(el ? "FiO\u2082 (% \u03AE 0,21\u20131)" : "FiO\u2082 (% or 0.21\u20131)", fio2, setFio2),
       field("PaCO\u2082 (mmHg)", pco2, setPco2), field(el ? "RR (/min)" : "RR (/min)", rr, setRr)),
-    React.createElement("label", { style: { display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: S.ink, fontWeight: 600, marginBottom: 6 } },
-      React.createElement("input", { type: "checkbox", checked: drive, onChange: (e) => setDrive(e.target.checked) }), el ? "\u0391\u03C5\u03BE\u03B7\u03BC\u03AD\u03BD\u03BF \u03B1\u03BD\u03B1\u03C0\u03BD\u03B5\u03C5\u03C3\u03C4\u03B9\u03BA\u03CC drive" : "Increased respiratory drive"),
+    React.createElement("label", { style: { display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: S.ink, fontWeight: 600, marginBottom: 6, minHeight: 44, cursor: "pointer" } },
+      React.createElement("input", { type: "checkbox", checked: drive, style: { width: 20, height: 20, margin: 0, flexShrink: 0, accentColor: S.teal }, onChange: (e) => setDrive(e.target.checked) }), el ? "\u0391\u03C5\u03BE\u03B7\u03BC\u03AD\u03BD\u03BF \u03B1\u03BD\u03B1\u03C0\u03BD\u03B5\u03C5\u03C3\u03C4\u03B9\u03BA\u03CC drive" : "Increased respiratory drive"),
     fBad && React.createElement("div", { style: box(true) }, el ? "\u0397 FiO\u2082 \u03C0\u03C1\u03AD\u03C0\u03B5\u03B9 \u03BD\u03B1 \u03B5\u03AF\u03BD\u03B1\u03B9 21\u2013100% (\u03AE 0,21\u20131)." : "FiO\u2082 must be 21\u2013100% (or 0.21\u20131)."),
     pf != null && React.createElement("div", { style: box(false) }, "PaO\u2082/FiO\u2082 = " + Math.round(pf) + " mmHg"),
     pf == null ? React.createElement("div", { style: box(false) }, el ? "\u039A\u03B1\u03C4\u03B1\u03C7\u03C9\u03C1\u03AE\u03C3\u03C4\u03B5 PaO\u2082 \u03BA\u03B1\u03B9 FiO\u2082." : "Enter PaO\u2082 and FiO\u2082.")
@@ -3337,14 +3553,18 @@ function OfflineCheck({ lang }) {
         add(keys.indexOf("anesthesia-v" + APP_VERSION) >= 0, el ? "\u0391\u03C0\u03BF\u03B8\u03AE\u03BA\u03B5\u03C2" : "Caches", keys.join(", ") || (el ? "\u03BA\u03B1\u03BC\u03AF\u03B1" : "none"));
         const need = ["./index.html"].concat(Array.from(document.scripts).map((x) => x.src).filter(Boolean));
         miss = [];
-        for (const u of need) if (!(await caches.match(u, { ignoreVary: true }))) miss.push(u.replace(/^.*\//, ""));
+        // #121: the SW serves navigations from the current cache only, so check that one
+        const cur = await caches.open("anesthesia-v" + APP_VERSION);
+        for (const u of need) if (!(await cur.match(u, { ignoreVary: true }))) miss.push(u.replace(/^.*\//, ""));
         add(miss.length === 0, el ? "\u0391\u03C1\u03C7\u03B5\u03AF\u03B1 \u03B3\u03B9\u03B1 offline" : "Files for offline", miss.length ? (el ? "\u03BB\u03B5\u03AF\u03C0\u03BF\u03C5\u03BD: " : "missing: ") + miss.join(", ") : need.length + "/" + need.length);
       } catch (e) { add(false, "Cache Storage", ((e && e.name) || "") + " " + ((e && e.message) || e)); }
     }
     try { if (nav.storage && nav.storage.estimate) { const est = await nav.storage.estimate(); add(null, el ? "\u03A7\u03CE\u03C1\u03BF\u03C2" : "Storage", Math.round((est.usage || 0) / 1024) + " KB / " + Math.round((est.quota || 0) / 1048576) + " MB"); } } catch (e) {}
+    try { if (nav.storage && nav.storage.persisted) { const pz = await nav.storage.persisted(); add(pz, el ? "\u039C\u03CC\u03BD\u03B9\u03BC\u03B7 \u03B1\u03C0\u03BF\u03B8\u03AE\u03BA\u03B5\u03C5\u03C3\u03B7" : "Persistent storage", pz ? (el ? "\u03BD\u03B1\u03B9" : "yes") : (el ? "\u03CC\u03C7\u03B9 \u2014 \u03C4\u03BF iOS \u03BC\u03C0\u03BF\u03C1\u03B5\u03AF \u03BD\u03B1 \u03C3\u03B2\u03AE\u03C3\u03B5\u03B9 \u03C4\u03B1 \u03B1\u03C1\u03C7\u03B5\u03AF\u03B1 \u03B1\u03BD \u03B4\u03B5\u03BD \u03B1\u03BD\u03BF\u03AF\u03B3\u03B5\u03C4\u03B5 \u03C4\u03B7\u03BD \u03B5\u03C6\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE" : "no \u2014 iOS may evict the files if the app is not opened")); } } catch (e) {}
     add(null, el ? "\u0388\u03BA\u03B4\u03BF\u03C3\u03B7 \u00B7 \u03C3\u03C5\u03C3\u03BA\u03B5\u03C5\u03AE" : "Version \u00B7 device", "v" + APP_VERSION + " \u00B7 " + (nav.userAgent || ""));
     const ready = hasSW && ctrl && hasCaches && miss && miss.length === 0;
-    R.unshift({ ok: ready, l: el ? "\u0391\u03C0\u03BF\u03C4\u03AD\u03BB\u03B5\u03C3\u03BC\u03B1" : "Result", v: ready ? (el ? "\u03AD\u03C4\u03BF\u03B9\u03BC\u03BF \u03B3\u03B9\u03B1 offline" : "ready for offline use") : (el ? "\u0394\u0395\u039D \u03B5\u03AF\u03BD\u03B1\u03B9 \u03AD\u03C4\u03BF\u03B9\u03BC\u03BF \u03B3\u03B9\u03B1 offline \u2014 \u03B4\u03B5\u03AF\u03C4\u03B5 \u03C4\u03B9\u03C2 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AD\u03C2 \u03BC\u03B5 \u2717" : "NOT ready for offline use \u2014 see the lines marked \u2717") });
+    const reopen = hasSW && !ctrl && !window.__swErr;
+    R.unshift({ ok: ready, l: el ? "\u0391\u03C0\u03BF\u03C4\u03AD\u03BB\u03B5\u03C3\u03BC\u03B1" : "Result", v: reopen && !ready ? (el ? "\u0394\u0395\u039D \u03B5\u03AF\u03BD\u03B1\u03B9 \u03B1\u03BA\u03CC\u03BC\u03B7 \u03AD\u03C4\u03BF\u03B9\u03BC\u03BF \u2014 \u03BA\u03BB\u03B5\u03AF\u03C3\u03C4\u03B5 \u03BA\u03B1\u03B9 \u03B1\u03BD\u03BF\u03AF\u03BE\u03C4\u03B5 \u03BE\u03B1\u03BD\u03AC \u03C4\u03B7\u03BD \u03B5\u03C6\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03BA\u03B1\u03B9 \u03B5\u03C0\u03B1\u03BD\u03B1\u03BB\u03AC\u03B2\u03B5\u03C4\u03B5 \u03C4\u03BF\u03BD \u03AD\u03BB\u03B5\u03B3\u03C7\u03BF" : "NOT ready yet \u2014 close and reopen the app, then repeat the check") : ready ? (el ? "\u03AD\u03C4\u03BF\u03B9\u03BC\u03BF \u03B3\u03B9\u03B1 offline" : "ready for offline use") : (el ? "\u0394\u0395\u039D \u03B5\u03AF\u03BD\u03B1\u03B9 \u03AD\u03C4\u03BF\u03B9\u03BC\u03BF \u03B3\u03B9\u03B1 offline \u2014 \u03B4\u03B5\u03AF\u03C4\u03B5 \u03C4\u03B9\u03C2 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AD\u03C2 \u03BC\u03B5 \u2717" : "NOT ready for offline use \u2014 see the lines marked \u2717") });
     setRows(R);
     setNote("");
   };

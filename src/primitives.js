@@ -209,6 +209,12 @@ function favInfo(f, lang) {
   } catch (e) {}
   return null;
 }
+// A list row with a favourite star: the star is its own button beside the row button (a button may not
+// contain another interactive element). The chevron after the star also opens the row.
+const StarRow = ({ main, star, open, onToggle, padR }) => React.createElement("div", { "data-row": "1", style: { display: "flex", alignItems: "stretch" } },
+  main, star,
+  React.createElement("span", { "aria-hidden": "true", onClick: onToggle, style: { display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, width: 26, marginRight: padR == null ? 8 : padR - 6, color: S.muted, fontWeight: 600, fontSize: 18, cursor: "pointer" } },
+    React.createElement("span", { style: { display: "inline-block", lineHeight: 1, transform: open ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")));
 function FavStar({ k, id, lang, fav }) {
   const el = lang === "el";
   const [full, setFull] = useState(false);
@@ -219,7 +225,7 @@ function FavStar({ k, id, lang, fav }) {
     if (!fav.toggle(k, id)) { setFull(true); setTimeout(() => setFull(false), 2500); }
   };
   const label = on ? (el ? "\u0391\u03C6\u03B1\u03AF\u03C1\u03B5\u03C3\u03B7 \u03B1\u03C0\u03CC \u03C4\u03B1 \u03B1\u03B3\u03B1\u03C0\u03B7\u03BC\u03AD\u03BD\u03B1" : "Remove from favourites") : (el ? "\u03A0\u03C1\u03BF\u03C3\u03B8\u03AE\u03BA\u03B7 \u03C3\u03C4\u03B1 \u03B1\u03B3\u03B1\u03C0\u03B7\u03BC\u03AD\u03BD\u03B1" : "Add to favourites");
-  return React.createElement("span", { role: "button", tabIndex: 0, "aria-pressed": on ? "true" : "false", "aria-label": label, title: label, onClick: click, onKeyDown: (e) => { if (e.key === "Enter" || e.key === " ") click(e); }, style: { display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4, minWidth: 44, minHeight: 44, margin: "-10px 0", fontSize: 21, lineHeight: 1, cursor: "pointer", color: on ? S.amber : S.muted, flexShrink: 0 } },
+  return React.createElement("button", { type: "button", "aria-pressed": on ? "true" : "false", "aria-label": label, title: label, onClick: click, style: { display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4, minWidth: 44, minHeight: 44, padding: 0, background: "none", border: "none", fontFamily: "inherit", alignSelf: "center", flexShrink: 0, fontSize: 21, lineHeight: 1, cursor: "pointer", color: on ? S.amber : S.muted, flexShrink: 0 } },
     full && React.createElement("span", { role: "status", style: { fontSize: 11.5, fontWeight: 800, color: S.red, whiteSpace: "nowrap" } }, el ? "\u03AD\u03C9\u03C2 " + FAV_MAX : "max " + FAV_MAX),
     on ? "\u2605" : "\u2606");
 }
@@ -285,9 +291,10 @@ function MedsTab({ lang, weight, height, sex, age, focus, wBad }) {
     boxShadow: cat === c.id ? "none" : `inset 0 0 0 1.5px ${S.line}`
   } }, c[lang]))), wBad ? /* @__PURE__ */ React.createElement("div", { role: "alert", style: { fontSize: 14, color: S.red, fontWeight: 800, padding: "8px 10px", border: `2px solid ${S.red}`, borderRadius: 10, background: S.tintDanger } }, "\u26A0 ", lang === "el" ? "\u0392\u03AC\u03C1\u03BF\u03C2 \u03B5\u03BA\u03C4\u03CC\u03C2 \u03BB\u03BF\u03B3\u03B9\u03BA\u03CE\u03BD \u03BF\u03C1\u03AF\u03C9\u03BD \u2014 \u03B4\u03B5\u03BD \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9 \u03BA\u03B1\u03BC\u03AF\u03B1 \u03B4\u03CC\u03C3\u03B7. \u0394\u03B9\u03BF\u03C1\u03B8\u03CE\u03C3\u03C4\u03B5 \u03C4\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2." : "Weight outside plausible limits \u2014 no dose is calculated. Correct the weight.") : !w && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: S.amber, fontWeight: 600, padding: "2px 4px" } }, "\u2696 ", t.weightNeeded), !q && /* @__PURE__ */ React.createElement(FavChips, { k: "drug", lang, fav, onPick: (id) => { setQ(""); setCat("all"); setOpen(id); } }), list.map((d) => {
     const isOpen = open === d.id;
-    return /* @__PURE__ */ React.createElement("div", { key: d.id, ref: focus && focus.id === d.id ? focusRef : null, style: { background: S.card, borderRadius: 14, border: `1.5px solid ${isOpen ? S.teal : S.line}`, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpen(isOpen ? null : d.id), style: {
-      width: "100%",
-      padding: "13px 14px",
+    return /* @__PURE__ */ React.createElement("div", { key: d.id, ref: focus && focus.id === d.id ? focusRef : null, style: { background: S.card, borderRadius: 14, border: `1.5px solid ${isOpen ? S.teal : S.line}`, overflow: "hidden" } }, /* @__PURE__ */ React.createElement(StarRow, { open: isOpen, onToggle: () => setOpen(isOpen ? null : d.id), star: React.createElement(FavStar, { k: "drug", id: d.id, lang, fav }), main: React.createElement("button", { onClick: () => setOpen(isOpen ? null : d.id), style: {
+      flex: 1,
+      minWidth: 0,
+      padding: "13px 4px 13px 14px",
       background: "none",
       border: "none",
       cursor: "pointer",
@@ -297,7 +304,7 @@ function MedsTab({ lang, weight, height, sex, age, focus, wBad }) {
       gap: 8,
       textAlign: "left",
       fontFamily: "inherit"
-    } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 15.5, color: S.ink, minWidth: 0, overflowWrap: "anywhere" } }, d.name), /* @__PURE__ */ React.createElement("span", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ React.createElement(FavStar, { k: "drug", id: d.id, lang, fav }), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A"))), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 10 } }, d.doses.filter((ds) => !isPendingErc(ds)).map((ds, i) => {
+    } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 15.5, color: S.ink, minWidth: 0, overflowWrap: "anywhere" } }, d.name)) }), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 10 } }, d.doses.filter((ds) => !isPendingErc(ds)).map((ds, i) => {
       const wd = wFor(ds);
       const dt = doseText(ds, wd, lang);
       const isStr = typeof dt === "string";
@@ -444,6 +451,9 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
       if (!a.ctx) a.ctx = new AC();
       const ctx = a.ctx;
       if (ctx.state !== "running") ctx.resume();
+      // #122: a context resumed outside a user tap may stay "suspended" \u2014 then show the no-sound notice
+      const g0 = a.gen;
+      setTimeout(() => { if (a.on && a.gen === g0 && a.ctx === ctx && ctx.state !== "running") setMetroMute(true); }, 600);
       const period = 60 / bpm;
       let next = ctx.currentTime + 0.06;
       a.timer = setInterval(() => {
@@ -594,7 +604,7 @@ function PrintChecklist({ c, lang }) {
     c.srcEl && React.createElement("div", { style: { marginTop: "5mm", fontSize: "9.5pt", color: "#333" } }, (el ? "\u03A0\u03B7\u03B3\u03AE: " + c.srcEl : "Source: " + c.srcEn)),
     React.createElement("div", { style: { marginTop: "3mm", fontSize: "9pt", color: "#555" } }, "Morfeas v" + APP_VERSION + " \u00B7 " + (el ? "\u03B5\u03BA\u03C0\u03B1\u03B9\u03B4\u03B5\u03C5\u03C4\u03B9\u03BA\u03CC \u03B2\u03BF\u03AE\u03B8\u03B7\u03BC\u03B1 \u2014 \u03B5\u03C0\u03B1\u03BB\u03B7\u03B8\u03B5\u03CD\u03C3\u03C4\u03B5 \u03BC\u03B5 \u03C4\u03B1 \u03C4\u03BF\u03C0\u03B9\u03BA\u03AC \u03C0\u03C1\u03C9\u03C4\u03CC\u03BA\u03BF\u03BB\u03BB\u03B1 \u00B7 \u03B5\u03BA\u03C4\u03CD\u03C0\u03C9\u03C3\u03B7 " : "educational aid \u2014 verify against local protocols \u00B7 printed ") + date));
 }
-function ChecklistTab({ lang, focus }) {
+function ChecklistTab({ lang, focus, age, weight }) {
   const fav = useFavs();
   const [crisis, setCrisis] = useState(null);
   const [open, setOpen] = useState(null);
@@ -676,14 +686,27 @@ function ChecklistTab({ lang, focus }) {
     background: cat === c.id ? S.teal : S.card,
     color: cat === c.id ? S.card : S.muted,
     boxShadow: cat === c.id ? "none" : `inset 0 0 0 1.5px ${S.line}`
-  } }, c[lang]))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: S.muted, fontWeight: 600, padding: "0 2px", lineHeight: 1.4 } }, lang === "el" ? "\u0392\u03AC\u03C3\u03B5\u03B9 Stanford Emergency Manual, DAS 2025 (\u03B1\u03B5\u03C1\u03B1\u03B3\u03C9\u03B3\u03CC\u03C2), DAS/BAETS/ENT-UK (SCOOP), AHA-ACLS, ASRA LAST, MHAUS & ESAIC." : "Based on Stanford Emergency Manual, DAS 2025 (airway), DAS/BAETS/ENT-UK (SCOOP), AHA-ACLS, ASRA LAST, MHAUS & ESAIC."), list.length === 0 && /* @__PURE__ */ React.createElement("div", { style: { color: S.muted, fontWeight: 600, fontSize: 14, textAlign: "center", padding: 20 } }, lang === "el" ? "\u0394\u03B5\u03BD \u03B2\u03C1\u03AD\u03B8\u03B7\u03BA\u03B5 \u03BA\u03B1\u03C4\u03AC\u03C3\u03C4\u03B1\u03C3\u03B7." : "No emergency found."), list.map((c) => {
+  } }, c[lang]))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: S.muted, fontWeight: 600, padding: "0 2px", lineHeight: 1.4 } }, lang === "el" ? "\u0392\u03AC\u03C3\u03B5\u03B9 Stanford Emergency Manual, DAS 2025 (\u03B1\u03B5\u03C1\u03B1\u03B3\u03C9\u03B3\u03CC\u03C2), DAS/BAETS/ENT-UK (SCOOP), AHA-ACLS, ASRA LAST, MHAUS & ESAIC." : "Based on Stanford Emergency Manual, DAS 2025 (airway), DAS/BAETS/ENT-UK (SCOOP), AHA-ACLS, ASRA LAST, MHAUS & ESAIC."), (() => {
+    // Pre-anaesthesia check: first in Lists, before the crisis checklists (spec 31/10/2026).
+    const title = lang === "el" ? "\u0388\u03BB\u03B5\u03B3\u03C7\u03BF\u03C2 \u03C0\u03C1\u03B9\u03BD \u03B1\u03C0\u03CC \u03C4\u03B7\u03BD \u03B1\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03AF\u03B1" : "Pre-anaesthesia check";
+    if (cat !== "all" || !title.toLowerCase().includes(q.toLowerCase())) return null;
+    const isOpen = open === "preop";
+    return React.createElement("div", { key: "preop", ref: focus && focus.id === "preop" ? focusRef : null, style: { background: S.card, borderRadius: 14, border: `1.5px solid ${isOpen ? S.teal : S.line}`, overflow: "hidden" } },
+      React.createElement(StarRow, { open: isOpen, onToggle: () => setOpen(isOpen ? null : "preop"), star: null, main: React.createElement("button", { onClick: () => setOpen(isOpen ? null : "preop"), "aria-expanded": isOpen ? "true" : "false", style: { flex: 1, minWidth: 0, padding: "14px 4px 14px 14px", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 12, textAlign: "left", fontFamily: "inherit" } },
+        React.createElement("span", { style: { width: 10, height: 10, borderRadius: 99, background: S.teal, flexShrink: 0 } }),
+        React.createElement("span", { style: { flex: 1, minWidth: 0 } },
+          React.createElement("span", { style: { display: "block", fontWeight: 700, fontSize: 15.5, color: S.ink } }, title),
+          React.createElement("span", { style: { display: "block", fontSize: 12, color: S.muted, fontWeight: 600, marginTop: 2 } }, lang === "el" ? "\u039C\u03B7\u03C7\u03AC\u03BD\u03B7\u03BC\u03B1 \u00B7 \u03C0\u03C1\u03B9\u03BD \u03B1\u03C0\u03CC \u03BA\u03AC\u03B8\u03B5 \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE \u00B7 Sign In (WHO)" : "Machine · before each patient · Sign In (WHO)"))) }),
+      isOpen && React.createElement("div", { style: { padding: "0 12px 12px" } }, React.createElement(PreAnaesthCheck, { lang, age, weight })));
+  })(), list.length === 0 && /* @__PURE__ */ React.createElement("div", { style: { color: S.muted, fontWeight: 600, fontSize: 14, textAlign: "center", padding: 20 } }, lang === "el" ? "\u0394\u03B5\u03BD \u03B2\u03C1\u03AD\u03B8\u03B7\u03BA\u03B5 \u03BA\u03B1\u03C4\u03AC\u03C3\u03C4\u03B1\u03C3\u03B7." : "No emergency found."), list.map((c) => {
     const isOpen = open === c.id;
     const steps = lang === "el" ? c.stepsEl : c.stepsEn;
     const nDone = countDone(c.id, steps.length);
     const complete = nDone === steps.length;
-    return /* @__PURE__ */ React.createElement("div", { key: c.id, style: { background: S.card, borderRadius: 14, border: `1.5px solid ${isOpen ? c.color : S.line}`, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpen(isOpen ? null : c.id), style: {
-      width: "100%",
-      padding: "14px",
+    return /* @__PURE__ */ React.createElement("div", { key: c.id, style: { background: S.card, borderRadius: 14, border: `1.5px solid ${isOpen ? c.color : S.line}`, overflow: "hidden" } }, /* @__PURE__ */ React.createElement(StarRow, { open: isOpen, onToggle: () => setOpen(isOpen ? null : c.id), star: React.createElement(FavStar, { k: "list", id: c.id, lang, fav }), main: React.createElement("button", { onClick: () => setOpen(isOpen ? null : c.id), style: {
+      flex: 1,
+      minWidth: 0,
+      padding: "14px 4px 14px 14px",
       background: "none",
       border: "none",
       cursor: "pointer",
@@ -700,7 +723,7 @@ function ChecklistTab({ lang, focus }) {
       background: complete ? S.teal : S.lineStrong,
       borderRadius: 99,
       padding: "3px 9px"
-    } }, nDone, "/", steps.length), /* @__PURE__ */ React.createElement(FavStar, { k: "list", id: c.id, lang, fav }), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 6 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setCrisis(c.id), style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px 14px", minHeight: 44, marginBottom: 4, borderRadius: 12, border: "none", background: c.color, color: "#FFFFFF", fontWeight: 800, fontSize: 15, cursor: "pointer", fontFamily: "inherit" } }, "\u26F6 ", lang === "el" ? "\u039B\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1 \u03BA\u03C1\u03AF\u03C3\u03B7\u03C2 \u2014 \u03C0\u03BB\u03AE\u03C1\u03B7\u03C2 \u03BF\u03B8\u03CC\u03BD\u03B7" : "Crisis mode — full screen"), steps.map((s, i) => {
+    } }, nDone, "/", steps.length)) }), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 6 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setCrisis(c.id), style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px 14px", minHeight: 44, marginBottom: 4, borderRadius: 12, border: "none", background: c.color, color: "#FFFFFF", fontWeight: 800, fontSize: 15, cursor: "pointer", fontFamily: "inherit" } }, "\u26F6 ", lang === "el" ? "\u039B\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1 \u03BA\u03C1\u03AF\u03C3\u03B7\u03C2 \u2014 \u03C0\u03BB\u03AE\u03C1\u03B7\u03C2 \u03BF\u03B8\u03CC\u03BD\u03B7" : "Crisis mode — full screen"), steps.map((s, i) => {
       const checked = !!done[`${c.id}:${i}`];
       return /* @__PURE__ */ React.createElement("button", { key: i, onClick: () => toggleStep(c.id, i), style: {
         display: "flex",
