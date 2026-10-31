@@ -66,8 +66,9 @@ function PatientBarCore({ lang, weight, setWeight, age, setAge, height, setHeigh
       "aria-label": t.sex,
       style: {
         ...fieldStyle,
-        flex: "0 0 40px",
-        minWidth: 40,
+        flex: "0 0 44px",
+        minWidth: 44,
+        minHeight: 44,
         padding: "4px 6px",
         cursor: "pointer",
         fontWeight: 800,
@@ -90,6 +91,7 @@ function PatientBarCore({ lang, weight, setWeight, age, setAge, height, setHeigh
         border: "none",
         borderRadius: 6,
         padding: "4px 14px",
+        minHeight: 44,
         fontSize: 12.5,
         fontWeight: 700,
         cursor: "pointer",
@@ -217,7 +219,7 @@ function FavStar({ k, id, lang, fav }) {
     if (!fav.toggle(k, id)) { setFull(true); setTimeout(() => setFull(false), 2500); }
   };
   const label = on ? (el ? "\u0391\u03C6\u03B1\u03AF\u03C1\u03B5\u03C3\u03B7 \u03B1\u03C0\u03CC \u03C4\u03B1 \u03B1\u03B3\u03B1\u03C0\u03B7\u03BC\u03AD\u03BD\u03B1" : "Remove from favourites") : (el ? "\u03A0\u03C1\u03BF\u03C3\u03B8\u03AE\u03BA\u03B7 \u03C3\u03C4\u03B1 \u03B1\u03B3\u03B1\u03C0\u03B7\u03BC\u03AD\u03BD\u03B1" : "Add to favourites");
-  return React.createElement("span", { role: "button", tabIndex: 0, "aria-pressed": on ? "true" : "false", "aria-label": label, title: label, onClick: click, onKeyDown: (e) => { if (e.key === "Enter" || e.key === " ") click(e); }, style: { display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4, minWidth: 40, minHeight: 40, margin: "-8px 0", fontSize: 21, lineHeight: 1, cursor: "pointer", color: on ? S.amber : S.muted, flexShrink: 0 } },
+  return React.createElement("span", { role: "button", tabIndex: 0, "aria-pressed": on ? "true" : "false", "aria-label": label, title: label, onClick: click, onKeyDown: (e) => { if (e.key === "Enter" || e.key === " ") click(e); }, style: { display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4, minWidth: 44, minHeight: 44, margin: "-10px 0", fontSize: 21, lineHeight: 1, cursor: "pointer", color: on ? S.amber : S.muted, flexShrink: 0 } },
     full && React.createElement("span", { role: "status", style: { fontSize: 11.5, fontWeight: 800, color: S.red, whiteSpace: "nowrap" } }, el ? "\u03AD\u03C9\u03C2 " + FAV_MAX : "max " + FAV_MAX),
     on ? "\u2605" : "\u2606");
 }
@@ -227,7 +229,7 @@ function FavChips({ k, lang, fav, onPick }) {
   if (!items.length) return null;
   return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 6 } },
     React.createElement("div", { style: { fontWeight: 800, fontSize: 12, color: S.muted, letterSpacing: 0.6, padding: "2px 4px 0" } }, upGr("\u2605 " + (lang === "el" ? "\u0391\u03B3\u03B1\u03C0\u03B7\u03BC\u03AD\u03BD\u03B1" : "Favourites"))),
-    React.createElement("div", { style: { display: "flex", gap: 6, flexWrap: "wrap" } }, items.map((x) => React.createElement("button", { key: x.id, onClick: () => onPick(x.id), style: { padding: "9px 12px", borderRadius: 10, border: `1.5px solid ${S.line}`, background: S.card, fontSize: 14, fontWeight: 700, color: S.ink, cursor: "pointer", fontFamily: "inherit", minHeight: 40 } }, x.info.title))));
+    React.createElement("div", { style: { display: "flex", gap: 6, flexWrap: "wrap" } }, items.map((x) => React.createElement("button", { key: x.id, onClick: () => onPick(x.id), style: { padding: "9px 12px", borderRadius: 10, border: `1.5px solid ${S.line}`, background: S.card, fontSize: 14, fontWeight: 700, color: S.ink, cursor: "pointer", fontFamily: "inherit", minHeight: 44 } }, x.info.title))));
 }
 function MedsTab({ lang, weight, height, sex, age, focus, wBad }) {
   const t = T[lang];
@@ -270,6 +272,7 @@ function MedsTab({ lang, weight, height, sex, age, focus, wBad }) {
   );
   return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4, WebkitOverflowScrolling: "touch" } }, CATS.map((c) => /* @__PURE__ */ React.createElement("button", { key: c.id, onClick: () => setCat(c.id), style: {
     padding: "6px 12px",
+    minHeight: 44,
     borderRadius: 99,
     border: "none",
     whiteSpace: "nowrap",
@@ -532,12 +535,12 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
       React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } },
         React.createElement("span", { style: { width: 14, height: 14, borderRadius: 99, background: c.color, flexShrink: 0 } }),
         React.createElement("div", { style: { flex: 1, fontSize: 19, fontWeight: 800, lineHeight: 1.2 } }, el ? c.titleEl : c.titleEn),
-        React.createElement("button", { onClick: () => { if (askRestart) { const t = Date.now(); save({ t0: t, marks: [], cyc: t, adr: [] }); setAskRestart(false); } else { setAskRestart(true); setTimeout(() => setAskRestart(false), 4000); } }, "aria-label": el ? "\u039D\u03AD\u03B1 \u03AD\u03BD\u03B1\u03C1\u03BE\u03B7 \u03C7\u03C1\u03BF\u03BD\u03BF\u03BC\u03AD\u03C4\u03C1\u03BF\u03C5" : "Restart timer", style: { ...btn, background: askRestart ? "#B3403F" : CARD, color: INK, fontSize: 13, padding: "0 10px", height: 44 } }, askRestart ? (el ? "\u03A3\u03AF\u03B3\u03BF\u03C5\u03C1\u03B1;" : "Sure?") : "\u27F2"),
+        React.createElement("button", { onClick: () => { if (askRestart) { const t = Date.now(); save({ t0: t, marks: [], cyc: t, adr: [] }); setAskRestart(false); } else { setAskRestart(true); setTimeout(() => setAskRestart(false), 4000); } }, "aria-label": el ? "\u039D\u03AD\u03B1 \u03AD\u03BD\u03B1\u03C1\u03BE\u03B7 \u03C7\u03C1\u03BF\u03BD\u03BF\u03BC\u03AD\u03C4\u03C1\u03BF\u03C5" : "Restart timer", style: { ...btn, background: askRestart ? "#B3403F" : CARD, color: INK, fontSize: 13, padding: "0 10px", height: 44, minWidth: 44 } }, askRestart ? (el ? "\u03A3\u03AF\u03B3\u03BF\u03C5\u03C1\u03B1;" : "Sure?") : "\u27F2"),
         React.createElement("button", { onClick: onClose, "aria-label": el ? "\u039A\u03BB\u03B5\u03AF\u03C3\u03B9\u03BC\u03BF" : "Close", style: { ...btn, background: CARD, color: INK, fontSize: 20, width: 44, height: 44 } }, "\u2715")),
       React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginTop: 10 } },
         React.createElement("div", { "aria-live": "off", style: { fontSize: 40, fontWeight: 800, fontVariantNumeric: "tabular-nums", letterSpacing: 1, lineHeight: 1 } }, mmss(now - st.t0)),
         React.createElement("div", { style: { flex: 1, fontSize: 12.5, color: MUTED, fontWeight: 600, lineHeight: 1.35 } }, lastMark ? (el ? "\u0391\u03C0\u03CC \u03C4\u03B7 \u03C3\u03AE\u03BC\u03B1\u03BD\u03C3\u03B7 " : "Since mark ") + marks.length + ": " : (el ? "\u03A7\u03C1\u03CC\u03BD\u03BF\u03C2 \u03B1\u03C0\u03CC \u03C4\u03B7\u03BD \u03AD\u03BD\u03B1\u03C1\u03BE\u03B7" : "Time since start"), lastMark && React.createElement("b", { style: { color: INK, fontSize: 18, fontVariantNumeric: "tabular-nums" } }, mmss(now - lastMark))),
-        React.createElement("button", { onClick: () => save({ ...st, marks: [...marks, Date.now()] }), style: { ...btn, background: c.color, color: "#FFFFFF", fontSize: 14, padding: "12px 14px" } }, el ? "\u23F1 \u03A3\u03AE\u03BC\u03B1\u03BD\u03C3\u03B7" : "\u23F1 Mark")),
+        React.createElement("button", { onClick: () => save({ ...st, marks: [...marks, Date.now()] }), style: { ...btn, background: c.color, color: "#FFFFFF", fontSize: 14, padding: "12px 14px", minHeight: 44 } }, el ? "\u23F1 \u03A3\u03AE\u03BC\u03B1\u03BD\u03C3\u03B7" : "\u23F1 Mark")),
       isArrest && React.createElement("div", { style: { display: "flex", gap: 8, marginTop: 10 } },
         React.createElement("button", { onClick: () => save({ ...st, cyc: Date.now() }), "aria-label": el ? "\u039D\u03AD\u03BF\u03C2 \u03BA\u03CD\u03BA\u03BB\u03BF\u03C2 2 \u03BB\u03B5\u03C0\u03C4\u03CE\u03BD" : "New 2-minute cycle", style: { ...btn, flex: 1, background: cycLeft <= 0 ? "#B3403F" : CARD, color: INK, padding: "10px 10px", textAlign: "left", display: "flex", flexDirection: "column", gap: 2 } },
           React.createElement("span", { style: { fontSize: 11.5, color: cycLeft <= 0 ? INK : MUTED, fontWeight: 700 } }, el ? "\u039A\u03CD\u03BA\u03BB\u03BF\u03C2 2 min \u00B7 \u03C0\u03B1\u03C4\u03AE\u03C3\u03C4\u03B5 \u03B3\u03B9\u03B1 \u03BD\u03AD\u03BF" : "2-min cycle \u00B7 tap for new"),
@@ -559,7 +562,7 @@ function CrisisMode({ c, lang, done, toggle, onClose }) {
       steps.map((s, i) => {
         const checked = !!done[c.id + ":" + i];
         const isNext = i === next;
-        return React.createElement("button", { key: i, ref: (n) => { stepRefs.current[i] = n; }, onClick: () => toggle(c.id, i), "aria-pressed": checked ? "true" : "false", style: { ...btn, display: "flex", alignItems: "flex-start", gap: 12, textAlign: "left", padding: "14px 14px", background: isNext ? "#22406E" : CARD, boxShadow: isNext ? "inset 0 0 0 2px " + c.color : "none", color: checked ? MUTED : INK, fontWeight: 600 } },
+        return React.createElement("button", { key: i, ref: (n) => { stepRefs.current[i] = n; }, onClick: () => toggle(c.id, i), "aria-pressed": checked ? "true" : "false", style: { ...btn, display: "flex", alignItems: "flex-start", gap: 12, textAlign: "left", padding: "14px 14px", flexShrink: 0, background: isNext ? "#22406E" : CARD, boxShadow: isNext ? "inset 0 0 0 2px " + c.color : "none", color: checked ? MUTED : INK, fontWeight: 600 } },
           React.createElement("span", { style: { width: 30, height: 30, borderRadius: 9, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: checked ? c.color : "transparent", boxShadow: checked ? "none" : "inset 0 0 0 2px " + MUTED, fontSize: checked ? 18 : 14, fontWeight: 900, color: checked ? "#FFFFFF" : MUTED } }, checked ? "\u2713" : i + 1),
           React.createElement("span", { style: { fontSize: 18, lineHeight: 1.4, flex: 1, textDecoration: checked ? "line-through" : "none" } }, s));
       })),
@@ -662,6 +665,7 @@ function ChecklistTab({ lang, focus }) {
     }
   ), !q && /* @__PURE__ */ React.createElement(FavChips, { k: "list", lang, fav, onPick: (id) => { setQ(""); setCat("all"); setOpen(id); } }), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4, WebkitOverflowScrolling: "touch" } }, CL_CATS.map((c) => /* @__PURE__ */ React.createElement("button", { key: c.id, ref: focus && focus.id === c.id ? focusRef : null, onClick: () => setCat(c.id), style: {
     padding: "6px 12px",
+    minHeight: 44,
     borderRadius: 99,
     border: "none",
     whiteSpace: "nowrap",
@@ -696,7 +700,7 @@ function ChecklistTab({ lang, focus }) {
       background: complete ? S.teal : S.lineStrong,
       borderRadius: 99,
       padding: "3px 9px"
-    } }, nDone, "/", steps.length), /* @__PURE__ */ React.createElement(FavStar, { k: "list", id: c.id, lang, fav }), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 6 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setCrisis(c.id), style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px 14px", marginBottom: 4, borderRadius: 12, border: "none", background: c.color, color: "#FFFFFF", fontWeight: 800, fontSize: 15, cursor: "pointer", fontFamily: "inherit" } }, "\u26F6 ", lang === "el" ? "\u039B\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1 \u03BA\u03C1\u03AF\u03C3\u03B7\u03C2 \u2014 \u03C0\u03BB\u03AE\u03C1\u03B7\u03C2 \u03BF\u03B8\u03CC\u03BD\u03B7" : "Crisis mode — full screen"), steps.map((s, i) => {
+    } }, nDone, "/", steps.length), /* @__PURE__ */ React.createElement(FavStar, { k: "list", id: c.id, lang, fav }), /* @__PURE__ */ React.createElement("span", { style: { color: S.muted, fontWeight: 600, fontSize: 18, transform: isOpen ? "rotate(90deg)" : "none", transition: "transform .15s" } }, "\u203A")), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 6 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setCrisis(c.id), style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px 14px", minHeight: 44, marginBottom: 4, borderRadius: 12, border: "none", background: c.color, color: "#FFFFFF", fontWeight: 800, fontSize: 15, cursor: "pointer", fontFamily: "inherit" } }, "\u26F6 ", lang === "el" ? "\u039B\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1 \u03BA\u03C1\u03AF\u03C3\u03B7\u03C2 \u2014 \u03C0\u03BB\u03AE\u03C1\u03B7\u03C2 \u03BF\u03B8\u03CC\u03BD\u03B7" : "Crisis mode — full screen"), steps.map((s, i) => {
       const checked = !!done[`${c.id}:${i}`];
       return /* @__PURE__ */ React.createElement("button", { key: i, onClick: () => toggleStep(c.id, i), style: {
         display: "flex",
@@ -730,7 +734,7 @@ function ChecklistTab({ lang, focus }) {
         color: checked ? S.muted : S.ink,
         textDecoration: checked ? "line-through" : "none"
       } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, color: checked ? S.muted : c.color, marginRight: 6 } }, i + 1, "."), s));
-    }), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" } }, nDone > 0 && /* @__PURE__ */ React.createElement("span", { style: { flex: "1 1 140px", fontSize: 12, color: S.muted, fontWeight: 600 } }, lang === "el" ? "\u03A4\u03B1 \u03C3\u03B7\u03BC\u03B5\u03B9\u03C9\u03BC\u03AD\u03BD\u03B1 \u03B2\u03AE\u03BC\u03B1\u03C4\u03B1 \u03BA\u03C1\u03B1\u03C4\u03B9\u03BF\u03CD\u03BD\u03C4\u03B1\u03B9 12 \u03CE\u03C1\u03B5\u03C2" : "Ticked steps are kept for 12 hours"), /* @__PURE__ */ React.createElement("button", { onClick: () => doPrint(c.id), style: { marginTop: 4, padding: "9px 14px", borderRadius: 9, border: `1.5px solid ${S.line}`, background: S.card, color: S.muted, fontWeight: 700, fontSize: 13.5, cursor: "pointer", fontFamily: "inherit", minHeight: 40 } }, "\u{1F5A8} ", lang === "el" ? "\u0395\u03BA\u03C4\u03CD\u03C0\u03C9\u03C3\u03B7 A4" : "Print A4"), /* @__PURE__ */ React.createElement("button", { onClick: () => resetList(c.id, steps.length), style: { marginTop: 4, padding: "9px 14px", borderRadius: 9, border: `1.5px solid ${S.line}`, background: S.card, color: S.muted, fontWeight: 700, fontSize: 13.5, cursor: "pointer", fontFamily: "inherit", minHeight: 40 } }, "\u21BA ", lang === "el" ? "\u039A\u03B1\u03B8\u03B1\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2" : "Clear")), c.srcEl && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: S.muted, fontWeight: 600, lineHeight: 1.45, marginTop: 4, paddingTop: 6, borderTop: "1px solid " + S.line } }, (lang === "el" ? "\u03A0\u03B7\u03B3\u03AE: " : "Source: ") + (lang === "el" ? c.srcEl : c.srcEn))));
+    }), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" } }, nDone > 0 && /* @__PURE__ */ React.createElement("span", { style: { flex: "1 1 140px", fontSize: 12, color: S.muted, fontWeight: 600 } }, lang === "el" ? "\u03A4\u03B1 \u03C3\u03B7\u03BC\u03B5\u03B9\u03C9\u03BC\u03AD\u03BD\u03B1 \u03B2\u03AE\u03BC\u03B1\u03C4\u03B1 \u03BA\u03C1\u03B1\u03C4\u03B9\u03BF\u03CD\u03BD\u03C4\u03B1\u03B9 12 \u03CE\u03C1\u03B5\u03C2" : "Ticked steps are kept for 12 hours"), /* @__PURE__ */ React.createElement("button", { onClick: () => doPrint(c.id), style: { marginTop: 4, padding: "9px 14px", borderRadius: 9, border: `1.5px solid ${S.line}`, background: S.card, color: S.muted, fontWeight: 700, fontSize: 13.5, cursor: "pointer", fontFamily: "inherit", minHeight: 44 } }, "\u{1F5A8} ", lang === "el" ? "\u0395\u03BA\u03C4\u03CD\u03C0\u03C9\u03C3\u03B7 A4" : "Print A4"), /* @__PURE__ */ React.createElement("button", { onClick: () => resetList(c.id, steps.length), style: { marginTop: 4, padding: "9px 14px", borderRadius: 9, border: `1.5px solid ${S.line}`, background: S.card, color: S.muted, fontWeight: 700, fontSize: 13.5, cursor: "pointer", fontFamily: "inherit", minHeight: 44 } }, "\u21BA ", lang === "el" ? "\u039A\u03B1\u03B8\u03B1\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2" : "Clear")), c.srcEl && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: S.muted, fontWeight: 600, lineHeight: 1.45, marginTop: 4, paddingTop: 6, borderTop: "1px solid " + S.line } }, (lang === "el" ? "\u03A0\u03B7\u03B3\u03AE: " : "Source: ") + (lang === "el" ? c.srcEl : c.srcEn))));
   }));
 }
 function TCITab({ lang, weight, age, height, sex }) {

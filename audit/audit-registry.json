@@ -1,7 +1,7 @@
 {
  "_readme": "Μητρώο ελέγχου περιεχομένου Morfeas. Κάθε εργαλείο, φάρμακο, checklist, κλίμακα και οδηγία της εφαρμογής πρέπει να έχει εγγραφή εδώ. status: reviewed = ελέγχθηκε με πηγές · reviewed-kept = ελέγχθηκε, η χρήστρια αποφάσισε να μείνει ως έχει (βλ. unverified) · pending = δεν έχει ελεγχθεί · excluded = εκτός ελέγχου (π.χ. πρωτόκολλο κλινικής). Κανόνας: μόνο αξιόπιστες πηγές, τίποτα από μνήμη. Το tests/audit-check.js συγκρίνει αυτό το αρχείο με την εφαρμογή.",
- "appVersion": 476,
- "updated": "2026-10-29",
+ "appVersion": 478,
+ "updated": "2026-10-31",
  "items": [
   {
    "type": "drug",
@@ -2082,6 +2082,26 @@
    "type": "tool",
    "name": "Περιεγχειρητική ιατρική",
    "note": "v455: γλυκόζη σε mg/dL, JBDS/CPOC"
+  },
+  {
+   "id": "gastricus",
+   "status": "reviewed",
+   "versions": [
+    478
+   ],
+   "date": "2026-10-31",
+   "type": "tool",
+   "name": "Γαστρικό υπερηχογράφημα",
+   "note": "v478: νέα κάρτα κατά την προδιαγραφή της 31/10/2026 (3η έκδ.)· κάθε αριθμός ελέγχθηκε στο πλήρες κείμενο της BJA Education 2019 (PMC7808010)· όριο 500 mL και παλιά όρια 0.4/0.8 από Perlas 2018· GLP-1 σύσταση 2b από Kindel 2024· παιδιά εκτός κάρτας με απόφασή σου",
+   "unverified": [
+    "Πρωτότυπα που μεταφέρει η BJA Ed 2019 χωρίς να διαβαστούν: Perlas 2013 (τύπος), Arzola 2018 (κύηση, 9.6 cm²), Kruisselbrink 2017 (BMI > 35)",
+    "Όρια CSA 0.5–60 cm²: τεχνικός έλεγχος πληκτρολόγησης, όχι κλινικό όριο"
+   ],
+   "sources": [
+    "El-Boghdadly K, Wojcikiewicz T, Perlas A. BJA Education 2019;19(7):219–226",
+    "Perlas A, Arzola C, Van de Putte P. Can J Anesth 2018;65:437–48",
+    "Kindel TL κ.ά. Clin Gastroenterol Hepatol 2024 (σύσταση 2b)"
+   ]
   },
   {
    "id": "abx",

@@ -765,7 +765,7 @@ check("v346: g/kg dose calculation gives grams",
   run("(function(){var r=doseText({lo:0.25,hi:1,unit:'g/kg'},70,'en');return r.calc;})()"), "17.5\u201370 g");
 
 check("v348: PCI after ACS >=12 months, balloon >=14 days; no unsourced dabigatran/FDA SGLT2 lines",
-  (function(){var S=src.replace(/const CHANGELOG[\s\S]*?\n\];/,'');return String(/After PCI for ACS.STEMI: ", .{0,60}\\u2265 12 months/.test(S) && /without stent: ", .{0,60}\\u2265 14 days/.test(S) && !/\\u2265 96h/.test(S) && !/Steffel|Kindel|Bailey B|Lieberman P|Hosseinian|Spasovski/.test(S));})(), "true");
+  (function(){var S=src.replace(/const CHANGELOG[\s\S]*?\n\];/,'');return String(/After PCI for ACS.STEMI: ", .{0,60}\\u2265 12 months/.test(S) && /without stent: ", .{0,60}\\u2265 14 days/.test(S) && !/\\u2265 96h/.test(S) && !/Steffel|Bailey B|Lieberman P|Hosseinian|Spasovski/.test(S));})(), "true");
 
 check("v348: heparin bypass 300-400 IU/kg, peds 50 + 15-25 IU/kg/h, no vascular row",
   run("(function(){var d=DRUGS.filter(function(x){return x.id==='heparin';})[0];return d.doses[0].lo+'-'+d.doses[0].hi+'|'+d.doses[3].lo+'|'+d.doses[4].lo+','+d.doses[4].hi+'|'+d.doses.length+'|'+/HIT/.test(d.ciEn);})()"), "300-400|50|15,25|6|true");
@@ -1283,6 +1283,14 @@ check("v475: metronome AAC tracks present, cached offline and tried first",
 check("v476: audit part 20: metronome generation guard, AAC ready at app start, no-sound notice; #115 wording; ERC 2025 DOI",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
     return String(P.includes("const METRO_AAC = {};") && P.includes("gen !== a.gen") && P.includes("No sound on this device") && require("fs").readFileSync(require("path").join(__dirname,"..","src","root.js"),"utf8").includes("metroPrefetch();") && T.includes("doi:10.1016/j.resuscitation.2025.110769") && !T.replace(/\\u([0-9A-Fa-f]{4})/g,function(m,h){return String.fromCharCode(parseInt(h,16));}).includes("7 ημέρες, και με ρήξη")); })(), "true");
+
+check("v477: 44 px buttons, offline check in About, review date 29/10/2026",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(require("fs").readFileSync(require("path").join(__dirname,"..","index.html"),"utf8").includes("body button { min-height: 44px; }") && require("fs").readFileSync(require("path").join(__dirname,"..","index.html"),"utf8").includes("window.__swErr") && P.includes('padding: "14px 14px", flexShrink: 0,') && T.includes("function OfflineCheck") && T.includes("createElement(OfflineCheck, { lang })") && T.includes('const CONTENT_CHECKED = "29/10/2026";') && P.includes("minWidth: 44, minHeight: 44, margin: \"-10px 0\"")); })(), "true");
+
+check("v478: gastric ultrasound card: spec test cases, no old 0.4/0.8 limits, card wired in",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return String(run('JSON.stringify((function(){var a=gastricCalc(["5"],"40","70"),b=gastricCalc(["15"],"30","60"),m=gastricCalc(["4","5","6"],"40","70"),e=gastricCalc(["10"],"53.125","70"),z=gastricCalc(["1"],"80","70"),o=gastricCalc(["40"],"30","70"),ch=gastricCalc(["5"],"12","40"),bad=gastricCalc(["70"],"40","70"),nw=gastricCalc(["5"],"40","");return [Math.round(a.vol),a.perkg.toFixed(2),a.high,Math.round(b.vol),b.perkg.toFixed(2),b.high,Math.round(m.vol),m.n,e.high,z.zero,o.over,!!ch.child,!!bad.bad,nw.perkg];})())')==='[49,"0.70",false,208,"3.46",true,49,3,true,true,true,true,true,null]' && T.includes("function GastricUSCard") && !/0\.4 mL\/kg|0\.8 mL\/kg/.test(T) && require("fs").readFileSync(require("path").join(__dirname,"..","src","root.js"),"utf8").includes('sec.id === "gastricus"') && T.includes("doi:10.1016/j.bjae.2019.03.003")); })(), "true");
 
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).

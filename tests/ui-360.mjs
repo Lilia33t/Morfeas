@@ -1,7 +1,7 @@
 // Screen test at phone width (360 px), at 100% and 130% text size.
 // Opens every drug, tool, checklist and paediatric pane and fails if any text
-// runs outside the screen or outside its card. Buttons smaller than 44 px are
-// reported as a warning (not a failure).
+// runs outside the screen or outside its card, or if any button is smaller than
+// 44 x 44 px (touch target, Apple HIG; WCAG 2.5.5).
 //
 // Needs Playwright with Chromium:   npm i -D playwright && npx playwright install chromium
 // Run from the repository folder:   node tests/ui-360.mjs
@@ -111,9 +111,10 @@ for (const zoomSteps of [0, 2]) {
 await browser.close();
 server.close();
 if (errors.length) failures.push("page errors: " + errors.slice(0, 3).join(" | "));
-console.log(`Buttons under 44 px on the busiest screen: ${smallMax} (warning only)`);
+console.log(`Buttons under 44 px on the busiest screen: ${smallMax}`);
+if (smallMax > 0) failures.push(`${smallMax} button(s) smaller than 44 x 44 px`);
 if (failures.length) {
   console.log("UI 360 px FAILED:\n  - " + failures.slice(0, 20).join("\n  - "));
   process.exit(1);
 }
-console.log("UI 360 px OK: nothing runs outside the screen or its card");
+console.log("UI 360 px OK: nothing runs outside the screen or its card; every button is at least 44 x 44 px");
