@@ -1,0 +1,2722 @@
+{
+ "_readme": "Μητρώο ελέγχου περιεχομένου Morfeas. Κάθε εργαλείο, φάρμακο, checklist, κλίμακα και οδηγία της εφαρμογής πρέπει να έχει εγγραφή εδώ. status: reviewed = ελέγχθηκε με πηγές · reviewed-kept = ελέγχθηκε, η χρήστρια αποφάσισε να μείνει ως έχει (βλ. unverified) · pending = δεν έχει ελεγχθεί · excluded = εκτός ελέγχου (π.χ. πρωτόκολλο κλινικής). Κανόνας: μόνο αξιόπιστες πηγές, τίποτα από μνήμη. Το tests/audit-check.js συγκρίνει αυτό το αρχείο με την εφαρμογή.",
+ "appVersion": 512,
+ "updated": "2026-11-08",
+ "items": [
+  {
+   "type": "drug",
+   "id": "propofol",
+   "name": "Propofol",
+   "status": "reviewed",
+   "versions": [
+    285,
+    355,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "etomidate",
+   "name": "Etomidate",
+   "status": "reviewed",
+   "versions": [
+    286,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "ketamine",
+   "name": "Ketamine",
+   "status": "reviewed",
+   "versions": [
+    287,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "midazolam",
+   "name": "Midazolam",
+   "status": "reviewed",
+   "versions": [
+    288,
+    411,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "remimazolam",
+   "name": "Remimazolam (Byfavo)",
+   "status": "reviewed",
+   "versions": [
+    289,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "cipepofol",
+   "name": "Cipepofol (Cypsedo)",
+   "status": "reviewed",
+   "versions": [
+    340,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "thiopental",
+   "name": "Thiopental",
+   "status": "reviewed",
+   "versions": [
+    290,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "sevoflurane",
+   "name": "Sevoflurane",
+   "status": "reviewed",
+   "versions": [
+    291,
+    352,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "desflurane",
+   "name": "Desflurane",
+   "status": "reviewed",
+   "versions": [
+    291,
+    352,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "isoflurane",
+   "name": "Isoflurane",
+   "status": "reviewed",
+   "versions": [
+    291,
+    352,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "n2o",
+   "name": "Nitrous oxide (N₂O)",
+   "status": "reviewed",
+   "versions": [
+    291,
+    433,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "fentanyl",
+   "name": "Fentanyl",
+   "status": "reviewed",
+   "versions": [
+    292,
+    293,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "sufentanil",
+   "name": "Sufentanil",
+   "status": "reviewed",
+   "versions": [
+    293,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "alfentanil",
+   "name": "Alfentanil",
+   "status": "reviewed",
+   "versions": [
+    294,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "remifentanil",
+   "name": "Remifentanil",
+   "status": "reviewed",
+   "versions": [
+    295,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "morphine",
+   "name": "Morphine",
+   "status": "reviewed",
+   "versions": [
+    295,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "oxycodone",
+   "name": "Oxycodone",
+   "status": "reviewed",
+   "versions": [
+    278,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "rocuronium",
+   "name": "Rocuronium",
+   "status": "reviewed",
+   "versions": [
+    296,
+    421,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "succinylcholine",
+   "name": "Succinylcholine",
+   "status": "reviewed",
+   "versions": [
+    297,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "cisatracurium",
+   "name": "Cisatracurium",
+   "status": "reviewed",
+   "versions": [
+    298,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "sugammadex",
+   "name": "Sugammadex",
+   "status": "reviewed",
+   "versions": [
+    299,
+    411,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "neostigmine",
+   "name": "Neostigmine + Glycopyrrolate",
+   "status": "reviewed",
+   "versions": [
+    299,
+    411,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "tramadol",
+   "name": "Tramadol",
+   "status": "reviewed",
+   "versions": [
+    300,
+    301,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "nalbuphine",
+   "name": "Nalbuphine",
+   "status": "reviewed",
+   "versions": [
+    302,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "amiodarone",
+   "name": "Amiodarone",
+   "status": "reviewed",
+   "versions": [
+    303,
+    407,
+    436,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "adenosine",
+   "name": "Adenosine",
+   "status": "reviewed",
+   "versions": [
+    304,
+    415,
+    437,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "vasopressin",
+   "name": "Vasopressin (argipressin)",
+   "status": "reviewed",
+   "versions": [
+    305,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "dopamine",
+   "name": "Dopamine",
+   "status": "reviewed",
+   "versions": [
+    306,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "calcium",
+   "name": "Calcium chloride / gluconate",
+   "status": "reviewed",
+   "versions": [
+    307,
+    412,
+    437,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "bicarbonate",
+   "name": "Sodium bicarbonate 8.4%",
+   "status": "reviewed",
+   "versions": [
+    308,
+    432,
+    434,
+    435,
+    436,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "insulin_glucose",
+   "name": "Insulin (+ glucose)",
+   "status": "reviewed",
+   "versions": [
+    308,
+    412,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "salbutamol",
+   "name": "Salbutamol",
+   "status": "reviewed",
+   "versions": [
+    309,
+    432,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "hydrocortisone",
+   "name": "Hydrocortisone",
+   "status": "reviewed",
+   "versions": [
+    309,
+    341,
+    342,
+    484,
+    496
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 37 (07/11/2026) · διορθώσεις v496",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "drug",
+   "id": "pethidine",
+   "name": "Pethidine (Meperidine)",
+   "status": "reviewed",
+   "versions": [
+    309,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 24 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "oxytocin",
+   "name": "Oxytocin",
+   "status": "reviewed",
+   "versions": [
+    311,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "carbetocin",
+   "name": "Carbetocin",
+   "status": "reviewed",
+   "versions": [
+    311,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "ergometrine",
+   "name": "Ergometrine / Methylergometrine",
+   "status": "reviewed",
+   "versions": [
+    311,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "carboprost",
+   "name": "Carboprost (Hemabate)",
+   "status": "reviewed",
+   "versions": [
+    347,
+    348,
+    380,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "protamine",
+   "name": "Protamine sulfate",
+   "status": "reviewed",
+   "versions": [
+    313,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "naloxone",
+   "name": "Naloxone (Narcan)",
+   "status": "reviewed",
+   "versions": [
+    314,
+    436,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "flumazenil",
+   "name": "Flumazenil (Anexate)",
+   "status": "reviewed",
+   "versions": [
+    314,
+    433,
+    482
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 23 (03/11/2026) · διορθώσεις v482",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "atropine",
+   "name": "Atropine",
+   "status": "reviewed",
+   "versions": [
+    315,
+    436,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "adrenaline",
+   "name": "Adrenaline (Epinephrine)",
+   "status": "reviewed",
+   "versions": [
+    315,
+    436,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "ephedrine",
+   "name": "Ephedrine",
+   "status": "reviewed",
+   "versions": [
+    316,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "phenylephrine",
+   "name": "Phenylephrine",
+   "status": "reviewed",
+   "versions": [
+    316,
+    413,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "noradrenaline",
+   "name": "Noradrenaline",
+   "status": "reviewed",
+   "versions": [
+    317,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "dobutamine",
+   "name": "Dobutamine",
+   "status": "reviewed",
+   "versions": [
+    318,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "isoprenaline",
+   "name": "Isoprenaline (isoproterenol)",
+   "status": "reviewed",
+   "versions": [
+    347,
+    348,
+    349,
+    380,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "labetalol",
+   "name": "Labetalol",
+   "status": "reviewed",
+   "versions": [
+    319,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "esmolol",
+   "name": "Esmolol",
+   "status": "reviewed",
+   "versions": [
+    320,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "landiolol",
+   "name": "Landiolol",
+   "status": "reviewed",
+   "versions": [
+    395,
+    486
+   ],
+   "date": "2026-11-06",
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486"
+  },
+  {
+   "type": "drug",
+   "id": "metoprolol",
+   "name": "Metoprolol",
+   "status": "reviewed",
+   "versions": [
+    321,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "urapidil",
+   "name": "Urapidil (Ebrantil)",
+   "status": "reviewed",
+   "versions": [
+    322,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "hydralazine",
+   "name": "Hydralazine",
+   "status": "reviewed",
+   "versions": [
+    323,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "nicardipine",
+   "name": "Nicardipine",
+   "status": "reviewed",
+   "versions": [
+    324,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "gtn",
+   "name": "Glyceryl trinitrate (GTN)",
+   "status": "reviewed",
+   "versions": [
+    325,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "snp",
+   "name": "Sodium nitroprusside",
+   "status": "reviewed",
+   "versions": [
+    326,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "clonidine",
+   "name": "Clonidine",
+   "status": "reviewed",
+   "versions": [
+    327,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "dexmedetomidine",
+   "name": "Dexmedetomidine (Dexdor)",
+   "status": "reviewed",
+   "versions": [
+    281,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "lidocaine",
+   "name": "Lidocaine",
+   "status": "reviewed",
+   "versions": [
+    328,
+    341,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "ropivacaine",
+   "name": "Ropivacaine",
+   "status": "reviewed",
+   "versions": [
+    328,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "prilocaine",
+   "name": "Prilocaine",
+   "status": "reviewed",
+   "versions": [
+    329,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "bupivacaine",
+   "name": "Bupivacaine",
+   "status": "reviewed",
+   "versions": [
+    328,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "ondansetron",
+   "name": "Ondansetron",
+   "status": "reviewed",
+   "versions": [
+    339,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "metoclopramide",
+   "name": "Metoclopramide",
+   "status": "reviewed",
+   "versions": [
+    339,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "droperidol",
+   "name": "Droperidol",
+   "status": "reviewed",
+   "versions": [
+    339,
+    414,
+    486
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 27 (06/11/2026) · διορθώσεις v485–v486",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "dexamethasone",
+   "name": "Dexamethasone",
+   "status": "reviewed",
+   "versions": [
+    330,
+    414,
+    486,
+    496
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 37 (07/11/2026) · διορθώσεις v496",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "drug",
+   "id": "paracetamol",
+   "name": "Paracetamol",
+   "status": "reviewed",
+   "versions": [
+    331,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "parecoxib",
+   "name": "Parecoxib (Dynastat)",
+   "status": "reviewed",
+   "versions": [
+    331,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "ketorolac",
+   "name": "Ketorolac",
+   "status": "reviewed",
+   "versions": [
+    331,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "diclofenac_ad",
+   "name": "Diclofenac",
+   "status": "reviewed",
+   "versions": [
+    332,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "ibuprofen_ad",
+   "name": "Ibuprofen",
+   "status": "reviewed",
+   "versions": [
+    332,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "lornoxicam",
+   "name": "Lornoxicam (Xefo)",
+   "status": "reviewed",
+   "versions": [
+    332,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "magnesium",
+   "name": "Magnesium sulfate",
+   "status": "reviewed",
+   "versions": [
+    333,
+    348,
+    380,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "glycopyrrolate",
+   "name": "Glycopyrrolate",
+   "status": "reviewed",
+   "versions": [
+    299,
+    333,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "ketamine_analgesic",
+   "name": "Ketamine (analgesic)",
+   "status": "reviewed",
+   "versions": [
+    334,
+    432,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "lidocaine_iv",
+   "name": "Lidocaine IV (systemic)",
+   "status": "reviewed",
+   "versions": [
+    334,
+    407,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "furosemide",
+   "name": "Furosemide",
+   "status": "reviewed",
+   "versions": [
+    346,
+    348,
+    380,
+    407,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "mannitol",
+   "name": "Mannitol",
+   "status": "reviewed",
+   "versions": [
+    346,
+    348,
+    349,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "hypertonic_saline",
+   "name": "Hypertonic saline (NaCl 3%)",
+   "status": "reviewed",
+   "versions": [
+    347,
+    348,
+    380,
+    446,
+    484
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 26 (06/11/2026) · διορθώσεις v484",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "txa",
+   "name": "Tranexamic acid",
+   "status": "reviewed",
+   "versions": [
+    334,
+    487
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 28 (06/11/2026) · διορθώσεις v487",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "rfviia",
+   "name": "rFVIIa (NovoSeven, eptacog alfa)",
+   "status": "reviewed",
+   "versions": [
+    280,
+    487
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 28 (06/11/2026) · διορθώσεις v487",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "dantrolene",
+   "name": "Dantrolene",
+   "status": "reviewed",
+   "versions": [
+    335,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "intralipid",
+   "name": "Intralipid 20% (LAST)",
+   "status": "reviewed",
+   "versions": [
+    335,
+    412,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "glucagon",
+   "name": "Glucagon (GlucaGen)",
+   "status": "reviewed",
+   "versions": [
+    344,
+    348,
+    380,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "methylene_blue",
+   "name": "Methylene blue (methylthioninium chloride)",
+   "status": "reviewed",
+   "versions": [
+    344,
+    348,
+    380,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "fibrinogen",
+   "name": "Fibrinogen concentrate",
+   "status": "reviewed",
+   "versions": [
+    335,
+    415,
+    416
+   ],
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG",
+   "date": "2026-10-22"
+  },
+  {
+   "type": "drug",
+   "id": "pcc",
+   "name": "Prothrombin complex concentrate (4F-PCC)",
+   "status": "reviewed",
+   "versions": [
+    336,
+    415,
+    487
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 28 (06/11/2026) · διορθώσεις v487",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "vitamin_k",
+   "name": "Vitamin K (phytomenadione, Konakion MM)",
+   "status": "reviewed",
+   "versions": [
+    346
+   ],
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+  },
+  {
+   "type": "drug",
+   "id": "desmopressin",
+   "name": "Desmopressin (DDAVP)",
+   "status": "reviewed",
+   "versions": [
+    336,
+    487
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 28 (06/11/2026) · διορθώσεις v487",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "idarucizumab",
+   "name": "Idarucizumab (Praxbind)",
+   "status": "reviewed",
+   "versions": [
+    339
+   ],
+   "note": "SmPC / κατευθυντήρια οδηγία — βλ. CHANGELOG"
+  },
+  {
+   "type": "drug",
+   "id": "andexanet",
+   "name": "Andexanet alfa (Ondexxya)",
+   "status": "reviewed",
+   "versions": [
+    339,
+    414,
+    415,
+    487
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 28 (06/11/2026) · διορθώσεις v487",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "heparin",
+   "name": "Heparin (unfractionated, UFH)",
+   "status": "reviewed",
+   "versions": [
+    344,
+    345,
+    348,
+    349,
+    487
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 28 (06/11/2026) · διορθώσεις v487",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "drug",
+   "id": "milrinone",
+   "name": "Milrinone",
+   "status": "reviewed",
+   "versions": [
+    337,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "drug",
+   "id": "levosimendan",
+   "name": "Levosimendan",
+   "status": "reviewed",
+   "versions": [
+    337,
+    483
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 25 (05/11/2026) · διορθώσεις v483",
+   "date": "2026-11-05"
+  },
+  {
+   "type": "checklist",
+   "id": "vfvt",
+   "name": "vfvt",
+   "status": "reviewed",
+   "versions": [
+    277,
+    489
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 30 (06/11/2026) · διορθώσεις v489",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "checklist",
+   "id": "asystole_pea",
+   "name": "asystole_pea",
+   "status": "reviewed",
+   "versions": [
+    277,
+    489
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 30 (06/11/2026) · διορθώσεις v489",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "checklist",
+   "id": "brady",
+   "name": "brady",
+   "status": "reviewed",
+   "versions": [
+    277,
+    420,
+    489
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 30 (06/11/2026) · διορθώσεις v489",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "checklist",
+   "id": "svt_stable",
+   "name": "svt_stable",
+   "status": "reviewed",
+   "versions": [
+    277,
+    415,
+    420
+   ],
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
+  },
+  {
+   "type": "checklist",
+   "id": "svt_unstable",
+   "name": "svt_unstable",
+   "status": "reviewed",
+   "versions": [
+    277,
+    432,
+    443,
+    489
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 30 (06/11/2026) · διορθώσεις v489",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "checklist",
+   "id": "difficult_airway",
+   "name": "difficult_airway",
+   "status": "reviewed",
+   "versions": [
+    277,
+    415
+   ],
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
+  },
+  {
+   "type": "checklist",
+   "id": "das_ati",
+   "name": "das_ati",
+   "status": "reviewed",
+   "versions": [
+    277,
+    414
+   ],
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
+  },
+  {
+   "type": "checklist",
+   "id": "das_extubation",
+   "name": "das_extubation",
+   "status": "reviewed",
+   "versions": [
+    277
+   ],
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+  },
+  {
+   "type": "checklist",
+   "id": "laryngospasm",
+   "name": "laryngospasm",
+   "status": "reviewed",
+   "versions": [
+    277,
+    432,
+    496
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 37 (07/11/2026) · διορθώσεις v496",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "checklist",
+   "id": "bronchospasm",
+   "name": "bronchospasm",
+   "status": "reviewed",
+   "versions": [
+    277,
+    432,
+    496
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 37 (07/11/2026) · διορθώσεις v496",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "checklist",
+   "id": "hypoxemia",
+   "name": "hypoxemia",
+   "status": "reviewed",
+   "versions": [
+    277,
+    432,
+    461
+   ],
+   "note": "v461: βήματα κατά AAGBI QRH 2-2 (v.1, 2018)",
+   "date": "2026-10-29"
+  },
+  {
+   "type": "checklist",
+   "id": "aspiration",
+   "name": "aspiration",
+   "status": "reviewed",
+   "versions": [
+    277,
+    432,
+    496
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 37 (07/11/2026) · διορθώσεις v496",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "checklist",
+   "id": "pneumothorax",
+   "name": "pneumothorax",
+   "status": "reviewed",
+   "versions": [
+    277,
+    417,
+    420
+   ],
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
+  },
+  {
+   "type": "checklist",
+   "id": "scoop",
+   "name": "scoop",
+   "status": "reviewed",
+   "versions": [
+    277,
+    417,
+    498
+   ],
+   "note": "Έλεγχος Μέρος 38 (08/11/2026) · DESATS → DAS supporting resources 2021 · v498",
+   "date": "2026-11-08"
+  },
+  {
+   "type": "checklist",
+   "id": "hypotension",
+   "name": "hypotension",
+   "status": "reviewed",
+   "versions": [
+    277,
+    441,
+    496
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 37 (07/11/2026) · διορθώσεις v496",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "checklist",
+   "id": "hemorrhage",
+   "name": "hemorrhage",
+   "status": "reviewed",
+   "versions": [
+    277,
+    417,
+    487
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 28 (06/11/2026) · διορθώσεις v487",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "checklist",
+   "id": "ischemia",
+   "name": "ischemia",
+   "status": "reviewed",
+   "versions": [
+    277,
+    496
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 37 (07/11/2026) · διορθώσεις v496",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "checklist",
+   "id": "vae",
+   "name": "vae",
+   "status": "reviewed",
+   "versions": [
+    277,
+    432,
+    496
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 37 (07/11/2026) · διορθώσεις v496",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "checklist",
+   "id": "anaphylaxis",
+   "name": "anaphylaxis",
+   "status": "reviewed",
+   "versions": [
+    277,
+    415,
+    420,
+    490
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 31 (06/11/2026) · διορθώσεις v490",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "checklist",
+   "id": "last",
+   "name": "last",
+   "status": "reviewed",
+   "versions": [
+    277,
+    414,
+    420
+   ],
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»",
+   "date": "2026-10-22"
+  },
+  {
+   "type": "checklist",
+   "id": "mh",
+   "name": "mh",
+   "status": "reviewed",
+   "versions": [
+    277,
+    420,
+    490
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 31 (06/11/2026) · διορθώσεις v490",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "checklist",
+   "id": "hyperkalaemia",
+   "name": "hyperkalaemia",
+   "status": "reviewed",
+   "versions": [
+    277,
+    420,
+    427,
+    436,
+    441,
+    448,
+    455,
+    490
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 31 (06/11/2026) · διορθώσεις v490",
+   "date": "2026-11-06"
+  },
+  {
+   "type": "checklist",
+   "id": "transfusion",
+   "name": "transfusion",
+   "status": "reviewed",
+   "versions": [
+    277,
+    496
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 37 (07/11/2026) · διορθώσεις v496",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "checklist",
+   "id": "total_spinal",
+   "name": "total_spinal",
+   "status": "reviewed",
+   "versions": [
+    277,
+    432,
+    437,
+    439,
+    440
+   ],
+   "note": "v440: αδρεναλίνη 2–10 µg/min κατά ERC 2025 (βραδυκαρδία)",
+   "date": "2026-10-23"
+  },
+  {
+   "type": "checklist",
+   "id": "afe",
+   "name": "afe",
+   "status": "reviewed",
+   "versions": [
+    277,
+    417,
+    441
+   ],
+   "note": "v441: υστεροτομή κατά ERC 2025 Special Circumstances",
+   "date": "2026-10-23"
+  },
+  {
+   "type": "checklist",
+   "id": "or_fire",
+   "name": "or_fire",
+   "status": "reviewed",
+   "versions": [
+    277,
+    432
+   ],
+   "note": "v432: ανεξάρτητος έλεγχος Μέρος 10",
+   "date": "2026-10-23"
+  },
+  {
+   "type": "checklist",
+   "id": "o2_failure",
+   "name": "o2_failure",
+   "status": "reviewed",
+   "versions": [
+    277,
+    491
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 32 (07/11/2026) · διορθώσεις v491",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "checklist",
+   "id": "power_failure",
+   "name": "power_failure",
+   "status": "reviewed",
+   "versions": [
+    277,
+    491
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 32 (07/11/2026) · διορθώσεις v491",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "checklist",
+   "id": "delayed_emergence",
+   "name": "delayed_emergence",
+   "status": "reviewed",
+   "versions": [
+    277,
+    432,
+    461
+   ],
+   "note": "v461: πηγή OpenAnesthesia (Laux & Mahanna Gabrielli 2023)",
+   "date": "2026-10-29",
+   "unverified": [
+    "Δευτερογενής εκπαιδευτική πηγή (OpenAnesthesia)· το Stanford Emergency Manual δεν ήταν προσβάσιμο"
+   ]
+  },
+  {
+   "type": "checklist",
+   "id": "rsi",
+   "name": "rsi",
+   "status": "reviewed",
+   "versions": [
+    277,
+    420,
+    432,
+    491
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 32 (07/11/2026) · διορθώσεις v491",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "checklist",
+   "id": "newborn",
+   "name": "newborn",
+   "status": "reviewed",
+   "versions": [
+    277,
+    426,
+    436,
+    491
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 32 (07/11/2026) · διορθώσεις v491",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "checklist",
+   "id": "airway_pressure",
+   "name": "airway_pressure",
+   "status": "reviewed",
+   "versions": [
+    277
+   ],
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+  },
+  {
+   "type": "checklist",
+   "id": "hypocapnia",
+   "name": "hypocapnia",
+   "status": "reviewed",
+   "versions": [
+    277
+   ],
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+  },
+  {
+   "type": "checklist",
+   "id": "hypercapnia",
+   "name": "hypercapnia",
+   "status": "reviewed",
+   "versions": [
+    277
+   ],
+   "note": "Ελέγχθηκαν μαζί (ERC 2025 κ.ά.) — «Τα έχουμε ξαναδεί αυτά»"
+  },
+  {
+   "type": "checklist",
+   "id": "lv_shock",
+   "name": "lv_shock",
+   "status": "reviewed",
+   "versions": [
+    277,
+    432,
+    444,
+    445
+   ],
+   "note": "v445: σημείωση διαθεσιμότητας φενολντοπάμης/νεσιριτίδης",
+   "date": "2026-10-23",
+   "unverified": [
+    "«maintain SVR <800»: υπάρχει αυτούσιο στο Moitra 2012 Εικ. 1 — πιθανό λάθος της πηγής· φενολντοπάμη/νεσιριτίδη — δεν ελέγχθηκε αν κυκλοφορούν στην ΕΕ"
+   ]
+  },
+  {
+   "type": "checklist",
+   "id": "rv_shock",
+   "name": "rv_shock",
+   "status": "reviewed",
+   "versions": [
+    277,
+    444
+   ],
+   "note": "v444: ταυτίζεται με Moitra 2012 Εικ. 2",
+   "date": "2026-10-23"
+  },
+  {
+   "type": "checklist",
+   "id": "hypertension_ddx",
+   "name": "hypertension_ddx",
+   "status": "reviewed",
+   "versions": [
+    277,
+    496
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 37 (07/11/2026) · διορθώσεις v496",
+   "date": "2026-11-07"
+  },
+  {
+   "id": "crisis",
+   "status": "reviewed",
+   "versions": [
+    277,
+    487,
+    491
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 32 (07/11/2026) · διορθώσεις v491",
+   "type": "tool",
+   "name": "Κρίσεις — Αλγόριθμοι",
+   "date": "2026-11-07"
+  },
+  {
+   "id": "airwaysizes",
+   "status": "reviewed",
+   "versions": [
+    354,
+    444
+   ],
+   "date": "2026-10-23",
+   "type": "tool",
+   "name": "Αεραγωγός — εκτίμηση & μεγέθη",
+   "note": "v444: όγκοι LMA ανά μοντέλο"
+  },
+  {
+   "id": "scores",
+   "status": "reviewed",
+   "versions": [
+    350,
+    351,
+    492
+   ],
+   "date": "2026-11-07",
+   "type": "tool",
+   "name": "Κλίμακες κινδύνου",
+   "note": "Πλήρης έλεγχος Μέρος 33 (07/11/2026) · διορθώσεις v492"
+  },
+  {
+   "id": "asaps",
+   "status": "reviewed",
+   "versions": [
+    357
+   ],
+   "date": "2026-10-16",
+   "type": "tool",
+   "name": "ASA — φυσική κατάσταση"
+  },
+  {
+   "id": "rotem",
+   "status": "reviewed",
+   "versions": [
+    363,
+    367,
+    419,
+    492
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 33 (07/11/2026) · διορθώσεις v492",
+   "type": "tool",
+   "name": "ROTEM / TEG (ερμηνεία)",
+   "date": "2026-11-07",
+   "unverified": [
+    "LI30 <94%: μόνο ως εύρος αναφοράς σε case report (HKMJ 2021) — δεν μπήκε",
+    "Τρανεξαμικό mg/kg: ESAIC μόνο 10–15 mg/kg στη γυναικολογία — δεν μπήκε γενικά"
+   ]
+  },
+  {
+   "id": "cardiac",
+   "status": "reviewed-kept",
+   "versions": [
+    357,
+    438,
+    462,
+    469,
+    473,
+    474
+   ],
+   "date": "2026-10-29",
+   "note": "v469: CPB κατά EACTS/EACTAIC/EBCP 2024, STS 2018/2021· ΠΥ κατά AHA 2023 · v473: ροή ως συνήθης πρακτική, FFP μόνο στην EACTS, «Vasoplegia» · v474 (ελεγκτής Μέρος 18: σημεία 8–14 σωστά απέναντι στην EACTS): ACT «κατά την CPB», ροή σε μέτρια υποθερμία έως νορμοθερμία (#114), πρωταμίνη — η μετατροπή σε mg/100 U φαίνεται",
+   "unverified": [
+    "Ινότροπα: αδρεναλίνη 0.01–0.5 µg/kg/min χωρίς πηγή — μένει με απόφασή σου (#108)",
+    "Αποσύνδεση, βήμα 3: «Hct > 24%» χωρίς πηγή — μένει με απόφασή σου (#109)"
+   ],
+   "sources": [
+    "STS/SCA/AmSECT 2018 (ACT >480 s)",
+    "ISTH (αντίσταση ηπαρίνης)",
+    "AHA 2023 ΠΥ σε μη καρδιοχειρουργική",
+    "Cureus 2018 ΠΥ",
+    "EACTS/EACTAIC/EBCP 2024 §9.3–9.9 (σελίδες από τη χρήστρια)",
+    "STS/SCA/AmSECT/SABM 2021 (Tibi)",
+    "AHA 2023 (Rajagopal), Circulation 2023;147:1317–1343"
+   ],
+   "type": "tool",
+   "name": "Καρδιοχειρουργική αναισθησία"
+  },
+  {
+   "id": "cardnc",
+   "status": "reviewed",
+   "versions": [
+    356,
+    381,
+    492
+   ],
+   "date": "2026-11-07",
+   "unverified": [
+    "Ραχιαία στη στένωση αορτικής (μόνο δευτερεύουσα πηγή)"
+   ],
+   "type": "tool",
+   "name": "Καρδιοπάθεια σε μη καρδιοχειρουργική επέμβαση",
+   "note": "Πλήρης έλεγχος Μέρος 33 (07/11/2026) · διορθώσεις v492"
+  },
+  {
+   "id": "obstetric",
+   "status": "reviewed",
+   "versions": [
+    311,
+    316,
+    357,
+    418,
+    419,
+    461,
+    473,
+    492
+   ],
+   "date": "2026-11-07",
+   "note": "Πλήρης έλεγχος Μέρος 33 (07/11/2026) · διορθώσεις v492",
+   "type": "tool",
+   "name": "Μαιευτική αναισθησία"
+  },
+  {
+   "id": "thoracic",
+   "status": "reviewed",
+   "versions": [
+    357,
+    433,
+    437,
+    462,
+    469,
+    492
+   ],
+   "date": "2026-11-07",
+   "note": "Πλήρης έλεγχος Μέρος 33 (07/11/2026) · διορθώσεις v492",
+   "unverified": [
+    "Υπερφόρτωση ΔΕ κοιλίας με το clamping της πνευμονικής αρτηρίας: μόνο περιγραφή περίπτωσης (Koo 2016)",
+    "Μεγέθη DLT: από το Miller μέσω Zhang 2021 (δευτερογενής)"
+   ],
+   "sources": [
+    "Baloch et al., Anaesth Pain Intensive Care 2016",
+    "OpenAnesthesia — DLT",
+    "NYSORA — OLV",
+    "Durkin 2021, Curr Anesthesiol Rep",
+    "Koo 2016, Korean J Anesthesiol (case report)",
+    "Zhang 2021, Front Med (Miller)"
+   ],
+   "type": "tool",
+   "name": "Θωρακοχειρουργική αναισθησία"
+  },
+  {
+   "id": "neuro",
+   "status": "reviewed",
+   "versions": [
+    357,
+    421,
+    446,
+    469,
+    473,
+    492
+   ],
+   "date": "2026-11-07",
+   "note": "Πλήρης έλεγχος Μέρος 33 (07/11/2026) · διορθώσεις v492",
+   "sources": [
+    "BTF 4th edition 2016",
+    "SIBICC 2019 (Hawryluk)"
+   ],
+   "type": "tool",
+   "name": "Νευροαναισθησία"
+  },
+  {
+   "id": "thrombectomy",
+   "status": "excluded",
+   "versions": [
+    444,
+    449,
+    453,
+    493
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 34 (07/11/2026) · διορθώσεις v493",
+   "type": "tool",
+   "name": "Μηχανική θρομβεκτομή (ΑΕΕ)",
+   "date": "2026-11-07"
+  },
+  {
+   "id": "giendo",
+   "status": "reviewed",
+   "versions": [
+    277,
+    383,
+    433,
+    437,
+    438,
+    493
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 34 (07/11/2026) · διορθώσεις v493",
+   "type": "tool",
+   "name": "Ενδοσκοπήσεις πεπτικού",
+   "date": "2026-11-07"
+  },
+  {
+   "id": "vascular",
+   "status": "reviewed-kept",
+   "versions": [
+    349,
+    357,
+    433,
+    450,
+    451,
+    455,
+    469,
+    493
+   ],
+   "date": "2026-11-07",
+   "note": "Πλήρης έλεγχος Μέρος 34 (07/11/2026) · διορθώσεις v493",
+   "unverified": [
+    "Στόχος ΑΠ κατά το clamp: το ESVS 2023 δεν δίνει αριθμό — Findlay 2017 / Yastrebov 2004"
+   ],
+   "sources": [
+    "Tambakis et al., Vascular 2011 (stump ≤40)",
+    "ACTION 2025 (ηπαρίνη)",
+    "Zheng 2025, Front Med (μέσω Heyer 2014) — μελέτη, όχι οδηγία"
+   ],
+   "type": "tool",
+   "name": "Αγγειοχειρουργική αναισθησία"
+  },
+  {
+   "id": "renal",
+   "status": "reviewed",
+   "versions": [
+    356,
+    373,
+    461,
+    493
+   ],
+   "date": "2026-11-07",
+   "unverified": [
+    "Η δόση δεσμοπρεσσίνης από δευτερογενή πηγή (UCSF)· το Hedges 2007 δεν διαβάστηκε (PubMed CAPTCHA)"
+   ],
+   "type": "tool",
+   "name": "Νεφρική νόσος τελικού σταδίου & αιμοκάθαρση",
+   "note": "Πλήρης έλεγχος Μέρος 34 (07/11/2026) · διορθώσεις v493"
+  },
+  {
+   "id": "hepatic",
+   "status": "reviewed",
+   "versions": [
+    356,
+    374,
+    449
+   ],
+   "date": "2026-10-23",
+   "type": "tool",
+   "name": "Ηπατική νόσος / κίρρωση",
+   "note": "v449: Khan 2024 (48%), Garrison 1984 / Mansour 1997 επιβεβαιώθηκαν"
+  },
+  {
+   "id": "immuno",
+   "status": "reviewed",
+   "versions": [
+    357,
+    371,
+    496
+   ],
+   "date": "2026-11-07",
+   "type": "tool",
+   "name": "Ανοσοκαταστολή & μεταμόσχευση",
+   "note": "Πλήρης έλεγχος Μέρος 37 (07/11/2026) · διορθώσεις v496"
+  },
+  {
+   "id": "neuromuscular",
+   "status": "reviewed",
+   "versions": [
+    356,
+    372,
+    382,
+    449,
+    461,
+    493
+   ],
+   "date": "2026-11-07",
+   "unverified": [
+    "Lambert-Eaton: δευτερογενής πηγή (UCLouvain)· το Weingarten 2014 δεν διαβάστηκε"
+   ],
+   "type": "tool",
+   "name": "Νευρομυϊκές νόσοι",
+   "note": "Πλήρης έλεγχος Μέρος 34 (07/11/2026) · διορθώσεις v493"
+  },
+  {
+   "id": "pregnonob",
+   "status": "reviewed",
+   "versions": [
+    356,
+    372,
+    461,
+    472,
+    473,
+    474,
+    476
+   ],
+   "date": "2026-10-29",
+   "type": "tool",
+   "name": "Εγκυμοσύνη — μη μαιευτική επέμβαση",
+   "note": "v461: Nejdlova & Johnson, CEACCP 2012 · v472–v476: κορτικοειδή κατά ACOG CO 713 — 24+0 έως 33+6 με κίνδυνο τοκετού σε 7 ημέρες, συμπεριλαμβανομένων ρήξης υμένων/πολύδυμης (#115)· από 23+0 ανάλογα με την απόφαση για ανάνηψη· βηταμεθαζόνη 34+0–36+6 χωρίς προηγούμενο κύκλο"
+  },
+  {
+   "id": "bariatric",
+   "status": "reviewed",
+   "versions": [
+    355,
+    421,
+    493
+   ],
+   "date": "2026-11-07",
+   "type": "tool",
+   "name": "Βαριατρικός / Παχύσαρκος ασθενής",
+   "note": "Πλήρης έλεγχος Μέρος 34 (07/11/2026) · διορθώσεις v493"
+  },
+  {
+   "id": "postop",
+   "status": "reviewed",
+   "versions": [
+    361,
+    369,
+    444,
+    461,
+    493
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 34 (07/11/2026) · διορθώσεις v493",
+   "type": "tool",
+   "name": "Οξεία μετεγχειρητική αναλγησία",
+   "date": "2026-11-07",
+   "unverified": [
+    "PCA: μόνο πρωτόκολλο νοσοκομείου (Wishaw)",
+    "Μαγνήσιο: η μετα-ανάλυση Rodríguez-Rubio μέσω ASRA News, δεν διαβάστηκε απευθείας"
+   ]
+  },
+  {
+   "id": "painscales",
+   "status": "reviewed",
+   "versions": [
+    357,
+    371
+   ],
+   "date": "2026-10-17",
+   "type": "tool",
+   "name": "Κλίμακες πόνου"
+  },
+  {
+   "id": "neuraxial",
+   "status": "reviewed",
+   "versions": [
+    360,
+    368,
+    444
+   ],
+   "note": "v444: ραχιαία ΚΤ κατά SmPC",
+   "type": "tool",
+   "name": "Νευραξονική & Περιοχική",
+   "date": "2026-10-23",
+   "unverified": [
+    "Saddle 7.5 mg: μόνο μία μελέτη (Regional Anesthesia and Acute Pain Management 2014)",
+    "Οδηγίες συγκεντρώσεων (χειρουργικός/αναλγητικός αποκλεισμός) — δεν ελέγχθηκαν ειδικά"
+   ]
+  },
+  {
+   "id": "la",
+   "status": "reviewed",
+   "versions": [
+    328,
+    329,
+    341,
+    411,
+    493
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 34 (07/11/2026) · διορθώσεις v493",
+   "type": "tool",
+   "name": "Όρια τοπικών αναισθητικών",
+   "date": "2026-11-07"
+  },
+  {
+   "id": "anticoag",
+   "status": "reviewed",
+   "versions": [
+    359,
+    370,
+    418,
+    424,
+    425,
+    432,
+    493
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 34 (07/11/2026) · διορθώσεις v493",
+   "type": "tool",
+   "name": "Αντιπηκτικά & Νευραξονικός",
+   "date": "2026-11-07"
+  },
+  {
+   "id": "tci",
+   "status": "reviewed",
+   "versions": [
+    279,
+    355,
+    375,
+    493
+   ],
+   "date": "2026-11-07",
+   "type": "tool",
+   "name": "TCI / Στοχευμένη έγχυση",
+   "note": "Πλήρης έλεγχος Μέρος 34 (07/11/2026) · διορθώσεις v493"
+  },
+  {
+   "id": "quickcalc",
+   "status": "reviewed",
+   "versions": [
+    355,
+    493
+   ],
+   "date": "2026-11-07",
+   "type": "tool",
+   "name": "Γρήγοροι υπολογιστές",
+   "note": "Πλήρης έλεγχος Μέρος 34 (07/11/2026) · διορθώσεις v493"
+  },
+  {
+   "id": "renalcalc",
+   "status": "reviewed",
+   "versions": [
+    357,
+    407
+   ],
+   "date": "2026-10-22",
+   "type": "tool",
+   "name": "Νεφρική λειτουργία (CrCl / eGFR)"
+  },
+  {
+   "id": "mac",
+   "status": "reviewed",
+   "versions": [
+    352,
+    378,
+    449,
+    494
+   ],
+   "date": "2026-11-07",
+   "type": "tool",
+   "name": "MAC πτητικών (κατά ηλικία)",
+   "note": "Πλήρης έλεγχος Μέρος 35 (07/11/2026) · διορθώσεις v494"
+  },
+  {
+   "id": "vaso",
+   "status": "reviewed-kept",
+   "versions": [
+    355,
+    409,
+    422,
+    423,
+    469,
+    494
+   ],
+   "date": "2026-11-07",
+   "note": "Πλήρης έλεγχος Μέρος 35 (07/11/2026) · διορθώσεις v494",
+   "unverified": [
+    "Βαζοπρεσσίνη 20 IU/50 mL (0.4 U/mL): το SmPC δίνει 0.8 IU/mL — κρατιέται με απόφασή σου",
+    "Αραιώσεις νοραδρεναλίνης 4/8/16 mg/50 mL: το SmPC δίνει 2 mg/50 mL (40 µg/mL) — κρατιούνται με απόφασή σου"
+   ],
+   "type": "tool",
+   "name": "Έγχυση αγγειοσυσπαστικών",
+   "sources": [
+    "SmPC νοραδρεναλίνης (Kalceks, emc)",
+    "FDA Adrenalin label 06/2026",
+    "SmPC Empressin (NL, 27/03/2026)"
+   ]
+  },
+  {
+   "id": "sedcalc",
+   "status": "reviewed-kept",
+   "versions": [
+    282,
+    355,
+    412,
+    469,
+    473
+   ],
+   "date": "2026-10-29",
+   "note": "v469: ελέγχθηκε — η ναλοξόνη 40 µg κρατιέται με απόφασή σου· φλουμαζενίλη 200 µg σε 15 s κατά SmPC · v473: #107 — η κάρτα Ενδοσκοπήσεων (SmPC 100–200 µg) και η Καταστολή (40 µg) μένουν όπως είναι, με απόφασή σου",
+   "unverified": [
+    "Ναλοξόνη 40 µg ανά 2–3 min — κρατιέται με απόφασή σου (SmPC: 100–200 µg, βήματα 100 µg ανά 2 min)"
+   ],
+   "type": "tool",
+   "name": "Καταστολή επεμβάσεων — δόσεις & ρυθμοί",
+   "sources": [
+    "SmPC ναλοξόνης (emc 6589)"
+   ]
+  },
+  {
+   "id": "vent",
+   "status": "reviewed",
+   "versions": [
+    352,
+    378,
+    407
+   ],
+   "date": "2026-10-22",
+   "type": "tool",
+   "name": "Αερισμός & Μηχανική πνεύμονα"
+  },
+  {
+   "id": "fickco",
+   "status": "reviewed",
+   "versions": [
+    357,
+    494
+   ],
+   "date": "2026-11-07",
+   "type": "tool",
+   "name": "Καρδιακή παροχή (Fick / SvO₂)",
+   "note": "Πλήρης έλεγχος Μέρος 35 (07/11/2026) · διορθώσεις v494"
+  },
+  {
+   "id": "spiro",
+   "status": "reviewed",
+   "versions": [
+    355,
+    433,
+    469,
+    473
+   ],
+   "date": "2026-10-29",
+   "note": "v469: όρια ppo 60/30, σκάλα <22 m, VO₂max <10 και σημείωση κατά ACCP 2013· η σφηνοειδής/τμηματεκτομή αφαιρέθηκε με απόφασή σου · v473: + ελάχιστα επεμβατική χειρουργική (ACCP 3.9.2)",
+   "type": "tool",
+   "name": "Σπιρομέτρηση & εκτομή πνεύμονα",
+   "sources": [
+    "ACCP 2013 (Brunelli), Chest 2013;143:e166S–e190S"
+   ],
+   "unverified": [
+    "Όρια ακριβώς 60% και 30%: η ACCP γράφει «>60%» και «above 30%» χωρίς να ορίζει τα ακριβή όρια· η κάρτα βάζει το 60 στον χαμηλό κίνδυνο και το 30 στη δοκιμασία κόπωσης"
+   ]
+  },
+  {
+   "id": "tof",
+   "status": "reviewed",
+   "versions": [
+    355,
+    438,
+    462,
+    469,
+    473,
+    474
+   ],
+   "date": "2026-10-29",
+   "note": "v469: ελέγχθηκε σημείο προς σημείο, με έγκρισή σου — επιπολής TOFr <0.4 (ASA 2023 Πίν. 5), sugammadex 16 mg/kg κατά SmPC, νεοστιγμίνη 0.03–0.07 mg/kg (US label) · v473: Πλήρης PTC 0 / Βαθύς PTC ≥1 (ASA Πίν. 5) · v474 (#112): ο υπολογισμός δείχνει ≤0.04 mg/kg στον ελάχιστο αποκλεισμό (ASA σ. 23) και το εύρος του US label",
+   "type": "tool",
+   "name": "TOF / Νευρομυϊκός αποκλεισμός",
+   "sources": [
+    "ASA 2023 (Thilen), Πίνακας 5",
+    "SmPC Bridion",
+    "US label νεοστιγμίνης (Par Health)"
+   ]
+  },
+  {
+   "id": "opioid",
+   "status": "reviewed",
+   "versions": [
+    338,
+    339,
+    412,
+    494
+   ],
+   "type": "tool",
+   "name": "Μετατροπή οπιοειδών",
+   "date": "2026-11-07",
+   "note": "Πλήρης έλεγχος Μέρος 35 (07/11/2026) · διορθώσεις v494"
+  },
+  {
+   "id": "fluids",
+   "status": "reviewed",
+   "versions": [
+    353,
+    377,
+    407
+   ],
+   "date": "2026-10-22",
+   "type": "tool",
+   "name": "Υγρά & Αίμα (περιεγχειρητικά)"
+  },
+  {
+   "id": "csht",
+   "status": "reviewed",
+   "versions": [
+    355,
+    375
+   ],
+   "date": "2026-10-17",
+   "type": "tool",
+   "name": "Context-Sensitive Half-Time"
+  },
+  {
+   "id": "periop",
+   "status": "reviewed",
+   "versions": [
+    343,
+    349,
+    380,
+    433,
+    455
+   ],
+   "date": "2026-10-23",
+   "type": "tool",
+   "name": "Περιεγχειρητική ιατρική",
+   "note": "v455: γλυκόζη σε mg/dL, JBDS/CPOC"
+  },
+  {
+   "id": "gastricus",
+   "status": "reviewed",
+   "versions": [
+    478,
+    479
+   ],
+   "date": "2026-10-31",
+   "type": "tool",
+   "name": "Γαστρικό υπερηχογράφημα",
+   "note": "v478: νέα κάρτα κατά την προδιαγραφή της 31/10/2026 (3η έκδ.)· κάθε αριθμός ελέγχθηκε στο πλήρες κείμενο της BJA Education 2019 (PMC7808010)· όριο 500 mL και παλιά όρια 0.4/0.8 από Perlas 2018· GLP-1 σύσταση 2b από Kindel 2024· παιδιά εκτός κάρτας με απόφασή σου · v479 (Μέρος 21): mL/kg: τιμή λίγο κάτω από 1.5 φαίνεται 1.49 (#120)· «δεν έχει μελετηθεί πλήρως» (σ. 225)· κύηση βαθμός 0 «sitting and RLD» (σ. 224)",
+   "unverified": [
+    "Πρωτότυπα που μεταφέρει η BJA Ed 2019 χωρίς να διαβαστούν: Perlas 2013 (τύπος), Arzola 2018 (κύηση, 9.6 cm²), Kruisselbrink 2017 (BMI > 35)",
+    "Όρια CSA 0.5–60 cm²: τεχνικός έλεγχος πληκτρολόγησης, όχι κλινικό όριο"
+   ],
+   "sources": [
+    "El-Boghdadly K, Wojcikiewicz T, Perlas A. BJA Education 2019;19(7):219–226",
+    "Perlas A, Arzola C, Van de Putte P. Can J Anesth 2018;65:437–48",
+    "Kindel TL κ.ά. Clin Gastroenterol Hepatol 2024 (σύσταση 2b)"
+   ]
+  },
+  {
+   "id": "abx",
+   "status": "reviewed",
+   "versions": [
+    362,
+    494
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 35 (07/11/2026) · διορθώσεις v494",
+   "type": "tool",
+   "name": "Αντιβιοτική προφύλαξη",
+   "date": "2026-11-07",
+   "unverified": [
+    "Καισαρική «προ τομής»: ο πίνακας Bratzler δεν το ορίζει ειδικά — ισχύει ο γενικός κανόνας 60 min προ τομής"
+   ]
+  },
+  {
+   "type": "score",
+   "id": "apfel",
+   "status": "reviewed",
+   "versions": [
+    350,
+    351,
+    495
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 36 (07/11/2026) · διορθώσεις v495",
+   "name": "Apfel",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "score",
+   "id": "stopbang",
+   "status": "reviewed",
+   "versions": [
+    350,
+    351,
+    495
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 36 (07/11/2026) · διορθώσεις v495",
+   "name": "STOP-Bang",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "score",
+   "id": "rcri",
+   "status": "reviewed",
+   "versions": [
+    350,
+    351
+   ],
+   "note": "",
+   "name": "RCRI"
+  },
+  {
+   "type": "score",
+   "id": "ariscat",
+   "status": "reviewed",
+   "versions": [
+    350,
+    351,
+    379
+   ],
+   "note": "",
+   "name": "ARISCAT",
+   "date": "2026-10-17"
+  },
+  {
+   "type": "score",
+   "id": "cfs",
+   "status": "reviewed",
+   "versions": [
+    350,
+    351
+   ],
+   "note": "",
+   "name": "Clinical Frailty Scale"
+  },
+  {
+   "type": "score",
+   "id": "childpugh",
+   "status": "reviewed",
+   "versions": [
+    350,
+    351
+   ],
+   "note": "",
+   "name": "Child-Pugh"
+  },
+  {
+   "type": "score",
+   "id": "psss",
+   "status": "reviewed",
+   "versions": [
+    364
+   ],
+   "note": "Pediatrics 2017 (qxmd) · περιγραφές καταστάσεων (Afya) · κλινικό πρωτόκολλο NCT04237792 (στόχος PSSS 2)",
+   "name": "PSSS (παιδιατρική καταστολή)",
+   "date": "2026-10-17"
+  },
+  {
+   "type": "score",
+   "id": "aldrete",
+   "status": "reviewed",
+   "versions": [
+    350,
+    351
+   ],
+   "note": "",
+   "name": "Aldrete"
+  },
+  {
+   "type": "score",
+   "id": "padss",
+   "status": "reviewed",
+   "versions": [
+    350,
+    351
+   ],
+   "note": "",
+   "name": "PADSS"
+  },
+  {
+   "type": "guideline",
+   "id": "aha-noncardiac",
+   "status": "reviewed",
+   "versions": [
+    432,
+    447,
+    495
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 36 (07/11/2026) · διορθώσεις v495",
+   "name": "AHA/ACC 2024 μη καρδιοχειρουργική",
+   "date": "2026-11-07",
+   "unverified": [
+    "Πίνακες COR/LOE δεν διαβάστηκαν",
+    "Τα κριτήρια ηλικίας για BNP αφαιρέθηκαν (πιθανώς CCS)"
+   ]
+  },
+  {
+   "type": "guideline",
+   "id": "ponv",
+   "status": "reviewed",
+   "versions": [
+    364,
+    365,
+    495
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 36 (07/11/2026) · διορθώσεις v495",
+   "name": "PONV",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "guideline",
+   "id": "fasting",
+   "status": "reviewed",
+   "versions": [
+    364,
+    366,
+    489,
+    495
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 36 (07/11/2026) · διορθώσεις v495",
+   "name": "Νηστεία",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "guideline",
+   "id": "nmb",
+   "status": "reviewed",
+   "versions": [
+    364,
+    495
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 36 (07/11/2026) · διορθώσεις v495",
+   "name": "Νευρομυϊκός αποκλεισμός",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "tab",
+   "id": "peds",
+   "status": "reviewed",
+   "versions": [
+    354,
+    376,
+    394,
+    426,
+    436,
+    437,
+    439,
+    448,
+    452,
+    454,
+    458,
+    460,
+    488
+   ],
+   "date": "2026-11-06",
+   "name": "Παιδιατρική",
+   "note": "Πλήρης έλεγχος Μέρος 29 (06/11/2026) · διορθώσεις v488",
+   "unverified": [
+    "Δεδομένα CDC για κορίτσια 2–20 ετών μερικά (το mirror κόβει τα αρχεία): ανάστημα έως 192.5, βάρος έως 188.5, BMI έως 160.5 μήνες",
+    "Το εκατοστημόριο υπολογίζεται με προσέγγιση της κανονικής κατανομής (Abramowitz–Stegun 7.1.26)",
+    "Ηλικία ύψους (McLaren): γραμμική παρεμβολή μεταξύ των μηνιαίων σημείων αντί για ανάγνωση γραφήματος",
+    "Ελάχιστη ΣΑΠ: PALS, με σημείωση των διαφορετικών τιμών p5 του ERC PLS 2025"
+   ]
+  },
+  {
+   "type": "tool",
+   "id": "recruit",
+   "name": "Recruitment manoeuvres",
+   "status": "reviewed",
+   "versions": [
+    384,
+    494
+   ],
+   "date": "2026-11-07",
+   "note": "Πλήρης έλεγχος Μέρος 35 (07/11/2026) · διορθώσεις v494",
+   "unverified": [
+    "PROBESE υπόταση/βραδυκαρδία: από The Bottom Line (όχι από το JAMA)",
+    "PROTHOR αποτελέσματα: από την ανακοίνωση του TU Dresden (το άρθρο Lancet Respir Med δεν ήταν προσβάσιμο)",
+    "Λίστα αντενδείξεων δεν περιλαμβάνεται — δεν βρέθηκε στις πηγές"
+   ]
+  },
+  {
+   "type": "tool",
+   "id": "lowflow",
+   "name": "Low-flow αναισθησία",
+   "status": "reviewed",
+   "versions": [
+    385,
+    388,
+    494
+   ],
+   "date": "2026-11-07",
+   "note": "Πλήρης έλεγχος Μέρος 35 (07/11/2026) · διορθώσεις v494",
+   "unverified": [
+    "Οι τιμές του σχήματος είναι ενδεικτικές τιμές των συγγραφέων του εγχειριδίου Dräger (όχι οδηγία)",
+    "Ο τύπος του Biro 2014 δεν διαβάστηκε απευθείας — οι σταθερές από τον Πίνακα 4 του Hunter 2025",
+    "Δεν περιλαμβάνονται τιμές GWP/CO₂e — δεν ελέγχθηκε πρωτογενής πηγή"
+   ]
+  },
+  {
+   "type": "tool",
+   "id": "gcs",
+   "name": "Glasgow Coma Scale (GCS / GCS-P)",
+   "status": "reviewed",
+   "versions": [
+    386
+   ],
+   "date": "2026-10-17",
+   "note": "GCS Assessment Aid (NHS GGC, © Teasdale 2015) · glasgowcomascale.org (RCPSG) για GCS-P",
+   "unverified": [
+    "Η παιδιατρική GCS δεν περιλαμβάνεται",
+    "Δεν μπήκαν κατηγορίες βαρύτητας (ήπια/μέτρια/σοβαρή) — δεν ελέγχθηκαν στην πηγή"
+   ]
+  },
+  {
+   "type": "tool",
+   "id": "niv",
+   "name": "Μη επεμβατικός αερισμός μετεγχειρητικά",
+   "status": "reviewed",
+   "versions": [
+    393
+   ],
+   "date": "2026-10-18",
+   "note": "Νέο εργαλείο· αλγόριθμος και ρυθμίσεις από τις διαφάνειες της Κ. Ε. Διαμαντάκη (ΠΑΓΝΗ) · ERS/ATS 2017 (PDF ATS) · ERS 2022 HFNC (BORIS Bern) · NIVAS ρυθμίσεις μέσω ESICM article review · Squadrone μέσω CMAJ · BiPOP μέσω healthmanagement.org/the-hospitalist · SFAR 2016 (Jaber)",
+   "unverified": [
+    "Το Ann Fr Anesth Reanim 2014;33(7-8):487-91 που αναφέρει η διαφάνεια δεν διαβάστηκε (ScienceDirect δεν επιτρέπει πρόσβαση) — οι ρυθμίσεις είναι όπως στη διαφάνεια",
+    "Cycling «30–60% της μέγιστης εκπνευστικής ροής»: όπως στη διαφάνεια· το διάγραμμα δείχνει % της μέγιστης εισπνευστικής ροής — προς επιβεβαίωση",
+    "Επιλογή BiPAP όταν ισχύει οποιοδήποτε κριτήριο του κουτιού (PCO₂, RR, drive) — ερμηνεία της διαφάνειας",
+    "NIVAS/Squadrone/BiPOP: στοιχεία από δευτερογενείς περιλήψεις, όχι από το πλήρες JAMA",
+    "Κριτήρια διασωλήνωσης των μελετών δεν περιλαμβάνονται — δεν βρέθηκαν στις πηγές"
+   ]
+  },
+  {
+   "type": "checklist",
+   "id": "post_rosc",
+   "name": "post_rosc",
+   "status": "reviewed",
+   "versions": [
+    442
+   ],
+   "note": "v442: νέα — ERC–ESICM 2025 Post-Resuscitation Care (Resuscitation 2025;215:110809)",
+   "date": "2026-10-23"
+  },
+  {
+   "type": "checklist",
+   "id": "cardiac_surgery_arrest",
+   "name": "cardiac_surgery_arrest",
+   "status": "reviewed",
+   "versions": [
+    442,
+    453,
+    454
+   ],
+   "note": "v454: ορολογία απινίδωση",
+   "date": "2026-10-23"
+  },
+  {
+   "type": "checklist",
+   "id": "lvad_arrest",
+   "name": "lvad_arrest",
+   "status": "reviewed",
+   "versions": [
+    442,
+    460,
+    489
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 30 (06/11/2026) · διορθώσεις v489",
+   "date": "2026-11-06",
+   "unverified": [
+    "Η Εικ. 18 του ERC δεν διαβάστηκε (το πλήρες κείμενο ERC δεν ήταν προσβάσιμο) — οι λεπτομέρειες από το κείμενο του Akhtar 2024, όχι από το διάγραμμά του (Εικ. 2)",
+    "Αδρεναλίνη στην ανακοπή με LVAD: δεν αναφέρεται στις πηγές που διαβάστηκαν"
+   ]
+  },
+  {
+   "type": "checklist",
+   "id": "asthma_arrest",
+   "name": "asthma_arrest",
+   "status": "reviewed",
+   "versions": [
+    442,
+    453
+   ],
+   "note": "v453: εγχειρίδιο ERC ALS 2025 σ. 146–148",
+   "date": "2026-10-23"
+  },
+  {
+   "type": "checklist",
+   "id": "hypokalaemia",
+   "name": "hypokalaemia",
+   "status": "reviewed",
+   "versions": [
+    442,
+    453
+   ],
+   "note": "v453: εγχειρίδιο ERC ALS 2025 σ. 108–109",
+   "date": "2026-10-23",
+   "unverified": [
+    "Ταχύτερη έγχυση σε επικείμενη ανακοπή: το εγχειρίδιο γράφει «20 mmol min⁻¹ για 10 min» — πιθανό τυπογραφικό, δεν μεταφέρθηκε ως αριθμός"
+   ]
+  },
+  {
+   "type": "checklist",
+   "id": "maternal_arrest",
+   "name": "maternal_arrest",
+   "status": "reviewed",
+   "versions": [
+    442,
+    453,
+    460
+   ],
+   "note": "v453: εγχειρίδιο ERC ALS · v460: φάρμακα κατά OAA QRH 2024 κάρτα 1-1 και OAA v1.1 (μαγνήσιο)",
+   "date": "2026-10-29",
+   "unverified": [
+    "Οι δόσεις είναι της OAA (Ηνωμένο Βασίλειο)· το πλήρες κείμενο ERC 2025 για την κύηση δεν ήταν προσβάσιμο"
+   ]
+  },
+  {
+   "type": "checklist",
+   "id": "status_epilepticus",
+   "name": "status_epilepticus",
+   "status": "reviewed",
+   "versions": [
+    456,
+    457,
+    467,
+    491,
+    492
+   ],
+   "note": "Πλήρης έλεγχος Μέρος 33 (07/11/2026) · διορθώσεις v492",
+   "date": "2026-11-07"
+  },
+  {
+   "type": "checklist",
+   "id": "status_epilepticus_peds",
+   "name": "status_epilepticus_peds",
+   "status": "reviewed",
+   "versions": [
+    467
+   ],
+   "note": "v467: νέα — APLS 7η έκδ. (ALSG, επιμ. S. Smith, Wiley Blackwell), Εικ. 6.4 — από φωτογραφίες σελίδων που έστειλε η χρήστρια",
+   "date": "2026-10-29"
+  },
+  {
+   "type": "card",
+   "id": "preop",
+   "name": "Έλεγχος πριν από την αναισθησία",
+   "status": "reviewed",
+   "versions": [
+    480,
+    495,
+    496
+   ],
+   "date": "2026-11-07",
+   "note": "Πλήρης έλεγχος Μέρος 37 (07/11/2026) · διορθώσεις v496",
+   "unverified": [
+    "AAGBI 2019 (Checking anaesthetic equipment): πλήρες κείμενο δεν διαβάστηκε· η κάρτα στηρίζεται στην έκδοση 2012"
+   ]
+  }
+ ]
+}
