@@ -151,7 +151,7 @@ const TCI_MODELS = [
     // Gepts 1995: Vc 14.3 L, not weight-adjusted
     rangeEl: "\u0397\u03BB\u03B9\u03BA\u03AF\u03B1 \u226512 \u03B5\u03C4\u03CE\u03BD. \u03A4\u03BF \u03BC\u03BF\u03BD\u03C4\u03AD\u03BB\u03BF \u0394\u0395\u039D \u03C0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03CC\u03B6\u03B5\u03C4\u03B1\u03B9 \u03C3\u03C4\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2 (Vc 14.3 L \u03B3\u03B9\u03B1 \u03CC\u03BB\u03BF\u03C5\u03C2).",
     rangeEn: "Age 12 years and over. The model is NOT weight-adjusted (Vc 14.3 L for everyone).",
-    valid: (c) => !c.a || c.a >= 12
+    valid: (c) => !c.hasA || c.a >= 12
   },
   {
     id: "maitre",
@@ -416,6 +416,9 @@ function speechText(s, lang) {
 // Plausible patient values. Outside them no dose is calculated at all: a
 // typo (700 kg, 0 kg, 150 years) must not produce a confident number.
 const PATIENT_LIMITS = { w: [0.3, 300], h: [25, 230], a: [0, 120] };
+// An age is "given" when the field holds a number. 0 is a real age (a newborn), never the same as an
+// empty field: "parseFloat(age) || 0" followed by "> 0" used to treat a newborn as "no age" (audit V12b-1).
+function ageGiven(age) { const s = age == null ? "" : String(age).trim(); return s !== "" && isFinite(parseFloat(s)); }
 function patientCheck(weight, age, height) {
   const w = parseFloat(weight), a = parseFloat(age), h = parseFloat(height);
   const out = (v, r) => !isNaN(v) && (v < r[0] || v > r[1]);

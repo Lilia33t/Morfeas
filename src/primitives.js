@@ -203,6 +203,48 @@ function FavChips({ k, lang, fav, onPick }) {
     React.createElement("div", { style: { fontWeight: 800, fontSize: 12, color: S.muted, letterSpacing: 0.6, padding: "2px 4px 0" } }, upGr("\u2605 " + (lang === "el" ? "\u0391\u03B3\u03B1\u03C0\u03B7\u03BC\u03AD\u03BD\u03B1" : "Favourites"))),
     React.createElement("div", { style: { display: "flex", gap: 6, flexWrap: "wrap" } }, items.map((x) => React.createElement("button", { key: x.id, onClick: () => onPick(x.id), style: { padding: "9px 12px", borderRadius: 10, border: `1.5px solid ${S.line}`, background: S.card, fontSize: 14, fontWeight: 700, color: S.ink, cursor: "pointer", fontFamily: "inherit", minHeight: 44 } }, x.info.title))));
 }
+// --- Notices on the drug card (audit v512, V12b-3 and V12b-2/V12b-7). They change no number. ---
+// V12b-3: a weight under this and no age: the card cannot tell rows for children from rows for adults.
+const AGE_PROMPT_KG = 40;
+// V12b-2: from this BMI the card says that its number is on actual weight (AAGBI/SOBA 2015: "dosing to total
+// body weight is rarely appropriate"). The Bariatric tool marks the same BMI.
+const OBESITY_WARN_BMI = 40;
+// Which weight the source doses on, for the drugs whose card calculates on actual weight. The groups are those
+// of the Bariatric tool (AAGBI/SOBA 2015, Table 3); a test keeps the two lists in step. Suxamethonium is dosed
+// on total body weight, so it has no notice. Lidocaine IV is not here: it is already calculated on ideal weight.
+// ibw130: the card's own source (rocuronium SmPC) starts at 30% above ideal weight, so the notice starts there too.
+const OBESITY_DOSING = {
+  propofol: { grp: "LBW+ABW" },
+  thiopental: { grp: "LBW" },
+  fentanyl: { grp: "LBW" },
+  rocuronium: { grp: "LBW", ibw130: true, el: "SmPC: \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 \u2014 \u03BF\u03B9 \u03C0\u03B7\u03B3\u03AD\u03C2 \u03B4\u03B9\u03B1\u03C6\u03AD\u03C1\u03BF\u03C5\u03BD", en: "SmPC: ideal body weight \u2014 the sources differ" },
+  alfentanil: { grp: "ABW" },
+  neostigmine: { grp: "ABW" },
+  sugammadex: { grp: "ABW", el: "SmPC: \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 \u2014 \u03BF\u03B9 \u03C0\u03B7\u03B3\u03AD\u03C2 \u03B4\u03B9\u03B1\u03C6\u03AD\u03C1\u03BF\u03C5\u03BD", en: "SmPC: actual body weight \u2014 the sources differ" },
+  morphine: { grp: "ABW" },
+  paracetamol: { grp: "ABW" },
+  bupivacaine: { grp: "ABW" },
+  lidocaine: { grp: "ABW" },
+  // Not in Table 3: the card's own note (V12b-7).
+  remifentanil: { grp: "NOTE_IBW" }
+};
+function obesityNotice(d, ctx, sex) {
+  const o = OBESITY_DOSING[d.id];
+  if (!o || !ctx || !(ctx.w > 0) || !(ctx.hNum > 0)) return null;
+  const bmi = bmiCalc(ctx.w, ctx.hNum), ibw = ibwDevine(ctx.hNum, sex);
+  const on = (bmi != null && bmi >= OBESITY_WARN_BMI) || (o.ibw130 && ibw > 0 && ctx.w >= 1.3 * ibw);
+  if (!on) return null;
+  const G = {
+    LBW: { el: "AAGBI/SOBA 2015 (\u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 3): \u03AC\u03BB\u03B9\u03C0\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2 (LBW)", en: "AAGBI/SOBA 2015 (Table 3): lean body weight (LBW)" },
+    ABW: { el: "AAGBI/SOBA 2015 (\u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 3): \u03C0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03C3\u03BC\u03AD\u03BD\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2 (ABW)", en: "AAGBI/SOBA 2015 (Table 3): adjusted body weight (ABW)" },
+    "LBW+ABW": { el: "AAGBI/SOBA 2015 (\u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 3): \u03B5\u03B9\u03C3\u03B1\u03B3\u03C9\u03B3\u03AE \u03C3\u03B5 \u03AC\u03BB\u03B9\u03C0\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2 (LBW), \u03AD\u03B3\u03C7\u03C5\u03C3\u03B7 \u03C3\u03B5 \u03C0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03C3\u03BC\u03AD\u03BD\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2 (ABW)", en: "AAGBI/SOBA 2015 (Table 3): induction on lean body weight (LBW), infusion on adjusted body weight (ABW)" },
+    NOTE_IBW: { el: "\u039F\u03B9 \u03C3\u03B7\u03BC\u03B5\u03B9\u03CE\u03C3\u03B5\u03B9\u03C2 \u03C4\u03B7\u03C2 \u03BA\u03AC\u03C1\u03C4\u03B1\u03C2: \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2", en: "The card's notes: ideal body weight" }
+  }[o.grp];
+  return {
+    el: "\u03A0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA\u03AF\u03B1: \u03BF \u03B1\u03C1\u03B9\u03B8\u03BC\u03CC\u03C2 \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03AD\u03BD\u03BF\u03C2 \u03C3\u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2. " + G.el + (o.el ? " \u00B7 " + o.el : "") + ". \u0394\u03B5\u03AF\u03C4\u03B5 \u03C4\u03BF \u03B5\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03BF \u00AB\u0392\u03B1\u03C1\u03B9\u03B1\u03C4\u03C1\u03B9\u03BA\u03CC\u03C2 / \u03A0\u03B1\u03C7\u03CD\u03C3\u03B1\u03C1\u03BA\u03BF\u03C2 \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2\u00BB.",
+    en: "Obesity: the number is calculated on actual body weight. " + G.en + (o.en ? " \u00B7 " + o.en : "") + ". See the \u201CBariatric / Obese patient\u201D tool."
+  };
+}
 // --- One dose calculation for the whole app (new look, spec \u00A75) ---
 // The drug card, the drug list and search all go through doseFor(): it picks the weight a row is
 // calculated on and then calls doseText(). There is no second implementation anywhere.
@@ -214,12 +256,14 @@ function doseCtx(weight, height, sex, age) {
   const hNum = parseFloat(height) || 0;
   const ibwRaw = w > 0 ? ibwLidoConsensus(hNum, sex) || 0 : 0;
   const wIbw = ibwRaw ? Math.min(ibwRaw, w) : 0;
-  const aNum = parseFloat(age) || 0;
-  const offAge = (ds) => { const g = doseAgeGroup(ds); return aNum > 0 && (g === "peds" && aNum >= 18 || g === "adult" && aNum < 18) ? g : null; };
+  // V12b-1: an age of 0 is an age (a newborn), not an empty field.
+  const hasAge = ageGiven(age) && parseFloat(age) >= 0;
+  const aNum = hasAge ? parseFloat(age) : 0;
+  const offAge = (ds) => { const g = doseAgeGroup(ds); return hasAge && (g === "peds" && aNum >= 18 || g === "adult" && aNum < 18) ? g : null; };
   const wFor = (ds) => offAge(ds) ? 0 : ds.basis === "ibw" ? wIbw : w;
   // Paediatric mode (spec \u00A79.2) uses the same limit as the rows above: an age is entered and it is under 18 years.
-  const child = aNum > 0 && !(aNum >= 18);
-  return { w, hNum, ibwRaw, wIbw, aNum, offAge, wFor, child };
+  const child = hasAge && aNum < 18;
+  return { w, hNum, ibwRaw, wIbw, aNum, hasAge, offAge, wFor, child };
 }
 function doseFor(ds, ctx, lang) {
   const wd = ctx.wFor(ds);
@@ -363,6 +407,7 @@ function DrugCard({ d, lang, ctx, sex, t, labOn }) {
   const ns = noteSections(notesText);
   const srcTypes = [d.srcType].concat(rows.map((ds) => ds.srcType)).filter((x, i, a) => x && SRC_TYPES[x] && a.indexOf(x) === i);
   const ver = verifiedInfo(d.verified);
+  const obNote = obesityNotice(d, ctx, sex);
   const chip = { display: "inline-flex", alignItems: "center", minHeight: 30, padding: "0 11px", borderRadius: 99, fontSize: 12.5, fontWeight: 400, border: `1px solid ${S.line}`, background: S.card, color: S.muted };
   return React.createElement("div", { "data-drug-card": d.id, style: { padding: "0 12px 14px", display: "flex", flexDirection: "column", gap: 10 } },
     // 1. category with its dot, patient weight
@@ -374,6 +419,9 @@ function DrugCard({ d, lang, ctx, sex, t, labOn }) {
     // 2. up to four main indications; the full wording is in the box under them
     rows.length > 1 && React.createElement("div", { role: "group", "aria-label": el ? "\u0388\u03BD\u03B4\u03B5\u03B9\u03BE\u03B7" : "Indication", style: { display: "flex", gap: 6, overflowX: "auto", paddingBottom: 2, WebkitOverflowScrolling: "touch" } },
       rows.slice(0, 4).map((ds, i) => React.createElement("button", { key: i, onClick: () => pick(i), "aria-pressed": sel === i ? "true" : "false", title: ds[lang], style: { flexShrink: 0, maxWidth: 210, minHeight: 44, padding: "0 13px", borderRadius: 99, border: sel === i ? "none" : `1px solid ${S.line}`, background: sel === i ? S.ink : S.card, color: sel === i ? S.card : S.ink, fontFamily: "inherit", fontSize: 13.5, fontWeight: sel === i ? 600 : 400, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", cursor: "pointer" } }, ds[lang]))),
+    // 2b. notices about the patient (audit V12b-3, V12b-2/V12b-7); no number changes
+    w > 0 && w < AGE_PROMPT_KG && !ctx.hasAge && React.createElement("div", { "data-age-prompt": "1", role: "note", style: { background: S.tintWarn, color: S.tintWarnFg, borderRadius: 14, padding: "10px 14px", fontSize: 14, fontWeight: 600, lineHeight: 1.4 } }, "\u26A0 ", el ? "\u03A3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 \u2014 \u03BF\u03B9 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AD\u03C2 \u03C0\u03B1\u03B9\u03B4\u03B9\u03CE\u03BD \u03BA\u03B1\u03B9 \u03B5\u03BD\u03B7\u03BB\u03AF\u03BA\u03C9\u03BD \u03B4\u03B5\u03BD \u03BE\u03B5\u03C7\u03C9\u03C1\u03AF\u03B6\u03BF\u03C5\u03BD" : "Enter the age \u2014 rows for children and adults are not told apart"),
+    obNote && React.createElement("div", { "data-obesity-note": "1", role: "note", style: { background: S.tintDanger, color: S.ink, boxShadow: `inset 0 0 0 1.5px ${S.red}`, borderRadius: 14, padding: "10px 14px", fontSize: 13.5, fontWeight: 600, lineHeight: 1.45, overflowWrap: "break-word" } }, "\u26A0 ", obNote[lang]),
     // 3. the dose for the patient
     !hero && pk.none && React.createElement("div", { "data-dose-hero": "1", role: "note", style: { background: S.tintWarn, color: S.tintWarnFg, borderRadius: 14, padding: "11px 14px", fontSize: 14, fontWeight: 600, lineHeight: 1.4 } },
       React.createElement("span", { "data-dose-none": "1" }, pk.none[lang]), el ? ". \u0394\u03B9\u03B1\u03BB\u03AD\u03BE\u03C4\u03B5 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B1\u03C0\u03CC \u03BA\u03AC\u03C4\u03C9." : ". Choose a row below.",
@@ -1119,6 +1167,7 @@ function TCITab({ lang, weight, age, height, sex }) {
     w: parseFloat(weight) || 0,
     h: parseFloat(height) || 0,
     a: parseFloat(age) || 0,
+    hasA: ageGiven(age),
     s: sex
   };
   const bmi = bmiCalc(c.w, c.h);
@@ -1145,7 +1194,7 @@ function TCITab({ lang, weight, age, height, sex }) {
     boxShadow: drug === dr ? "none" : `inset 0 0 0 1.5px ${S.line}`
   } }, dr))), models.map((m) => {
     const isOpen = openModel === m.id;
-    const missing = m.requires.filter((r) => !c[r] || r === "w" && c.w <= 0);
+    const missing = m.requires.filter((r) => r === "a" ? !c.hasA : !c[r] || r === "w" && c.w <= 0);
     const ready = missing.length === 0;
     const valid = ready && m.valid(c);
     const v1 = ready ? v1Of(m) : null;

@@ -1007,7 +1007,7 @@ check("v406: terms version, privacy, review date, attributed wording",
 
 check("v407: lidocaine IBW, small-dose rounding, per-24h units, fluids/renal/PBW guards, Greek drug search",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String((function(){ const r = run('[fmt(0.007), fmt(0.0028), fmt(0.013), fmt(150), ibwDevine(90,"M"), ibwLidoConsensus(160,"F"), doseText(DRUGS.find(d=>d.id==="lidocaine_iv").doses[0], ibwLidoConsensus(160,"F"), "el").calc, DRUGS.find(d=>d.id==="lidocaine_iv").doses[0].basis, doseText(DRUGS.find(d=>d.id==="amiodarone").doses[2], 70, "el").calc].join("|")'); return r === '0.007|0.0028|0.013|150||55|55–82.5 mg|ibw|700–1200 mg/24h' && /const adultOK = a >= 18 && a <= 120;/.test(T) && /const autoCat = !a \? null/.test(T) && /d\.synEl \|\| ""/.test(P) && /function PatientBarCore/.test(P) && !/clinical practice\)/.test(require('fs').readFileSync(require('path').join(__dirname,'..','src','data.js'),'utf8').match(/id: "lidocaine_iv"[\s\S]*?id: "furosemide"/)[0]); })()); })(), "true");
+    return String((function(){ const r = run('[fmt(0.007), fmt(0.0028), fmt(0.013), fmt(150), ibwDevine(90,"M"), ibwLidoConsensus(160,"F"), doseText(DRUGS.find(d=>d.id==="lidocaine_iv").doses[0], ibwLidoConsensus(160,"F"), "el").calc, DRUGS.find(d=>d.id==="lidocaine_iv").doses[0].basis, doseText(DRUGS.find(d=>d.id==="amiodarone").doses[2], 70, "el").calc].join("|")'); return r === '0.007|0.0028|0.013|150||55|55–82.5 mg|ibw|700–1200 mg/24h' && /const adultOK = a >= 18 && a <= 120;/.test(T) && /const autoCat = !ageGiven\(age\) \? null/.test(T) && /d\.synEl \|\| ""/.test(P) && /function PatientBarCore/.test(P) && !/clinical practice\)/.test(require('fs').readFileSync(require('path').join(__dirname,'..','src','data.js'),'utf8').match(/id: "lidocaine_iv"[\s\S]*?id: "furosemide"/)[0]); })()); })(), "true");
 
 check("v408: age-group hiding of calculated dose rows",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
@@ -1023,7 +1023,7 @@ check("v410: SRI on both React scripts, no opaque caching",
 
 check("v411: LA sources and limits, sugammadex/neostigmine/midazolam updates",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String((function(){ const r = run('[LA_LIST.every(l=>l.noteEl&&l.noteEn), LA_LIST.find(l=>l.id==="mepi").absByConc[2], LA_LIST.find(l=>l.id==="mepi").absByConc[1], LA_LIST.find(l=>l.id==="chloro").concs.join(), DRUGS.find(d=>d.id==="midazolam").doses.filter(x=>/IM (premedication|conscious sedation)/.test(x.en)).map(x=>x.lo+"-"+x.hi+":"+x.max).join(), /birth/.test(DRUGS.find(d=>d.id==="sugammadex").doses.map(x=>x.en).join()), /TOFr >0.2/.test(DRUGS.find(d=>d.id==="neostigmine").notesEn)].join("|")'); return r === 'true|400|300|2|0.08-0.2:null,0.05-0.15:null|true|true' && /ageN > 0 && ageN < 12/.test(T) && /LACalc, \{ lang, weight, age \}/.test(require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8')); })()); })(), "true");
+    return String((function(){ const r = run('[LA_LIST.every(l=>l.noteEl&&l.noteEn), LA_LIST.find(l=>l.id==="mepi").absByConc[2], LA_LIST.find(l=>l.id==="mepi").absByConc[1], LA_LIST.find(l=>l.id==="chloro").concs.join(), DRUGS.find(d=>d.id==="midazolam").doses.filter(x=>/IM (premedication|conscious sedation)/.test(x.en)).map(x=>x.lo+"-"+x.hi+":"+x.max).join(), /birth/.test(DRUGS.find(d=>d.id==="sugammadex").doses.map(x=>x.en).join()), /TOFr >0.2/.test(DRUGS.find(d=>d.id==="neostigmine").notesEn)].join("|")'); return r === 'true|400|300|2|0.08-0.2:null,0.05-0.15:null|true|true' && /ageGiven\(age\) && ageN < 12/.test(T) && /LACalc, \{ lang, weight, age \}/.test(require('fs').readFileSync(require('path').join(__dirname,'..','src','root.js'),'utf8')); })()); })(), "true");
 
 check("v412: direction-specific opioid factors and daily maxima, UKKA 2026, Intralipid QRH 2023, sedation population",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
@@ -1714,7 +1714,7 @@ check("v502 crisis log: memory only, no patient details, new start begins a new 
   })(), "ok");
 check("v502 paediatric mode: the limit already used by the dose rows (under 18 years); rows for children listed first, none lost, adult order untouched",
   run(`(() => { const C = (a) => doseCtx("20", "", "", a).child;
-    if (C("") || C("0") || !C("0.1") || !C("5") || !C("17.9") || C("18") || C("45")) return "limit";
+    if (C("") || !C("0") || !C("0.1") || !C("5") || !C("17.9") || C("18") || C("45")) return "limit";
     const kid = doseCtx("20", "", "", "5"), adult = doseCtx("70", "", "", "45"), none = doseCtx("70", "", "", "");
     let moved = 0;
     for (const d of DRUGS) { const base = drugRows(d), k = rowsFor(d, kid);
@@ -1763,7 +1763,7 @@ check("v502 source files: theme button cycles four themes, theatre text two step
     if (!(R.includes("setTheme(THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length])") && R.includes('theme === "theatre" ? FS_LEVELS[Math.min(FS_LEVELS.length - 1, FS_LEVELS.indexOf(fs) + 2)] : fs') && (R.match(/zoom: fsEff/g) || []).length === 2 && !/zoom: fs\b/.test(R) && R.includes('if (mode === "theatre")') && R.includes('"Theme: theatre (dark, large text)"'))) bad.push("theatre");
     const pb = P.slice(P.indexOf("function PatientBarCore("), P.indexOf("// Split a drug's notes into labelled groups"));
     if (!(pb.includes('doseCtx("", "", "", age).child') && pb.includes('"data-peds-label"') && pb.includes('"\\u03A0\\u03B1\\u03B9\\u03B4\\u03AF" : "Child"') && pb.includes("kid ? S.tintWarn : S.cardAlt"))) bad.push("child label");
-    if (!/const child = aNum > 0 && !\(aNum >= 18\);/.test(P)) bad.push("one limit");
+    if (!/const child = hasAge && aNum < 18;/.test(P)) bad.push("one limit");
     const tl = P.slice(P.indexOf("const timelineEl ="), P.indexOf('return h("div", { role: "dialog", "aria-modal": "true", "aria-label": fullTitle,'));
     const pairs = [["\\u03A7\\u03C1\\u03BF\\u03BD\\u03BF\\u03B3\\u03C1\\u03B1\\u03BC\\u03BC\\u03AE", "Timeline"], ["\\u0391\\u03BD\\u03C4\\u03B9\\u03B3\\u03C1\\u03B1\\u03C6\\u03AE \\u03C9\\u03C2 \\u03BA\\u03B5\\u03AF\\u03BC\\u03B5\\u03BD\\u03BF", "Copy as text"], ["\\u039D\\u03AD\\u03B1 \\u03BA\\u03C1\\u03AF\\u03C3\\u03B7", "New crisis"], ["\\u03A0\\u03AF\\u03C3\\u03C9 \\u03C3\\u03C4\\u03B7 \\u03BB\\u03AF\\u03C3\\u03C4\\u03B1", "Back to the list"]];
     pairs.forEach((x) => { if (!tl.includes('"' + x[0] + '"') || !tl.includes('"' + x[1] + '"')) bad.push(x[1]); });
@@ -2015,6 +2015,63 @@ check("v512 shell: the crisis button uses one red in every theme; the bar floats
       /background: labelOnDark\(\) \? NAV_BG_DARK : NAV_BG,/.test(R), M.background_color === bg && M.theme_color === bg && H.includes('content="' + bg + '"'),
       crypto.createHash("sha256").update(P.slice(a, b)).digest("hex").slice(0, 16)].join(",");
   })(), "true,true,true,true,d9e1f7c11d34a7f1");
+// --- v513: audit v512 (Morfeas_elegxos_v512_MerosA_kai_B, 15/11/2026) ---
+check("v513 V12b-1 (a) an age of 0 is an age: ageGiven and doseCtx treat it as a child, an empty field as no age",
+  run(`[ageGiven("0"), ageGiven(0), ageGiven(""), ageGiven("  "), ageGiven(null), doseCtx("3.5", "", "", "0").child, doseCtx("3.5", "", "", "").child, doseCtx("3.5", "", "", "0").hasAge].join()`),
+  "true,true,false,false,false,true,false,true");
+check("v513 V12b-1 (b) 3.5 kg, age 0: the first row of adrenaline, amiodarone and paracetamol is for children; no adult row is calculated",
+  run(`(() => { const c = doseCtx("3.5", "", "", "0"); const bad = [];
+    ["adrenaline", "amiodarone", "paracetamol", "atropine", "calcium", "succinylcholine"].forEach((id) => { const d = DRUGS.find((x) => x.id === id), rows = rowsFor(d, c);
+      if (doseAgeGroup(rows[0]) !== "peds") bad.push(id + " first");
+      rows.filter((r) => doseAgeGroup(r) === "adult").forEach((r) => { if (c.wFor(r) !== 0) bad.push(id + " adult calc"); });
+      const pk = primaryPick(d, c); if (pk.index >= 0 && doseAgeGroup(rows[pk.index]) === "adult") bad.push(id + " main"); });
+    return bad.join("; ") || "ok"; })()`), "ok");
+check("v513 V12b-1 (c) no tool reads an age of 0 as no age: local anaesthetics, growth, paediatrics, fluids, gases, MAC, renal, TCI",
+  (function () {
+    const fs = require("fs"), p = require("path"), rd = (f) => fs.readFileSync(p.join(__dirname, "..", "src", f), "utf8");
+    const T = rd("tabs.js"), P = rd("primitives.js"), F = rd("formulas.js"), bad = [];
+    if (!T.includes("if (ageGiven(age) && ageN < 12) return")) bad.push("LA");
+    [/ageN > 0/, /aNum > 0/, /a0 \? String/, /if \(!a && !wIn\)/, /autoCat = !a \?/, /factor = a > 0/, /if \(!a\) missing/, /kidNote = a &&/, /!c\.a \|\|/].forEach((re) => { if (re.test(T + P + F)) bad.push(String(re)); });
+    if (!P.includes('r === "a" ? !c.hasA')) bad.push("TCI requires");
+    const remi = run(`TCI_MODELS.filter((m) => /!c\\.hasA/.test(String(m.valid))).map((m) => m.valid({ a: 0, hasA: true, w: 3.5, h: 50, s: "M" }) + "/" + m.valid({ a: 0, hasA: false, w: 70, h: 175, s: "M" })).join()`);
+    if (remi !== "false/true") bad.push("TCI age 0 " + remi);
+    return bad.join("; ") || "ok";
+  })(), "ok");
+check("v513 V12b-3 weight under 40 kg and no age: the card asks for the age; an age entered or 40 kg and over: no notice",
+  (function () {
+    const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
+    return [run("AGE_PROMPT_KG"), P.includes('w > 0 && w < AGE_PROMPT_KG && !ctx.hasAge && React.createElement("div", { "data-age-prompt": "1"'),
+      P.includes('"\\u03A3\\u03C5\\u03BC\\u03C0\\u03BB\\u03B7\\u03C1\\u03CE\\u03C3\\u03C4\\u03B5 \\u03B7\\u03BB\\u03B9\\u03BA\\u03AF\\u03B1') && P.includes('"Enter the age \\u2014 rows for children and adults are not told apart"')].join();
+  })(), "40,true,true");
+check("v513 V12b-6 amiodarone, child in arrest: two rows (after the 3rd shock max 300 mg, after the 5th max 150 mg); 40 kg -> 200 mg and 150 mg, in the card and the paediatric tab",
+  (function () {
+    const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8");
+    const r = run(`(() => { const c = doseCtx("40", "", "", "10"); const rows = DRUGS.find((d) => d.id === "amiodarone").doses.filter((x) => /^Children/.test(x.en));
+      return rows.length + "|" + rows.map((x) => x.max + ":" + doseSummary(x, c, "en").main).join("|") + "|" + rows.every((x) => /3\\u03B7|5\\u03B7/.test(x.el) && /3rd|5th/.test(x.en)); })()`);
+    return r + "|" + (T.includes("fmt(Math.min(5 * w, 300))} mg \\u00B7 5th: ${fmt(Math.min(5 * w, 150))} mg`") && T.includes("${fmt(Math.min(5 * w, 150))} mg` : `3rd:"));
+  })(), "2|300:200 mg|150:150 mg|true|true");
+check("v513 V12b-5 every fixed-text dose row has its English text (nalbuphine pruritus row included)",
+  run(`DRUGS.reduce((n, d) => n + (d.doses || []).filter((x) => x.fixed && !x.fixedEn).length, 0) + "|" + DRUGS.find((d) => d.id === "nalbuphine").doses.find((x) => /pruritus/.test(x.en)).fixedEn`), "0|2.5–5 mg IV");
+check("v513 V12b-2/V12b-7 obesity notice: BMI >= 40 (rocuronium also >= 1.3 x ideal weight); none for suxamethonium; no dose changes",
+  run(`(() => { const big = doseCtx("150", "170", "M", "45"), mid = doseCtx("90", "170", "M", "45"), small = doseCtx("70", "170", "M", "45"), D = (id) => DRUGS.find((d) => d.id === id);
+    const on = (id, c) => !!obesityNotice(D(id), c, "M");
+    const prop = doseSummary(drugRows(D("propofol"))[0], big, "en").main, roc = doseSummary(drugRows(D("rocuronium")).find((x) => /RSI/.test(x.en)), big, "en").main;
+    return [Object.keys(OBESITY_DOSING).every((id) => on(id, big)), on("succinylcholine", big), on("ketamine", big), on("rocuronium", mid), on("propofol", mid), on("rocuronium", small),
+      on("propofol", doseCtx("150", "", "M", "45")), prop, roc, Object.keys(OBESITY_DOSING).every((id) => { const n = obesityNotice(D(id), big, "M"); return n.el && n.en && n.el !== n.en; })].join(); })()`),
+  "true,false,false,true,false,false,false,225–375 mg,150 mg,true");
+check("v513 V12b-2 the obesity map follows the groups of the Bariatric tool (AAGBI/SOBA 2015, Table 3), and both use one BMI limit",
+  (function () {
+    const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8");
+    const grp = (g) => (T.match(new RegExp('grp: "' + g + '",[\\s\\S]*?drugsEn: "([^"]*)"')) || [])[1] || "";
+    const bad = [];
+    run("JSON.stringify(OBESITY_DOSING)") && Object.entries(JSON.parse(run("JSON.stringify(OBESITY_DOSING)"))).forEach(([id, o]) => {
+      if (o.grp === "NOTE_IBW") { if (!/ideal body weight/.test(run(`DRUGS.find((d) => d.id === "${id}").notesEn`))) bad.push(id + " note"); return; }
+      o.grp.split("+").forEach((g) => { if (!new RegExp("\\b" + id + "\\b", "i").test(grp(g))) bad.push(id + " " + g); });
+    });
+    if (!/succinylcholine|suxamethonium/i.test(grp("TBW"))) bad.push("TBW");
+    if (!T.includes("warn: bmi && bmi >= OBESITY_WARN_BMI })")) bad.push("bariatric limit");
+    return (bad.join("; ") || "ok") + "|" + run("OBESITY_WARN_BMI");
+  })(), "ok|40");
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
 (function () {
