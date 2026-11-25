@@ -16,8 +16,21 @@ const LOGO_DATA = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAw
 // Release notes shown once after an update. APP_VERSION must equal the number
 // in sw.js (CACHE = "anesthesia-v<N>"); a test enforces it. Add a new entry on
 // top for every release that changes content.
-const APP_VERSION = 513;
+// Hellenic Society of Anaesthesiology: approval to carry its logo (author, 25/11/2026). The wording is the author's
+// choice. Shown at the top of "Sources" only; the author took it off the first-open notice (EaeBadge, primitives.js).
+const EAE_AUSPICES = { el: "\u03A5\u03C0\u03CC \u03C4\u03B7\u03BD \u03B1\u03B9\u03B3\u03AF\u03B4\u03B1 \u03C4\u03B7\u03C2 \u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AE\u03C2 \u0391\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03B9\u03BF\u03BB\u03BF\u03B3\u03B9\u03BA\u03AE\u03C2 \u0395\u03C4\u03B1\u03B9\u03C1\u03B5\u03AF\u03B1\u03C2", en: "Under the auspices of the Hellenic Society of Anaesthesiology" };
+const EAE_LOGO = { light: "icons/eae-logo-black.png", dark: "icons/eae-logo-white.png" };
+const APP_VERSION = 514;
 const CHANGELOG = [
+  {
+    v: 514,
+    el: [
+      "\u03A3\u03AE\u03BC\u03B1 \u03C4\u03B7\u03C2 \u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AE\u03C2 \u0391\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03B9\u03BF\u03BB\u03BF\u03B3\u03B9\u03BA\u03AE\u03C2 \u0395\u03C4\u03B1\u03B9\u03C1\u03B5\u03AF\u03B1\u03C2 \u03BC\u03B5 \u03C4\u03B7 \u03C6\u03C1\u03AC\u03C3\u03B7 \u00AB\u03A5\u03C0\u03CC \u03C4\u03B7\u03BD \u03B1\u03B9\u03B3\u03AF\u03B4\u03B1 \u03C4\u03B7\u03C2 \u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AE\u03C2 \u0391\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03B9\u03BF\u03BB\u03BF\u03B3\u03B9\u03BA\u03AE\u03C2 \u0395\u03C4\u03B1\u03B9\u03C1\u03B5\u03AF\u03B1\u03C2\u00BB, \u03C3\u03C4\u03B7\u03BD \u03B1\u03C1\u03C7\u03AE \u03C4\u03C9\u03BD \u00AB\u03A0\u03B7\u03B3\u03CE\u03BD\u00BB \u2014 \u03BA\u03B1\u03BD\u03AD\u03BD\u03B1 \u03BA\u03BB\u03B9\u03BD\u03B9\u03BA\u03CC \u03C0\u03B5\u03C1\u03B9\u03B5\u03C7\u03CC\u03BC\u03B5\u03BD\u03BF \u03B4\u03B5\u03BD \u03AC\u03BB\u03BB\u03B1\u03BE\u03B5"
+    ],
+    en: [
+      "Logo of the Hellenic Society of Anaesthesiology with the words \u201CUnder the auspices of the Hellenic Society of Anaesthesiology\u201D, at the top of \u201CSources\u201D \u2014 no clinical content has changed"
+    ]
+  },
   {
     v: 513,
     el: [

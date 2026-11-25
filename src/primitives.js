@@ -203,6 +203,13 @@ function FavChips({ k, lang, fav, onPick }) {
     React.createElement("div", { style: { fontWeight: 800, fontSize: 12, color: S.muted, letterSpacing: 0.6, padding: "2px 4px 0" } }, upGr("\u2605 " + (lang === "el" ? "\u0391\u03B3\u03B1\u03C0\u03B7\u03BC\u03AD\u03BD\u03B1" : "Favourites"))),
     React.createElement("div", { style: { display: "flex", gap: 6, flexWrap: "wrap" } }, items.map((x) => React.createElement("button", { key: x.id, onClick: () => onPick(x.id), style: { padding: "9px 12px", borderRadius: 10, border: `1.5px solid ${S.line}`, background: S.card, fontSize: 14, fontWeight: 700, color: S.ink, cursor: "pointer", fontFamily: "inherit", minHeight: 44 } }, x.info.title))));
 }
+// Logo of the Hellenic Society of Anaesthesiology with its wording: black on the light theme, white on the dark ones.
+function EaeBadge({ lang, size }) {
+  const dark = S.bg !== LIGHT.bg, sz = size || 52;
+  return React.createElement("div", { "data-eae": "1", style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 10, maxWidth: "100%" } },
+    React.createElement("img", { src: dark ? EAE_LOGO.dark : EAE_LOGO.light, alt: lang === "el" ? "\u0395\u0391\u0395" : "HSA", width: sz, height: sz, style: { width: sz, height: sz, flex: "none" } }),
+    React.createElement("div", { style: { fontSize: 13, lineHeight: 1.35, fontWeight: 600, color: S.ink, minWidth: 0, overflowWrap: "break-word" } }, EAE_AUSPICES[lang] || EAE_AUSPICES.en));
+}
 // --- Notices on the drug card (audit v512, V12b-3 and V12b-2/V12b-7). They change no number. ---
 // V12b-3: a weight under this and no age: the card cannot tell rows for children from rows for adults.
 const AGE_PROMPT_KG = 40;

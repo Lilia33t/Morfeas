@@ -2072,6 +2072,34 @@ check("v513 V12b-2 the obesity map follows the groups of the Bariatric tool (AAG
     if (!T.includes("warn: bmi && bmi >= OBESITY_WARN_BMI })")) bad.push("bariatric limit");
     return (bad.join("; ") || "ok") + "|" + run("OBESITY_WARN_BMI");
   })(), "ok|40");
+// --- v514: logo of the Hellenic Society of Anaesthesiology (author's approval, 25/11/2026) ---
+check("v514 EAE logo: the wording in one place, el and en, as the author chose; black and white files exist, are PNG and are cached offline",
+  (function () {
+    const fs = require("fs"), p = require("path"), R = p.join(__dirname, "..");
+    const sw = fs.readFileSync(p.join(R, "sw.js"), "utf8"), bad = [];
+    const w = run("EAE_AUSPICES.el + '|' + EAE_AUSPICES.en");
+    if (w !== "Υπό την αιγίδα της Ελληνικής Αναισθησιολογικής Εταιρείας|Under the auspices of the Hellenic Society of Anaesthesiology") bad.push("wording " + w);
+    ["light", "dark"].forEach((k) => {
+      const f = run("EAE_LOGO." + k), b = fs.existsSync(p.join(R, f)) ? fs.readFileSync(p.join(R, f)) : null;
+      if (!b || b.slice(1, 4).toString() !== "PNG") bad.push(k + " file");
+      if (!sw.includes('"./' + f + '"')) bad.push(k + " not in sw.js");
+    });
+    const src = ["data.js", "formulas.js", "primitives.js", "tabs.js", "root.js"].map((f) => fs.readFileSync(p.join(R, "src", f), "utf8")).join("\n");
+    const cnt = (t) => src.split(t).length - 1;
+    if (cnt("Under the auspices of the Hellenic Society of Anaesthesiology") !== 2 || cnt("\\u03A5\\u03C0\\u03CC \\u03C4\\u03B7\\u03BD \\u03B1\\u03B9\\u03B3\\u03AF\\u03B4\\u03B1") !== 2) bad.push("wording outside one place (definition + CHANGELOG 514)");
+    return bad.join("; ") || "ok";
+  })(), "ok");
+check("v514 EAE logo: shown at the top of Sources and not on the first-open notice (author, 25/11); black on the light theme, white on dark and theatre",
+  (function () {
+    const fs = require("fs"), p = require("path"), R = p.join(__dirname, "..", "src");
+    const root = fs.readFileSync(p.join(R, "root.js"), "utf8"), tabs = fs.readFileSync(p.join(R, "tabs.js"), "utf8"), bad = [];
+    if (/EaeBadge/.test(root) || !root.includes('React.createElement("img", { src: LOGO_DATA, alt: "", style: { width: 52, height: 52, borderRadius: 13, marginBottom: 8 } })')) bad.push("notice");
+    if (!/function ReferencesCard[\s\S]{0,2500}React\.createElement\(EaeBadge, \{ lang, size: 64 \}\)/.test(tabs)) bad.push("sources");
+    const pick = run(`["light", "dark", "theatre"].map((m) => { applyTheme(m); return S.bg !== LIGHT.bg ? EAE_LOGO.dark : EAE_LOGO.light; }).join()`);
+    run(`applyTheme("light")`);
+    if (pick !== "icons/eae-logo-black.png,icons/eae-logo-white.png,icons/eae-logo-white.png") bad.push("theme " + pick);
+    return bad.join("; ") || "ok";
+  })(), "ok");
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
 (function () {
