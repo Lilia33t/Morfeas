@@ -17,11 +17,32 @@ const LOGO_DATA = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAw
 // in sw.js (CACHE = "anesthesia-v<N>"); a test enforces it. Add a new entry on
 // top for every release that changes content.
 // Hellenic Society of Anaesthesiology: approval to carry its logo (author, 25/11/2026). The wording is the author's
-// choice. Shown at the top of "Sources" only; the author took it off the first-open notice (EaeBadge, primitives.js).
+// choice. Shown at the top of "Sources" (EaeBadge, primitives.js); the logo alone sits on the "About" tile of the
+// home screen (root.js). The author took it off the first-open notice.
 const EAE_AUSPICES = { el: "\u03A5\u03C0\u03CC \u03C4\u03B7\u03BD \u03B1\u03B9\u03B3\u03AF\u03B4\u03B1 \u03C4\u03B7\u03C2 \u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AE\u03C2 \u0391\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03B9\u03BF\u03BB\u03BF\u03B3\u03B9\u03BA\u03AE\u03C2 \u0395\u03C4\u03B1\u03B9\u03C1\u03B5\u03AF\u03B1\u03C2", en: "Under the auspices of the Hellenic Society of Anaesthesiology" };
 const EAE_LOGO = { light: "icons/eae-logo-black.png", dark: "icons/eae-logo-white.png" };
-const APP_VERSION = 514;
+const APP_VERSION = 516;
 const CHANGELOG = [
+  {
+    v: 516,
+    el: [
+      "\u03A0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA\u03AF\u03B1: \u03BC\u03BF\u03C1\u03C6\u03AF\u03BD\u03B7, \u03C0\u03B1\u03C1\u03B1\u03BA\u03B5\u03C4\u03B1\u03BC\u03CC\u03BB\u03B7, \u03B2\u03BF\u03C5\u03C0\u03B9\u03B2\u03B1\u03BA\u03B1\u0390\u03BD\u03B7 \u03BA\u03B1\u03B9 \u03BB\u03B9\u03B4\u03BF\u03BA\u03B1\u0390\u03BD\u03B7 \u03C3\u03C4\u03BF \u03AC\u03BB\u03B9\u03C0\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2 (LBW), \u03CC\u03C0\u03C9\u03C2 \u03BF \u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 3 \u03C4\u03B7\u03C2 AAGBI/SOBA 2015, \u03C3\u03C4\u03BF \u03B5\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03BF \u00AB\u0392\u03B1\u03C1\u03B9\u03B1\u03C4\u03C1\u03B9\u03BA\u03CC\u03C2\u00BB \u03BA\u03B1\u03B9 \u03C3\u03C4\u03B9\u03C2 \u03BA\u03AC\u03C1\u03C4\u03B5\u03C2",
+      "\u039A\u03AC\u03C1\u03C4\u03B1 \u03C6\u03B1\u03C1\u03BC\u03AC\u03BA\u03BF\u03C5: \u03BC\u03B5 \u03B2\u03AC\u03C1\u03BF\u03C2 \u2265 120 kg \u03C7\u03C9\u03C1\u03AF\u03C2 \u03CD\u03C8\u03BF\u03C2, \u00AB\u03A3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03CD\u03C8\u03BF\u03C2\u00BB \u00B7 \u03BC\u03B5 BMI \u2265 40, \u03B3\u03BA\u03C1\u03B9 \u03C3\u03B7\u03BC\u03B5\u03AF\u03C9\u03C3\u03B7 \u03C3\u03C4\u03B1 \u03C6\u03AC\u03C1\u03BC\u03B1\u03BA\u03B1 \u03BC\u03B5 \u03B4\u03CC\u03C3\u03B7 \u03B1\u03BD\u03AC kg \u03C0\u03BF\u03C5 \u03B4\u03B5\u03BD \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C3\u03C4\u03BF\u03BD \u03A0\u03AF\u03BD\u03B1\u03BA\u03B1 3 \u2014 \u03BA\u03B1\u03BC\u03AF\u03B1 \u03B4\u03CC\u03C3\u03B7 \u03B4\u03B5\u03BD \u03AC\u03BB\u03BB\u03B1\u03BE\u03B5"
+    ],
+    en: [
+      "Obesity: morphine, paracetamol, bupivacaine and lidocaine on lean body weight (LBW), as in Table 3 of AAGBI/SOBA 2015, in the \u201CBariatric\u201D tool and on the cards",
+      "Drug card: with a weight \u2265 120 kg and no height, \u201CEnter the height\u201D \u00B7 with BMI \u2265 40, a grey note on drugs with a dose per kg that Table 3 does not name \u2014 no dose has changed"
+    ]
+  },
+  {
+    v: 515,
+    el: [
+      "\u039C\u03B9\u03BA\u03C1\u03CC \u03C3\u03AE\u03BC\u03B1 \u03C4\u03B7\u03C2 \u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AE\u03C2 \u0391\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03B9\u03BF\u03BB\u03BF\u03B3\u03B9\u03BA\u03AE\u03C2 \u0395\u03C4\u03B1\u03B9\u03C1\u03B5\u03AF\u03B1\u03C2 \u03C3\u03C4\u03BF \u03C0\u03BB\u03B1\u03BA\u03AF\u03B4\u03B9\u03BF \u00AB\u03A3\u03C7\u03B5\u03C4\u03B9\u03BA\u03AC\u00BB \u03C4\u03B7\u03C2 \u03B1\u03C1\u03C7\u03B9\u03BA\u03AE\u03C2 \u2014 \u03B7 \u03B1\u03C1\u03C7\u03B9\u03BA\u03AE \u03B4\u03B5\u03BD \u03BC\u03B5\u03B3\u03B1\u03BB\u03CE\u03BD\u03B5\u03B9"
+    ],
+    en: [
+      "Small logo of the Hellenic Society of Anaesthesiology on the \u201CAbout\u201D tile of the home screen \u2014 the home screen is no taller"
+    ]
+  },
   {
     v: 514,
     el: [

@@ -2054,7 +2054,7 @@ check("v513 V12b-5 every fixed-text dose row has its English text (nalbuphine pr
   run(`DRUGS.reduce((n, d) => n + (d.doses || []).filter((x) => x.fixed && !x.fixedEn).length, 0) + "|" + DRUGS.find((d) => d.id === "nalbuphine").doses.find((x) => /pruritus/.test(x.en)).fixedEn`), "0|2.5–5 mg IV");
 check("v513 V12b-2/V12b-7 obesity notice: BMI >= 40 (rocuronium also >= 1.3 x ideal weight); none for suxamethonium; no dose changes",
   run(`(() => { const big = doseCtx("150", "170", "M", "45"), mid = doseCtx("90", "170", "M", "45"), small = doseCtx("70", "170", "M", "45"), D = (id) => DRUGS.find((d) => d.id === id);
-    const on = (id, c) => !!obesityNotice(D(id), c, "M");
+    const on = (id, c) => { const n = obesityNotice(D(id), c, "M"); return !!n && !n.grey; };
     const prop = doseSummary(drugRows(D("propofol"))[0], big, "en").main, roc = doseSummary(drugRows(D("rocuronium")).find((x) => /RSI/.test(x.en)), big, "en").main;
     return [Object.keys(OBESITY_DOSING).every((id) => on(id, big)), on("succinylcholine", big), on("ketamine", big), on("rocuronium", mid), on("propofol", mid), on("rocuronium", small),
       on("propofol", doseCtx("150", "", "M", "45")), prop, roc, Object.keys(OBESITY_DOSING).every((id) => { const n = obesityNotice(D(id), big, "M"); return n.el && n.en && n.el !== n.en; })].join(); })()`),
@@ -2100,6 +2100,39 @@ check("v514 EAE logo: shown at the top of Sources and not on the first-open noti
     if (pick !== "icons/eae-logo-black.png,icons/eae-logo-white.png,icons/eae-logo-white.png") bad.push("theme " + pick);
     return bad.join("; ") || "ok";
   })(), "ok");
+// --- v515: EAE logo on the "About" tile (author, 25/11/2026); audit v514 V14-4 ---
+check("v515 EAE logo on the About tile only: decorative (alt empty), black/white by theme, does not take taps; badge alt empty (V14-4)",
+  (function () {
+    const fs = require("fs"), p = require("path"), R = p.join(__dirname, "..", "src");
+    const root = fs.readFileSync(p.join(R, "root.js"), "utf8"), prim = fs.readFileSync(p.join(R, "primitives.js"), "utf8"), bad = [];
+    if (!root.includes('x.id === "about" && h("img", { "data-eae-tile": "1", src: S.bg !== LIGHT.bg ? EAE_LOGO.dark : EAE_LOGO.light, alt: "", "aria-hidden": "true"')) bad.push("tile");
+    if ((root.match(/EAE_LOGO/g) || []).length !== 2 || /EaeBadge/.test(root)) bad.push("elsewhere in root.js");
+    if (!/pointerEvents: "none"/.test(root.slice(root.indexOf('data-eae-tile'), root.indexOf('data-eae-tile') + 400))) bad.push("taps");
+    if (!prim.includes('alt: "", width: sz')) bad.push("badge alt");
+    return bad.join("; ") || "ok";
+  })(), "ok");
+// --- v516: audit v514 V14-1, V14-2, V14-3 ---
+check("v516 V14-1 morphine, paracetamol, bupivacaine, lidocaine on lean body weight (AAGBI/SOBA 2015 Table 3): card note and Bariatric tool agree",
+  (function () {
+    const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8");
+    const grp = (g) => (T.match(new RegExp('grp: "' + g + '",[\\s\\S]*?drugsEn: "([^"]*)"')) || [])[1] || "";
+    const lbw = grp("LBW"), abw = grp("ABW"), bad = [];
+    ["morphine", "paracetamol", "bupivacaine", "lidocaine"].forEach((x) => { if (!new RegExp("\\b" + x + "\\b").test(lbw) || new RegExp("\\b" + x + "\\b").test(abw)) bad.push(x + " tool"); });
+    const n = run(`["morphine", "paracetamol", "bupivacaine", "lidocaine"].map((id) => OBESITY_DOSING[id].grp + ":" + obesityNotice(DRUGS.find((d) => d.id === id), doseCtx("150", "170", "M", "45"), "M").en.includes("lean body weight (LBW)")).join()`);
+    if (n !== "LBW:true,LBW:true,LBW:true,LBW:true") bad.push("card " + n);
+    return bad.join("; ") || "ok";
+  })(), "ok");
+check("v516 V14-2 weight >= 120 kg and no height: 'Enter the height' on drugs dosed per kg; not with a height, not under 120 kg, not for suxamethonium",
+  run(`(() => { const D = (id) => DRUGS.find((d) => d.id === id);
+    return [OBESITY_HEIGHT_PROMPT_KG, obesityHeightPrompt(D("propofol"), doseCtx("130", "", "M", "45")), obesityHeightPrompt(D("ketamine"), doseCtx("120", "", "M", "45")),
+      obesityHeightPrompt(D("propofol"), doseCtx("130", "170", "M", "45")), obesityHeightPrompt(D("propofol"), doseCtx("119", "", "M", "45")),
+      obesityHeightPrompt(D("succinylcholine"), doseCtx("130", "", "M", "45"))].join(); })()`), "120,true,true,false,false,false");
+check("v516 V14-3 BMI >= 40: grey note on per-kg drugs that Table 3 does not name (ketamine, midazolam, dexmedetomidine); none for suxamethonium or IV lidocaine; red note unchanged for Table 3 drugs; el/en present",
+  run(`(() => { const D = (id) => DRUGS.find((d) => d.id === id), big = doseCtx("150", "170", "M", "45"), small = doseCtx("90", "170", "M", "45");
+    const g = (id, c) => { const n = obesityNotice(D(id), c, "M"); return n ? (n.grey ? "grey" : "red") : "none"; };
+    const k = obesityNotice(D("ketamine"), big, "M");
+    return [g("ketamine", big), g("midazolam", big), g("dexmedetomidine", big), g("succinylcholine", big), g("lidocaine_iv", big), g("propofol", big), g("ketamine", small), !!(k.el && k.en && /AAGBI\\/SOBA 2015/.test(k.el + k.en))].join(); })()`),
+  "grey,grey,grey,none,none,red,none,true");
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
 (function () {

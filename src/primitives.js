@@ -207,7 +207,7 @@ function FavChips({ k, lang, fav, onPick }) {
 function EaeBadge({ lang, size }) {
   const dark = S.bg !== LIGHT.bg, sz = size || 52;
   return React.createElement("div", { "data-eae": "1", style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 10, maxWidth: "100%" } },
-    React.createElement("img", { src: dark ? EAE_LOGO.dark : EAE_LOGO.light, alt: lang === "el" ? "\u0395\u0391\u0395" : "HSA", width: sz, height: sz, style: { width: sz, height: sz, flex: "none" } }),
+    React.createElement("img", { src: dark ? EAE_LOGO.dark : EAE_LOGO.light, alt: "", width: sz, height: sz, style: { width: sz, height: sz, flex: "none" } }),
     React.createElement("div", { style: { fontSize: 13, lineHeight: 1.35, fontWeight: 600, color: S.ink, minWidth: 0, overflowWrap: "break-word" } }, EAE_AUSPICES[lang] || EAE_AUSPICES.en));
 }
 // --- Notices on the drug card (audit v512, V12b-3 and V12b-2/V12b-7). They change no number. ---
@@ -220,6 +220,8 @@ const OBESITY_WARN_BMI = 40;
 // of the Bariatric tool (AAGBI/SOBA 2015, Table 3); a test keeps the two lists in step. Suxamethonium is dosed
 // on total body weight, so it has no notice. Lidocaine IV is not here: it is already calculated on ideal weight.
 // ibw130: the card's own source (rocuronium SmPC) starts at 30% above ideal weight, so the notice starts there too.
+// Audit v514 V14-1: morphine, paracetamol, bupivacaine and lidocaine are in the lean body weight column of Table 3
+// (checked by the author on the printed table, 25/11/2026); they used to be under adjusted body weight.
 const OBESITY_DOSING = {
   propofol: { grp: "LBW+ABW" },
   thiopental: { grp: "LBW" },
@@ -228,15 +230,33 @@ const OBESITY_DOSING = {
   alfentanil: { grp: "ABW" },
   neostigmine: { grp: "ABW" },
   sugammadex: { grp: "ABW", el: "SmPC: \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 \u2014 \u03BF\u03B9 \u03C0\u03B7\u03B3\u03AD\u03C2 \u03B4\u03B9\u03B1\u03C6\u03AD\u03C1\u03BF\u03C5\u03BD", en: "SmPC: actual body weight \u2014 the sources differ" },
-  morphine: { grp: "ABW" },
-  paracetamol: { grp: "ABW" },
-  bupivacaine: { grp: "ABW" },
-  lidocaine: { grp: "ABW" },
+  morphine: { grp: "LBW" },
+  paracetamol: { grp: "LBW" },
+  bupivacaine: { grp: "LBW" },
+  lidocaine: { grp: "LBW" },
   // Not in Table 3: the card's own note (V12b-7).
   remifentanil: { grp: "NOTE_IBW" }
 };
+// V14-2: from this weight, with no height, the card asks for the height (no BMI without it).
+const OBESITY_HEIGHT_PROMPT_KG = 120;
+// V14-3: drugs with a dose per kg that Table 3 does not name get a grey note at the same BMI. Suxamethonium is dosed on
+// total body weight; IV lidocaine is already calculated on ideal weight. Only rows that are not for children count.
+const OBESITY_NO_SCALAR_SKIP = ["succinylcholine", "lidocaine_iv"];
+function obesityPerKg(d) {
+  return !OBESITY_DOSING[d.id] && OBESITY_NO_SCALAR_SKIP.indexOf(d.id) < 0 && (d.doses || []).some((r) => /\/kg/.test(r.unit || "") && doseAgeGroup(r) !== "peds");
+}
+function obesityHeightPrompt(d, ctx) {
+  return !!ctx && ctx.w >= OBESITY_HEIGHT_PROMPT_KG && !(ctx.hNum > 0) && (!!OBESITY_DOSING[d.id] || obesityPerKg(d));
+}
 function obesityNotice(d, ctx, sex) {
   const o = OBESITY_DOSING[d.id];
+  if (!o && obesityPerKg(d) && ctx && ctx.w > 0 && ctx.hNum > 0) {
+    const b = bmiCalc(ctx.w, ctx.hNum);
+    if (b != null && b >= OBESITY_WARN_BMI) return { grey: true,
+      el: "\u03A0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA\u03AF\u03B1: \u03BF \u03B1\u03C1\u03B9\u03B8\u03BC\u03CC\u03C2 \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C3\u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2\u00B7 \u03B7 AAGBI/SOBA 2015 \u03B4\u03B5\u03BD \u03B4\u03AF\u03BD\u03B5\u03B9 \u03B2\u03AC\u03C1\u03BF\u03C2 \u03B3\u03B9\u03B1 \u03B1\u03C5\u03C4\u03CC \u03C4\u03BF \u03C6\u03AC\u03C1\u03BC\u03B1\u03BA\u03BF.",
+      en: "Obesity: the number is on actual body weight; AAGBI/SOBA 2015 gives no weight for this drug." };
+    return null;
+  }
   if (!o || !ctx || !(ctx.w > 0) || !(ctx.hNum > 0)) return null;
   const bmi = bmiCalc(ctx.w, ctx.hNum), ibw = ibwDevine(ctx.hNum, sex);
   const on = (bmi != null && bmi >= OBESITY_WARN_BMI) || (o.ibw130 && ibw > 0 && ctx.w >= 1.3 * ibw);
@@ -428,7 +448,9 @@ function DrugCard({ d, lang, ctx, sex, t, labOn }) {
       rows.slice(0, 4).map((ds, i) => React.createElement("button", { key: i, onClick: () => pick(i), "aria-pressed": sel === i ? "true" : "false", title: ds[lang], style: { flexShrink: 0, maxWidth: 210, minHeight: 44, padding: "0 13px", borderRadius: 99, border: sel === i ? "none" : `1px solid ${S.line}`, background: sel === i ? S.ink : S.card, color: sel === i ? S.card : S.ink, fontFamily: "inherit", fontSize: 13.5, fontWeight: sel === i ? 600 : 400, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", cursor: "pointer" } }, ds[lang]))),
     // 2b. notices about the patient (audit V12b-3, V12b-2/V12b-7); no number changes
     w > 0 && w < AGE_PROMPT_KG && !ctx.hasAge && React.createElement("div", { "data-age-prompt": "1", role: "note", style: { background: S.tintWarn, color: S.tintWarnFg, borderRadius: 14, padding: "10px 14px", fontSize: 14, fontWeight: 600, lineHeight: 1.4 } }, "\u26A0 ", el ? "\u03A3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 \u2014 \u03BF\u03B9 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AD\u03C2 \u03C0\u03B1\u03B9\u03B4\u03B9\u03CE\u03BD \u03BA\u03B1\u03B9 \u03B5\u03BD\u03B7\u03BB\u03AF\u03BA\u03C9\u03BD \u03B4\u03B5\u03BD \u03BE\u03B5\u03C7\u03C9\u03C1\u03AF\u03B6\u03BF\u03C5\u03BD" : "Enter the age \u2014 rows for children and adults are not told apart"),
-    obNote && React.createElement("div", { "data-obesity-note": "1", role: "note", style: { background: S.tintDanger, color: S.ink, boxShadow: `inset 0 0 0 1.5px ${S.red}`, borderRadius: 14, padding: "10px 14px", fontSize: 13.5, fontWeight: 600, lineHeight: 1.45, overflowWrap: "break-word" } }, "\u26A0 ", obNote[lang]),
+    obesityHeightPrompt(d, ctx) && React.createElement("div", { "data-height-prompt": "1", role: "note", style: { background: S.tintWarn, color: S.tintWarnFg, borderRadius: 14, padding: "10px 14px", fontSize: 14, fontWeight: 600, lineHeight: 1.4 } }, "\u26A0 ", el ? "\u03A3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03CD\u03C8\u03BF\u03C2 \u2014 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA\u03AF\u03B1 \u03B7 \u03B4\u03CC\u03C3\u03B7 \u03BC\u03C0\u03BF\u03C1\u03B5\u03AF \u03BD\u03B1 \u03C7\u03C1\u03B5\u03B9\u03AC\u03B6\u03B5\u03C4\u03B1\u03B9 \u03AC\u03BB\u03BB\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2" : "Enter the height \u2014 in obesity the dose may need another weight"),
+    obNote && obNote.grey && React.createElement("div", { "data-obesity-note": "grey", role: "note", style: { background: S.tintNeutral, color: S.ink, borderRadius: 14, padding: "10px 14px", fontSize: 13.5, fontWeight: 600, lineHeight: 1.45, overflowWrap: "break-word" } }, obNote[lang]),
+    obNote && !obNote.grey && React.createElement("div", { "data-obesity-note": "1", role: "note", style: { background: S.tintDanger, color: S.ink, boxShadow: `inset 0 0 0 1.5px ${S.red}`, borderRadius: 14, padding: "10px 14px", fontSize: 13.5, fontWeight: 600, lineHeight: 1.45, overflowWrap: "break-word" } }, "\u26A0 ", obNote[lang]),
     // 3. the dose for the patient
     !hero && pk.none && React.createElement("div", { "data-dose-hero": "1", role: "note", style: { background: S.tintWarn, color: S.tintWarnFg, borderRadius: 14, padding: "11px 14px", fontSize: 14, fontWeight: 600, lineHeight: 1.4 } },
       React.createElement("span", { "data-dose-none": "1" }, pk.none[lang]), el ? ". \u0394\u03B9\u03B1\u03BB\u03AD\u03BE\u03C4\u03B5 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B1\u03C0\u03CC \u03BA\u03AC\u03C4\u03C9." : ". Choose a row below.",

@@ -273,7 +273,10 @@ function HomeScreen({ lang, go, openFav, recents }) {
       h("span", { "aria-hidden": "true", style: { fontSize: 20, fontWeight: 400 } }, "\u203A")),
     h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 } },
       TILES.filter((x) => TAB_IDS.indexOf(x.id) >= 0).map((x) => h("button", { key: x.id, "data-home-tile": x.id, onClick: () => go(x.id),
-        style: { display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2, textAlign: "left", minWidth: 0, minHeight: 78, boxSizing: "border-box", background: S.card, color: S.ink, border: "1px solid " + S.line, borderRadius: 18, padding: "8px 13px 9px", cursor: "pointer", fontFamily: "inherit" } },
+        style: { position: "relative", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2, textAlign: "left", minWidth: 0, minHeight: 78, boxSizing: "border-box", background: S.card, color: S.ink, border: "1px solid " + S.line, borderRadius: 18, padding: "8px 13px 9px", cursor: "pointer", fontFamily: "inherit" } },
+        // Small mark of the Hellenic Society of Anaesthesiology on the "About" tile (author, 25/11/2026). It adds no height
+        // to the home screen; the wording is in full at the top of "Sources".
+        x.id === "about" && h("img", { "data-eae-tile": "1", src: S.bg !== LIGHT.bg ? EAE_LOGO.dark : EAE_LOGO.light, alt: "", "aria-hidden": "true", width: 34, height: 34, style: { position: "absolute", top: 9, right: 10, width: 34, height: 34, pointerEvents: "none" } }),
         h("span", { "data-tile-icon": "1", style: { color: (TILE_INK[x.id] || [S.teal, S.teal])[labelOnDark() ? 1 : 0], display: "flex", marginBottom: 2 } }, h(LineIcon, { name: x.icon, size: 25 })),
         h("span", { style: { fontWeight: 700, fontSize: 17, lineHeight: 1.2, letterSpacing: -0.2 } }, el ? x.el : x.en),
         // The number is read from the data, never typed in.
