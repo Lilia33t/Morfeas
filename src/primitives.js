@@ -242,13 +242,26 @@ const OBESITY_HEIGHT_PROMPT_KG = 120;
 // V14-3: drugs with a dose per kg that Table 3 does not name get a grey note at the same BMI. Suxamethonium is dosed on
 // total body weight; IV lidocaine is already calculated on ideal weight. Only rows that are not for children count.
 const OBESITY_NO_SCALAR_SKIP = ["succinylcholine", "lidocaine_iv"];
+// V16-2 (a), author 25/11/2026: the grey note only on hypnotics, opioids, relaxants, reversal, sedation and local
+// anaesthetics; not on crisis, vasoactive or haemostatic drugs.
+const OBESITY_NO_SCALAR_CATS = ["induction", "opioid", "nmb", "reversal", "sedation", "local"];
+// V16-2 (b): dantrolene has its own note: the malignant hyperthermia guidelines dose on actual body weight
+// (ANZCA PS55, after MHANZ and EMHG; MHAUS: "based upon the patient's true weight").
+const OBESITY_OWN_NOTE = {
+  dantrolene: { el: "\u03A0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA\u03AF\u03B1: \u03B4\u03CC\u03C3\u03B7 \u03C3\u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 (EMHG / ANZCA PS55, MHAUS).", en: "Obesity: dose on actual body weight (EMHG / ANZCA PS55, MHAUS)." }
+};
+// V16-1: the notes are for adults (Table 3: "healthy obese adults"); none for a child, as the child/adult limit of the app.
+function obesityAdult(ctx) { return !!ctx && !ctx.child; }
 function obesityPerKg(d) {
-  return !OBESITY_DOSING[d.id] && OBESITY_NO_SCALAR_SKIP.indexOf(d.id) < 0 && (d.doses || []).some((r) => /\/kg/.test(r.unit || "") && doseAgeGroup(r) !== "peds");
+  return !OBESITY_DOSING[d.id] && OBESITY_NO_SCALAR_SKIP.indexOf(d.id) < 0 && OBESITY_NO_SCALAR_CATS.indexOf(d.cat) >= 0 && (d.doses || []).some((r) => /\/kg/.test(r.unit || "") && doseAgeGroup(r) !== "peds");
 }
 function obesityHeightPrompt(d, ctx) {
-  return !!ctx && ctx.w >= OBESITY_HEIGHT_PROMPT_KG && !(ctx.hNum > 0) && (!!OBESITY_DOSING[d.id] || obesityPerKg(d));
+  return obesityAdult(ctx) && ctx.w >= OBESITY_HEIGHT_PROMPT_KG && !(ctx.hNum > 0) && (!!OBESITY_DOSING[d.id] || obesityPerKg(d));
 }
 function obesityNotice(d, ctx, sex) {
+  if (!obesityAdult(ctx)) return null;
+  const own = OBESITY_OWN_NOTE[d.id];
+  if (own) { const b = ctx.w > 0 && ctx.hNum > 0 ? bmiCalc(ctx.w, ctx.hNum) : null; return b != null && b >= OBESITY_WARN_BMI ? { own: true, el: own.el, en: own.en } : null; }
   const o = OBESITY_DOSING[d.id];
   if (!o && obesityPerKg(d) && ctx && ctx.w > 0 && ctx.hNum > 0) {
     const b = bmiCalc(ctx.w, ctx.hNum);
@@ -449,8 +462,9 @@ function DrugCard({ d, lang, ctx, sex, t, labOn }) {
     // 2b. notices about the patient (audit V12b-3, V12b-2/V12b-7); no number changes
     w > 0 && w < AGE_PROMPT_KG && !ctx.hasAge && React.createElement("div", { "data-age-prompt": "1", role: "note", style: { background: S.tintWarn, color: S.tintWarnFg, borderRadius: 14, padding: "10px 14px", fontSize: 14, fontWeight: 600, lineHeight: 1.4 } }, "\u26A0 ", el ? "\u03A3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 \u2014 \u03BF\u03B9 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AD\u03C2 \u03C0\u03B1\u03B9\u03B4\u03B9\u03CE\u03BD \u03BA\u03B1\u03B9 \u03B5\u03BD\u03B7\u03BB\u03AF\u03BA\u03C9\u03BD \u03B4\u03B5\u03BD \u03BE\u03B5\u03C7\u03C9\u03C1\u03AF\u03B6\u03BF\u03C5\u03BD" : "Enter the age \u2014 rows for children and adults are not told apart"),
     obesityHeightPrompt(d, ctx) && React.createElement("div", { "data-height-prompt": "1", role: "note", style: { background: S.tintWarn, color: S.tintWarnFg, borderRadius: 14, padding: "10px 14px", fontSize: 14, fontWeight: 600, lineHeight: 1.4 } }, "\u26A0 ", el ? "\u03A3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03CD\u03C8\u03BF\u03C2 \u2014 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA\u03AF\u03B1 \u03B7 \u03B4\u03CC\u03C3\u03B7 \u03BC\u03C0\u03BF\u03C1\u03B5\u03AF \u03BD\u03B1 \u03C7\u03C1\u03B5\u03B9\u03AC\u03B6\u03B5\u03C4\u03B1\u03B9 \u03AC\u03BB\u03BB\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2" : "Enter the height \u2014 in obesity the dose may need another weight"),
+    obNote && obNote.own && React.createElement("div", { "data-obesity-note": "own", role: "note", style: { background: S.tintInfo, color: S.tintInfoFg, borderRadius: 14, padding: "10px 14px", fontSize: 13.5, fontWeight: 600, lineHeight: 1.45, overflowWrap: "break-word" } }, obNote[lang]),
     obNote && obNote.grey && React.createElement("div", { "data-obesity-note": "grey", role: "note", style: { background: S.tintNeutral, color: S.ink, borderRadius: 14, padding: "10px 14px", fontSize: 13.5, fontWeight: 600, lineHeight: 1.45, overflowWrap: "break-word" } }, obNote[lang]),
-    obNote && !obNote.grey && React.createElement("div", { "data-obesity-note": "1", role: "note", style: { background: S.tintDanger, color: S.ink, boxShadow: `inset 0 0 0 1.5px ${S.red}`, borderRadius: 14, padding: "10px 14px", fontSize: 13.5, fontWeight: 600, lineHeight: 1.45, overflowWrap: "break-word" } }, "\u26A0 ", obNote[lang]),
+    obNote && !obNote.grey && !obNote.own && React.createElement("div", { "data-obesity-note": "1", role: "note", style: { background: S.tintDanger, color: S.ink, boxShadow: `inset 0 0 0 1.5px ${S.red}`, borderRadius: 14, padding: "10px 14px", fontSize: 13.5, fontWeight: 600, lineHeight: 1.45, overflowWrap: "break-word" } }, "\u26A0 ", obNote[lang]),
     // 3. the dose for the patient
     !hero && pk.none && React.createElement("div", { "data-dose-hero": "1", role: "note", style: { background: S.tintWarn, color: S.tintWarnFg, borderRadius: 14, padding: "11px 14px", fontSize: 14, fontWeight: 600, lineHeight: 1.4 } },
       React.createElement("span", { "data-dose-none": "1" }, pk.none[lang]), el ? ". \u0394\u03B9\u03B1\u03BB\u03AD\u03BE\u03C4\u03B5 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B1\u03C0\u03CC \u03BA\u03AC\u03C4\u03C9." : ". Choose a row below.",
@@ -706,7 +720,7 @@ const CRISIS_LOG_NOTE = { el: "\u03A0\u03B1\u03C4\u03AE\u03BC\u03B1\u03C4\u03B1 
 function crisisLogText(c, lang, log) {
   return (lang === "el" ? c.titleEl : c.titleEn) + "\n" + (lang === "el" ? CRISIS_LOG_NOTE.el : CRISIS_LOG_NOTE.en) + "\n" + crisisLogLines(c, lang, log).map((x) => x[0] + " " + x[1]).join(" \u00B7 ");
 }
-function CrisisMode({ c, lang, done, toggle, onClose, resetTicks }) {
+function CrisisMode({ c, lang, kid, maybeKid, done, toggle, onClose, resetTicks }) {
   const el = lang === "el";
   const steps = el ? c.stepsEl : c.stepsEn;
   const key = "aa_crisis_" + c.id;
@@ -981,6 +995,7 @@ function CrisisMode({ c, lang, done, toggle, onClose, resetTicks }) {
       CRISIS_METRO[c.id] && metro > 0 && metroMute && h("div", { role: "status", style: { fontSize: 12.5, color: AMBER, fontWeight: 600, marginTop: 6, lineHeight: 1.4 } }, el ? "\u03A7\u03C9\u03C1\u03AF\u03C2 \u03AE\u03C7\u03BF \u03C3\u03B5 \u03B1\u03C5\u03C4\u03AE \u03C4\u03B7 \u03C3\u03C5\u03C3\u03BA\u03B5\u03C5\u03AE \u2014 \u03B1\u03BA\u03BF\u03BB\u03BF\u03C5\u03B8\u03AE\u03C3\u03C4\u03B5 \u03C4\u03B7\u03BD \u03BA\u03BF\u03C5\u03BA\u03BA\u03AF\u03B4\u03B1" : "No sound on this device \u2014 follow the flashing dot")),
     // Steps (spec \u00A78.2): only the current step is a light card; ticked steps fade to 55%; the step text itself is unchanged.
     h("div", { style: { flex: 1, overflowY: "auto", padding: "10px 12px 8px", display: "flex", flexDirection: "column", gap: 8 } },
+      kid && ADULT_ONLY_LISTS.includes(c.id) && h(AdultListBand, { lang, maybe: maybeKid, crisisColors: { ink: INK, red: RED, bg: BG } }),
       steps.map((s, i) => {
         const checked = !!done[c.id + ":" + i];
         const isNext = i === next;
@@ -1032,7 +1047,27 @@ function PrintChecklist({ c, lang }) {
     c.srcEl && React.createElement("div", { style: { marginTop: "5mm", fontSize: "9.5pt", color: "#333" } }, (el ? "\u03A0\u03B7\u03B3\u03AE: " + c.srcEl : "Source: " + c.srcEn)),
     React.createElement("div", { style: { marginTop: "3mm", fontSize: "9pt", color: "#555" } }, "Morfeas v" + APP_VERSION + " \u00B7 " + (el ? "\u03B5\u03BA\u03C0\u03B1\u03B9\u03B4\u03B5\u03C5\u03C4\u03B9\u03BA\u03CC \u03B2\u03BF\u03AE\u03B8\u03B7\u03BC\u03B1 \u2014 \u03B5\u03C0\u03B1\u03BB\u03B7\u03B8\u03B5\u03CD\u03C3\u03C4\u03B5 \u03BC\u03B5 \u03C4\u03B1 \u03C4\u03BF\u03C0\u03B9\u03BA\u03AC \u03C0\u03C1\u03C9\u03C4\u03CC\u03BA\u03BF\u03BB\u03BB\u03B1 \u00B7 \u03B5\u03BA\u03C4\u03CD\u03C0\u03C9\u03C3\u03B7 " : "educational aid \u2014 verify against local protocols \u00B7 printed ") + date));
 }
+// Audit E1-1: these lists carry adult doses only. With a child in the patient bar a red band says so and opens
+// Paediatrics → Emergency (weight-based doses, ERC PLS 2025).
+const ADULT_ONLY_LISTS = ["vfvt", "asystole_pea", "svt_stable", "svt_unstable", "cardiac_surgery_arrest"];
+// Paediatrics sub-tab to open on the next visit (set by the band, read once by PedsCard). 2 = "Emergency".
+let PEDS_OPEN_TAB = null;
+const PEDS_EMERGENCY_TAB = 2;
+function goPedsEmergency() {
+  PEDS_OPEN_TAB = PEDS_EMERGENCY_TAB;
+  try { window.dispatchEvent(new CustomEvent("morfeas-go", { detail: { tab: "peds" } })); } catch (e) {}
+}
+// Audit V19-6: a weight under 40 kg with no age may be a child; the same band asks for the age.
+function possibleKid(weight, age) { const w = parseFloat(weight); return w > 0 && w < AGE_PROMPT_KG && !ageGiven(age); }
+function AdultListBand({ lang, crisisColors, maybe }) {
+  const el = lang === "el", C = crisisColors;
+  return React.createElement("div", { "data-adult-band": "1", role: "alert", style: { display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", background: C ? "transparent" : S.tintDanger, color: C ? C.ink : S.ink, boxShadow: `inset 0 0 0 2px ${C ? C.red : S.red}`, borderRadius: 12, padding: "8px 12px", fontSize: 14, fontWeight: 700, lineHeight: 1.35 } },
+    React.createElement("span", { style: { flex: "1 1 160px", minWidth: 0 } }, "\u26A0 ", maybe ? (el ? "\u03A0\u03B9\u03B8\u03B1\u03BD\u03CC \u03C0\u03B1\u03B9\u03B4\u03AF \u2014 \u03C3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1. " : "Possibly a child \u2014 enter the age. ") : "", el ? "\u0394\u03CC\u03C3\u03B5\u03B9\u03C2 \u03B5\u03BD\u03B7\u03BB\u03AF\u03BA\u03C9\u03BD \u2014 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03AF \u03B2\u03BB. \u03A0\u03B1\u03B9\u03B4\u03B9\u03AC \u2192 \u0395\u03C0\u03B5\u03AF\u03B3\u03BF\u03BD\u03C4\u03B1" : "Adult doses \u2014 for a child see Paediatrics \u2192 Emergency"),
+    React.createElement("button", { "data-adult-band-go": "1", onClick: goPedsEmergency, style: { minHeight: 44, padding: "0 14px", borderRadius: 10, border: "none", background: C ? C.red : S.red, color: C ? C.bg : S.onAccent, fontFamily: "inherit", fontWeight: 800, fontSize: 14, cursor: "pointer" } }, el ? "\u03A0\u03B1\u03B9\u03B4\u03B9\u03AC \u2192" : "Paediatrics \u2192"));
+}
 function ChecklistTab({ lang, focus, age, weight }) {
+  const kidPt = doseCtx(weight, "", "", age).child;
+  const maybeKid = possibleKid(weight, age);
   const fav = useFavs();
   const [crisis, setCrisis] = useState(null);
   const [open, setOpen] = useState(null);
@@ -1093,7 +1128,7 @@ function ChecklistTab({ lang, focus, age, weight }) {
     return (cat === "all" || c.cat === cat) && title.includes(q.toLowerCase());
   });
   const crisisC = crisis ? CHECKLISTS.find((x) => x.id === crisis) : null;
-  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } }, printing && ReactDOM.createPortal(/* @__PURE__ */ React.createElement(PrintChecklist, { c: CHECKLISTS.find((x) => x.id === printing), lang }), document.body), crisisC && ReactDOM.createPortal(/* @__PURE__ */ React.createElement(CrisisMode, { key: crisisC.id, c: crisisC, lang, done, toggle: toggleStep, resetTicks: () => resetList(crisisC.id, crisisC.stepsEl.length), onClose: () => setCrisis(null) }), document.body), /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10 } }, printing && ReactDOM.createPortal(/* @__PURE__ */ React.createElement(PrintChecklist, { c: CHECKLISTS.find((x) => x.id === printing), lang }), document.body), crisisC && ReactDOM.createPortal(/* @__PURE__ */ React.createElement(CrisisMode, { key: crisisC.id, c: crisisC, lang, kid: kidPt || maybeKid, maybeKid, done, toggle: toggleStep, resetTicks: () => resetList(crisisC.id, crisisC.stepsEl.length), onClose: () => setCrisis(null) }), document.body), /* @__PURE__ */ React.createElement(
     "input",
     {
       value: q,
@@ -1151,7 +1186,7 @@ function ChecklistTab({ lang, focus, age, weight }) {
       background: complete ? S.teal : S.lineStrong,
       borderRadius: 99,
       padding: "3px 9px"
-    } }, nDone, "/", steps.length)) }), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 6 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setCrisis(c.id), style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px 14px", minHeight: 44, marginBottom: 4, borderRadius: 12, border: "none", background: c.color, color: "#FFFFFF", fontWeight: 800, fontSize: 15, cursor: "pointer", fontFamily: "inherit" } }, "\u26F6 ", lang === "el" ? "\u039B\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1 \u03BA\u03C1\u03AF\u03C3\u03B7\u03C2 \u2014 \u03C0\u03BB\u03AE\u03C1\u03B7\u03C2 \u03BF\u03B8\u03CC\u03BD\u03B7" : "Crisis mode — full screen"), steps.map((s, i) => {
+    } }, nDone, "/", steps.length)) }), isOpen && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 14px 14px", display: "flex", flexDirection: "column", gap: 6 } }, (kidPt || maybeKid) && ADULT_ONLY_LISTS.includes(c.id) && React.createElement(AdultListBand, { lang, maybe: maybeKid }), /* @__PURE__ */ React.createElement("button", { onClick: () => setCrisis(c.id), style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px 14px", minHeight: 44, marginBottom: 4, borderRadius: 12, border: "none", background: c.color, color: "#FFFFFF", fontWeight: 800, fontSize: 15, cursor: "pointer", fontFamily: "inherit" } }, "\u26F6 ", lang === "el" ? "\u039B\u03B5\u03B9\u03C4\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1 \u03BA\u03C1\u03AF\u03C3\u03B7\u03C2 \u2014 \u03C0\u03BB\u03AE\u03C1\u03B7\u03C2 \u03BF\u03B8\u03CC\u03BD\u03B7" : "Crisis mode — full screen"), steps.map((s, i) => {
       const checked = !!done[`${c.id}:${i}`];
       return /* @__PURE__ */ React.createElement("button", { key: i, onClick: () => toggleStep(c.id, i), style: {
         display: "flex",

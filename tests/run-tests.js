@@ -1330,7 +1330,7 @@ check("v487: Part 28 corrections: crisis haemorrhage card, PCC, heparin, TXA, an
 
 check("v488: Part 29 paediatric card: salbutamol cap, naloxone cap, uncuffed ETT floor, ESAIC fasting, RCUK infusion, signed z, sourced analgesia",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String(T.includes("Math.min(15 * w, 250)") && T.includes("Math.min(10 * w, 400)") && T.includes("Math.floor(p.ettUncuffed * 2) / 2") && !T.includes("Rich/fatty meal") && T.includes("RCUK 2026") && T.includes("r.wz < 0 ?") && T.includes("Kalceks 2024") && T.includes("a > 0 && a < 14")); })(), "true");
+    return String(T.includes("Math.min(15 * w, 250)") && T.includes("Math.min(10 * w, 400)") && T.includes("Math.floor(p.ettUncuffed * 2) / 2") && !T.includes("Rich/fatty meal") && T.includes("RCUK 2026") && T.includes("r.wz < 0 ?") && T.includes("Kalceks 2024") && T.includes("warn: under(14)")); })(), "true");
 
 check("v489: Part 30 corrections: AHA cardioversion energies, RLB, pacing 70, AHA atropine, QRH 2-1, LVAD mechanical CPR, children fasting",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
@@ -2133,6 +2133,157 @@ check("v516 V14-3 BMI >= 40: grey note on per-kg drugs that Table 3 does not nam
     const k = obesityNotice(D("ketamine"), big, "M");
     return [g("ketamine", big), g("midazolam", big), g("dexmedetomidine", big), g("succinylcholine", big), g("lidocaine_iv", big), g("propofol", big), g("ketamine", small), !!(k.el && k.en && /AAGBI\\/SOBA 2015/.test(k.el + k.en))].join(); })()`),
   "grey,grey,grey,none,none,red,none,true");
+// --- v517: audit v516 V16-1, V16-2 (author 25/11/2026) ---
+check("v517 V16-1 obesity notes are for adults: child 12 years, 80 kg / 140 cm (BMI 40.8) gets none; with no age or 18+ they show",
+  run(`(() => { const D = (id) => DRUGS.find((d) => d.id === id), kid = doseCtx("80", "140", "M", "12"), noAge = doseCtx("80", "140", "M", ""), adult = doseCtx("80", "140", "M", "18");
+    const n = (id, c) => { const x = obesityNotice(D(id), c, "M"); return x ? (x.grey ? "grey" : x.own ? "own" : "red") : "none"; };
+    return [n("propofol", kid), n("ketamine", kid), n("dantrolene", kid), obesityHeightPrompt(D("propofol"), doseCtx("130", "", "M", "12")), n("propofol", noAge), n("propofol", adult), n("ketamine", adult), obesityHeightPrompt(D("propofol"), doseCtx("130", "", "M", ""))].join(); })()`),
+  "none,none,none,false,red,red,grey,true");
+check("v517 V16-2 (a) grey note only on hypnotics, opioids, relaxants, reversal, sedation, local; none on crisis, vasoactive, haemostatic drugs",
+  run(`(() => { const D = (id) => DRUGS.find((d) => d.id === id), big = doseCtx("150", "170", "M", "45");
+    const g = (id) => { const x = obesityNotice(D(id), big, "M"); return x ? (x.grey ? "grey" : x.own ? "own" : "red") : "none"; };
+    const cats = [...new Set(DRUGS.filter((d) => { const x = obesityNotice(d, big, "M"); return x && x.grey; }).map((d) => d.cat))].sort().join("+");
+    return [cats, g("ketamine"), g("dexmedetomidine"), g("cisatracurium"), g("ropivacaine"), g("amiodarone"), g("intralipid"), g("txa"), g("heparin"), g("noradrenaline")].join(); })()`),
+  "induction+local+nmb+opioid+sedation,grey,grey,grey,grey,none,none,none,none,none");
+check("v517 V16-2 (b) dantrolene, BMI >= 40: its own note, actual body weight (EMHG / ANZCA PS55, MHAUS), el and en; no AAGBI wording; no dose change",
+  run(`(() => { const d = DRUGS.find((x) => x.id === "dantrolene"), c = doseCtx("150", "170", "M", "45"), n = obesityNotice(d, c, "M");
+    return [n.own, /EMHG/.test(n.el) && /ANZCA PS55/.test(n.el) && /MHAUS/.test(n.el), n.en, /AAGBI/.test(n.el + n.en), obesityNotice(d, doseCtx("90", "170", "M", "45"), "M"), doseSummary(drugRows(d)[0], c, "en").main].join("|"); })()`),
+  "true|true|Obesity: dose on actual body weight (EMHG / ANZCA PS55, MHAUS).|false||300 mg");
+// --- v518: audit E1 (extreme patients), findings E1-1 to E1-7 ---
+// A second sandbox with a tiny static renderer: components run once with their initial state and the visible text
+// is collected, so a test can read what a screen shows. (Added in v518; the main sandbox stays as it was.)
+const uiText = (function () {
+  const R = {
+    Fragment: Symbol("Fragment"), Component: class {},
+    createElement: (type, props, ...kids) => ({ type, props: props || {}, kids }),
+    useState: (v) => [typeof v === "function" ? v() : v, () => {}], useEffect: () => {}, useLayoutEffect: () => {},
+    useRef: (v) => ({ current: v === undefined ? null : v }), useMemo: (f) => f(), useCallback: (f) => f
+  };
+  const box = { React: R, ReactDOM: { createPortal: (n) => n }, window: { localStorage: null, addEventListener() {}, removeEventListener() {}, dispatchEvent() {} }, console, navigator: {}, document: { body: {} } };
+  vm.createContext(box);
+  vm.runInContext(src, box, { filename: "app-src-ui.js" });
+  const flat = (n, out) => {
+    if (n == null || n === false || n === true) return;
+    if (Array.isArray(n)) { n.forEach((x) => flat(x, out)); return; }
+    if (typeof n === "string" || typeof n === "number") { out.push(String(n)); return; }
+    if (typeof n.type === "function") { flat(n.type(Object.assign({}, n.props, { children: n.kids.length > 1 ? n.kids : n.kids[0] })), out); return; }
+    if (n.props && n.props["data-adult-band"]) out.push("[ADULT-BAND]");
+    flat(n.kids, out);
+  };
+  return (expr) => { const out = []; flat(vm.runInContext(expr, box), out); return out.join(" ").replace(/\s+/g, " "); };
+})();
+check("v518 E1-1 crisis lists with adult doses (VF/VT, asystole/PEA, SVT, after cardiac surgery): red band for a child, opens Paediatrics -> Emergency; none for an adult",
+  (function () {
+    const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8"), bad = [];
+    if (run("ADULT_ONLY_LISTS.join()") !== "vfvt,asystole_pea,svt_stable,svt_unstable,cardiac_surgery_arrest") bad.push("lists");
+    if (!P.includes("(kidPt || maybeKid) && ADULT_ONLY_LISTS.includes(c.id) && React.createElement(AdultListBand, { lang, maybe: maybeKid })")) bad.push("list body");
+    if (!P.includes("kid && ADULT_ONLY_LISTS.includes(c.id) && h(AdultListBand,")) bad.push("crisis mode");
+    if (!P.includes("React.createElement(CrisisMode, { key: crisisC.id, c: crisisC, lang, kid: kidPt || maybeKid, maybeKid,")) bad.push("crisis prop");
+    if (run('[doseCtx("3.5", "", "", "0").child, doseCtx("70", "", "", "45").child, PEDS_EMERGENCY_TAB].join()') !== "true,false,2") bad.push("child/tab");
+    const t = uiText('React.createElement(AdultListBand, { lang: "el" })');
+    if (!/Δόσεις ενηλίκων/.test(t) || !/Επείγοντα/.test(t)) bad.push("text " + t);
+    return bad.join("; ") || "ok";
+  })(), "ok");
+check("v518 E1-2 ventilation: no PBW and no Vt target under 152.4 cm (5 y, 108 cm; newborn); adult 175 cm unchanged; recruitment the same",
+  (function () {
+    const bad = [], r = run('[pbw(108, "M"), pbw(50, "F"), Math.round(pbw(175, "M") * 10) / 10, PBW_MIN_CM].join("|")');
+    if (r !== "||70.5|152.4") bad.push("pbw " + r);
+    // v519: under 150 cm the paediatric SCHN formula now applies (author); the gap 150–152.4 cm still gives no number.
+    const kid = uiText('React.createElement(VentilationCalc, { lang: "en", height: "151", sex: "M", weight: "45", age: "13" })');
+    if (/Vt target 6/i.test(kid) || !/no PBW formula covers this height/.test(kid) || / 0–0 mL/.test(kid)) bad.push("vent 151 cm: " + kid.slice(0, 200));
+    const ad = uiText('React.createElement(VentilationCalc, { lang: "en", height: "175", sex: "M", weight: "70" })');
+    if (!/Vt target 6/i.test(ad) || !/493 mL/.test(ad)) bad.push("vent adult");
+    const rm = uiText('React.createElement(RecruitmentCard, { lang: "en", height: "108", sex: "M", weight: "18", age: "5" })');
+    if (!/adult trials/.test(rm)) bad.push("recruitment");
+    return bad.join("; ") || "ok";
+  })(), "ok");
+check("v518 E1-3 MAC: under 1 y no Mapleson (desflurane/isoflurane '—'); sevoflurane under 3 y from the SmPC (0 y 3.3 %, 3 months 3.0 %, 2 y 2.8 %); 40 y unchanged",
+  (function () {
+    const m = (age) => uiText('React.createElement(MACCard, { lang: "en", age: "' + age + '" })');
+    const sevo = (t) => (t.match(/Sevoflurane · .*?(\d+\.\d\d %|—)/) || [])[1], des = (t) => (t.match(/Desflurane · .*?(\d+\.\d\d %|—)/) || [])[1];
+    const a0 = m("0"), a3m = m("0.25"), a2 = m("2"), a40 = m("40");
+    return [sevo(a0), des(a0), sevo(a3m), sevo(a2), des(a2), sevo(a40), des(a40)].join(",");
+  })(), "3.30 %,—,3.00 %,2.80 %,8.35 %,1.80 %,6.60 %");
+check("v518 E1-4 TOF: in a child the 16 mg/kg immediate reversal shows no number and says adults only (Bridion SmPC); adult unchanged",
+  (function () {
+    const k = uiText('React.createElement(TOFCard, { lang: "en", weight: "3.5", age: "0" })'), a = uiText('React.createElement(TOFCard, { lang: "en", weight: "70", age: "45" })');
+    return [/Immediate reversal — · Adults only/.test(k) || /Immediate reversal\s*·?\s*Adults only[^]*?—/.test(k) || (/Adults only — not studied in children/.test(k) && !/56 mg/.test(k)), /1120 mg/.test(a), !/Adults only/.test(a)].join();
+  })(), "true,true,true");
+check("v518 E1-5 Paediatrics -> Analgesia: under a row's own age limit no number (codeine and tramadol under 12, ibuprofen and paracetamol loads under 3 months, mefenamic under 14); with the age above the limit the numbers are back",
+  (function () {
+    const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"), bad = [];
+    ["v: upTo(12) ? outV : maybeA ? askV : `${fmt(w)}", "v: upTo(12) ? outV : maybeA ? askV : `${fmt(0.5 * w)}", "v: under(0.25) ? outV : maybeA ? askV : `${fmt(Math.min(10 * w, 400))}", "v: under(0.25) ? outV : maybeA ? askV : `${fmt(20 * w)}", "v: under(0.25) ? outV : maybeA ? askV : `${fmt(40 * w)}", "v: under(14) ? outV : maybeA ? askV : `${fmt(5 * w)}"].forEach((x) => { if (!T.includes(x)) bad.push(x.slice(0, 40)); });
+    if (!T.includes("const under = (minY) => hasA && a < minY;")) bad.push("under()");
+    if (/a > 0 && a < (5|12|14)/.test(T)) bad.push("age 0 still read as no age");
+    return bad.join("; ") || "ok";
+  })(), "ok");
+check("v518 E1-6 vasopressors: with a child in the bar, a note 'adult dilutions'; none for an adult; dilutions unchanged",
+  (function () {
+    const k = uiText('React.createElement(VasopressorCalc, { lang: "en", weight: "3.5", age: "0" })'), a = uiText('React.createElement(VasopressorCalc, { lang: "en", weight: "70", age: "45" })');
+    return [/Adult dilutions/.test(k), /Adult dilutions/.test(a), /4 mg\/50 mL/.test(k)].join();
+  })(), "true,false,true");
+check("v518 E1-7 English maximum doses carry their unit (mg/kg/day); no 'max N/kg/d' left",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); return [/max [0-9.]+\/kg\/d\b/.test(T), T.includes("max 30 mg/kg/day"), T.includes("max 100 mg/dose, 400 mg/day")].join(); })(), "false,true,true");
+check("v518 E1-5 rendered: newborn 3.5 kg -> codeine, tramadol, ibuprofen, mefenamic, paracetamol PO load show 'outside age'; 13 y 45 kg -> numbers (codeine 22.5\u201345 mg, tramadol 45\u201390 mg); mefenamic still outside at 13 y",
+  (function () {
+    const P = (a, w) => uiText('(PEDS_OPEN_TAB = 4, React.createElement(PedsCard, { lang: "en", weight: "' + w + '", age: "' + a + '", height: "", sex: "M" }))');
+    const seg = (t, k) => { const i = t.indexOf(k); return i < 0 ? "" : t.slice(i, i + 260); };
+    const n = P("0", "3.5"), o = P("13", "45"), out = (x) => /outside age/.test(x);
+    return [out(seg(n, "Codeine PO")), out(seg(n, "Tramadol IV")), out(seg(n, "Ibuprofen PO")), out(seg(n, "Mefenamic")), out(seg(n, "Paracetamol PO load")),
+      /22\.5\u201345 mg/.test(seg(o, "Codeine PO")), /45\u201390 mg/.test(seg(o, "Tramadol IV")), out(seg(o, "Mefenamic"))].join();
+  })(), "true,true,true,true,true,true,true,true");
+check("v519 ventilation, child under 150 cm: PBW from SCHN (height² × 1.65 / 1000) and Vt 6–8 mL/kg; 108 cm -> 19.2 kg, 135 mL (115–154); 150 cm -> 37.1 kg; 151 cm -> no value; 175 cm ♂ -> Devine 70.5 kg",
+  (function () {
+    const r = run('[Math.round(pbwChild(108) * 10) / 10, Math.round(pbwChild(150) * 10) / 10, pbwChild(151), PBW_CHILD_MAX_CM].join("|")');
+    // v520 V19-2: the Vt is on the lesser of PBW and actual weight (here 18 kg): 126 mL (108–144).
+    const k = uiText('React.createElement(VentilationCalc, { lang: "en", height: "108", sex: "M", weight: "18", age: "5" })');
+    return [r, /19\.2 kg/.test(k) && /SCHN/.test(k) && /126 mL/.test(k) && /108–144 mL/.test(k) && /PALICC-2/.test(k)].join("|");
+  })(), "19.2|37.1||150|true");
+// --- v520: audit v519 V19-1 to V19-7 (author 26/11/2026: "yes to all") ---
+check("v520 V19-1 PBW chosen by age: woman 78 y 145 cm -> Devine/ARDSNet 38.8 kg (57 in = 144.8 cm: 38.6) (not SCHN); adult 120 cm -> none; no age under 152 cm -> asks for the age; child 13 y 160 cm -> Devine (child)",
+  run('[["145","F","78","55"],["120","F","70","40"],["145","F","",""],["160","M","13","50"],["175","M","",""]].map(function (x) { var p = pbwPick(+x[0], x[1], x[2], x[3]); return p.kind + ":" + (p.pbw ? Math.round(p.pbw * 10) / 10 : ""); }).join(",")'),
+  "devineLow:38.8,tooShort:,needAge:,devineKid:56.9,devine:70.5");
+check("v520 V19-1 recruitment: adult 145 cm gets PBW 38.8 kg (ARDSNet); child gets no Vt; no age under 152 cm asks for the age",
+  (function () {
+    const a = uiText('React.createElement(RecruitmentCard, { lang: "en", height: "145", sex: "F", weight: "55", age: "78" })'), k = uiText('React.createElement(RecruitmentCard, { lang: "en", height: "120", sex: "M", weight: "22", age: "7" })'), n = uiText('React.createElement(RecruitmentCard, { lang: "en", height: "145", sex: "F", weight: "55", age: "" })');
+    return [/PBW \(Devine\): 38\.8 kg/.test(a), /adult trials/.test(k), /enter the age/.test(n)].join();
+  })(), "true,true,true");
+check("v520 V19-2 child Vt on the lesser of PBW and actual weight (PALICC-2): newborn 3.5 kg / 50 cm -> 21–28 mL (PBW 4.13); adult unchanged",
+  (function () {
+    const n = uiText('React.createElement(VentilationCalc, { lang: "en", height: "50", sex: "M", weight: "3.5", age: "0" })');
+    return [/21–28 mL/.test(n), /4\.13 kg/.test(n), /lesser of PBW and actual weight \(3\.5 kg\)/.test(n)].join();
+  })(), "true,true,true");
+check("v520 V19-3 / V19-4 the SCHN label says what the formula is (PICU drug-dosing guideline, v6.0 — an approximation for Vt); in a child the footnote does not say Devine",
+  (function () {
+    const k = uiText('React.createElement(VentilationCalc, { lang: "en", height: "108", sex: "M", weight: "18", age: "5" })'), a = uiText('React.createElement(VentilationCalc, { lang: "en", height: "175", sex: "M", weight: "70", age: "45" })');
+    return [/IBW per SCHN \(PICU drug-dosing guideline, v6\.0\) — an approximation for Vt/.test(k), /Vt scaled to PBW \(Devine\)/.test(k), /Child: Vt on the lesser/.test(k), /Vt scaled to PBW \(Devine\)/.test(a)].join();
+  })(), "true,false,true,true");
+check("v520 V19-5 sevoflurane up to 12 y from the SmPC: 5 y and 12 y -> 2.50 %; 13 y -> Mapleson (2.13 %)",
+  (function () {
+    const m = (age) => (uiText('React.createElement(MACCard, { lang: "en", age: "' + age + '" })').match(/Sevoflurane · .*?(\d+\.\d\d %|—)/) || [])[1];
+    return [m("5"), m("12"), m("13")].join(",");
+  })(), "2.50 %,2.50 %,2.13 %");
+check("v520 V19-6 weight under 40 kg and no age: 'Possibly a child — enter the age' in the crisis-list band, TOF and vasopressors; not with an age or 40 kg+",
+  (function () {
+    const b = uiText('React.createElement(AdultListBand, { lang: "en", maybe: true })'), t = uiText('React.createElement(TOFCard, { lang: "en", weight: "18", age: "" })'), v = uiText('React.createElement(VasopressorCalc, { lang: "en", weight: "18", age: "" })'), v2 = uiText('React.createElement(VasopressorCalc, { lang: "en", weight: "70", age: "" })');
+    return [/Possibly a child/.test(b), /Possibly a child/.test(t), /Possibly a child/.test(v), /Possibly a child|Adult dilutions/.test(v2), run('[possibleKid("18", ""), possibleKid("18", "5"), possibleKid("40", "")].join()')].join("|");
+  })(), "true|true|true|false|true,false,false");
+check("v520 V19-7 codeine and tramadol hidden at 12 y too ('>12 y', EMA); shown at 13 y",
+  (function () {
+    const P = (a, w) => uiText('(PEDS_OPEN_TAB = 4, React.createElement(PedsCard, { lang: "en", weight: "' + w + '", age: "' + a + '", height: "", sex: "M" }))');
+    const seg = (t, k) => { const i = t.indexOf(k); return i < 0 ? "" : t.slice(i, i + 260); };
+    const a12 = P("12", "40"), a13 = P("13", "45");
+    return [/outside age/.test(seg(a12, "Codeine PO")), /outside age/.test(seg(a12, "Tramadol IV")), /limit: >12 y/.test(seg(a12, "Codeine PO")), /outside age/.test(seg(a13, "Codeine PO"))].join();
+  })(), "true,true,true,false");
+// --- v521: audit v520 V20-1 ---
+check("v521 V20-1 Paediatrics -> Analgesia, 18 kg with no age: codeine, tramadol, mefenamic, ibuprofen and paracetamol loads say 'enter the age' with their limit; with an age (5 y) the rule of v518/v520 applies; 45 kg no age: doses as before",
+  (function () {
+    const P = (a, w) => uiText('(PEDS_OPEN_TAB = 4, React.createElement(PedsCard, { lang: "en", weight: "' + w + '", age: "' + a + '", height: "", sex: "M" }))');
+    const seg = (t, k) => { const i = t.indexOf(k); return i < 0 ? "" : t.slice(i, i + 260); };
+    const n = P("", "18"), k5 = P("5", "18"), big = P("", "45"), ask = (x) => /enter the age/.test(x);
+    return [ask(seg(n, "Codeine PO")), ask(seg(n, "Tramadol IV")), ask(seg(n, "Mefenamic")), ask(seg(n, "Ibuprofen PO")), ask(seg(n, "Paracetamol PO load")), /limit: >12 y/.test(seg(n, "Codeine PO")),
+      /outside age/.test(seg(k5, "Codeine PO")), /180 mg/.test(seg(k5, "Ibuprofen PO")), ask(seg(big, "Codeine PO")), /22\.5\u201345 mg/.test(seg(big, "Codeine PO"))].join();
+  })(), "true,true,true,true,true,true,true,true,false,true");
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
 (function () {

@@ -20,7 +20,30 @@ const ibwDevine = (h, sex) => {
   // Devine is an adult formula; below ~100 cm it goes negative, which must never reach a calculation.
   return v > 0 ? v : null;
 };
-const pbw = (h, sex) => ibwDevine(h, sex);
+// Audit E1-2: the ARDSNet PBW (Devine) is valid for adults only (height >= 152.4 cm). Below that no PBW and no Vt
+// target are given (Martin & Richards, BMC Pulm Med 2017); children: PBW from growth charts.
+const PBW_MIN_CM = 152.4;
+const pbw = (h, sex) => h >= PBW_MIN_CM ? ibwDevine(h, sex) : null;
+// Children (author 26/11/2026, after audit E1-2): SCHN 2008-0009 v5, "Ideal body weight (kg) = height (cm)2 x 1.65 / 1000
+// (Formula is valid for children up to a height of 150cm)". Between 150 and 152.4 cm neither formula applies.
+const PBW_CHILD_MAX_CM = 150;
+const pbwChild = (h) => h > 0 && h <= PBW_CHILD_MAX_CM ? h * h * 1.65 / 1000 : null;
+// Audit v519 V19-1, V19-2: the method follows the age, not only the height.
+//  adult or no age, >=152.4 cm: Devine/ARDSNet ("devine")
+//  adult under 152.4 cm: the ARDSNet Vt card table goes down to 48 in (122 cm) for both sexes ("devineLow"); below, nothing
+//  child (<18 y): <=150 cm SCHN ("schn"), 150-152.4 cm nothing ("gap"), >=152.4 cm Devine ("devineKid");
+//    the Vt is scaled to the lesser of PBW and actual weight (PALICC-2 2023, 6.1.2)
+//  no age, under 152.4 cm: ask for the age ("needAge")
+const ARDSNET_MIN_CM = 122;
+function pbwPick(h, sex, age, weight) {
+  if (!(h > 0)) return { kind: "noHeight", pbw: null, vtBase: null };
+  const hasA = ageGiven(age), a = parseFloat(age), kid = hasA && a < 18, w = parseFloat(weight);
+  const out = (kind, p) => ({ kind, pbw: p, vtBase: kid && p && w > 0 ? Math.min(p, w) : p, kid });
+  if (kid) return h >= PBW_MIN_CM ? out("devineKid", ibwDevine(h, sex)) : h <= PBW_CHILD_MAX_CM ? out("schn", pbwChild(h)) : out("gap", null);
+  if (h >= PBW_MIN_CM) return out("devine", ibwDevine(h, sex));
+  if (!hasA) return out("needAge", null);
+  return h >= ARDSNET_MIN_CM ? out("devineLow", ibwDevine(h, sex)) : out("tooShort", null);
+}
 const abw = (w, h, sex) => {
   const ibw = ibwDevine(h, sex);
   if (!w || !ibw) return null;
