@@ -21,8 +21,26 @@ const LOGO_DATA = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAw
 // home screen (root.js). The author took it off the first-open notice.
 const EAE_AUSPICES = { el: "\u03A5\u03C0\u03CC \u03C4\u03B7\u03BD \u03B1\u03B9\u03B3\u03AF\u03B4\u03B1 \u03C4\u03B7\u03C2 \u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AE\u03C2 \u0391\u03BD\u03B1\u03B9\u03C3\u03B8\u03B7\u03C3\u03B9\u03BF\u03BB\u03BF\u03B3\u03B9\u03BA\u03AE\u03C2 \u0395\u03C4\u03B1\u03B9\u03C1\u03B5\u03AF\u03B1\u03C2", en: "Under the auspices of the Hellenic Society of Anaesthesiology" };
 const EAE_LOGO = { light: "icons/eae-logo-black.png", dark: "icons/eae-logo-white.png" };
-const APP_VERSION = 521;
+const APP_VERSION = 523;
 const CHANGELOG = [
+  {
+    v: 523,
+    el: [
+      "\u03A0\u03B1\u03B9\u03B4\u03B9\u03AC \u2192 \u0391\u03BD\u03B1\u03BB\u03B3\u03B7\u03C3\u03AF\u03B1: \u03BF\u03B9 \u03C6\u03BF\u03C1\u03C4\u03AF\u03C3\u03B5\u03B9\u03C2 \u03C0\u03B1\u03C1\u03B1\u03BA\u03B5\u03C4\u03B1\u03BC\u03CC\u03BB\u03B7\u03C2 PO \u03BA\u03B1\u03B9 PR \u03B4\u03B5\u03BD \u03BE\u03B5\u03C0\u03B5\u03C1\u03BD\u03BF\u03CD\u03BD \u03C0\u03BB\u03AD\u03BF\u03BD \u03C4\u03BF 1000 mg \u03C0\u03BF\u03C5 \u03B3\u03C1\u03AC\u03C6\u03B5\u03B9 \u03B7 \u03AF\u03B4\u03B9\u03B1 \u03B7 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE (PCH 2024)"
+    ],
+    en: [
+      "Paediatrics \u2192 Analgesia: the PO and PR paracetamol loading doses no longer exceed the 1000 mg written in the row itself (PCH 2024)"
+    ]
+  },
+  {
+    v: 522,
+    el: [
+      "\u0397 \u03B5\u03B9\u03B4\u03BF\u03C0\u03BF\u03AF\u03B7\u03C3\u03B7 \u00AB\u039D\u03AD\u03B1 \u03AD\u03BA\u03B4\u03BF\u03C3\u03B7 \u03B4\u03B9\u03B1\u03B8\u03AD\u03C3\u03B9\u03BC\u03B7\u00BB \u03BC\u03B5 \u03C4\u03BF \u03C3\u03BA\u03BF\u03CD\u03C1\u03BF \u03BC\u03C0\u03BB\u03B5 \u03C4\u03B7\u03C2 \u03B5\u03C6\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE\u03C2 (\u03AE\u03C4\u03B1\u03BD \u03B1\u03BA\u03CC\u03BC\u03B7 \u03C0\u03C1\u03AC\u03C3\u03B9\u03BD\u03B7 \u03B1\u03C0\u03CC \u03C4\u03B7\u03BD \u03C0\u03B1\u03BB\u03B9\u03AC \u03CC\u03C8\u03B7)"
+    ],
+    en: [
+      "The \u201CNew version\u201D notice in the app\u2019s dark blue (it was still green from the old look)"
+    ]
+  },
   {
     v: 521,
     el: [

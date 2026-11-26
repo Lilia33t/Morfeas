@@ -2212,7 +2212,7 @@ check("v518 E1-4 TOF: in a child the 16 mg/kg immediate reversal shows no number
 check("v518 E1-5 Paediatrics -> Analgesia: under a row's own age limit no number (codeine and tramadol under 12, ibuprofen and paracetamol loads under 3 months, mefenamic under 14); with the age above the limit the numbers are back",
   (function () {
     const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"), bad = [];
-    ["v: upTo(12) ? outV : maybeA ? askV : `${fmt(w)}", "v: upTo(12) ? outV : maybeA ? askV : `${fmt(0.5 * w)}", "v: under(0.25) ? outV : maybeA ? askV : `${fmt(Math.min(10 * w, 400))}", "v: under(0.25) ? outV : maybeA ? askV : `${fmt(20 * w)}", "v: under(0.25) ? outV : maybeA ? askV : `${fmt(40 * w)}", "v: under(14) ? outV : maybeA ? askV : `${fmt(5 * w)}"].forEach((x) => { if (!T.includes(x)) bad.push(x.slice(0, 40)); });
+    ["v: upTo(12) ? outV : maybeA ? askV : `${fmt(w)}", "v: upTo(12) ? outV : maybeA ? askV : `${fmt(0.5 * w)}", "v: under(0.25) ? outV : maybeA ? askV : `${fmt(Math.min(10 * w, 400))}", "v: under(0.25) ? outV : maybeA ? askV : `${fmt(Math.min(20 * w, 1000))}", "v: under(0.25) ? outV : maybeA ? askV : `${fmt(Math.min(40 * w, 1000))}", "v: under(14) ? outV : maybeA ? askV : `${fmt(5 * w)}"].forEach((x) => { if (!T.includes(x)) bad.push(x.slice(0, 40)); });
     if (!T.includes("const under = (minY) => hasA && a < minY;")) bad.push("under()");
     if (/a > 0 && a < (5|12|14)/.test(T)) bad.push("age 0 still read as no age");
     return bad.join("; ") || "ok";
@@ -2284,6 +2284,23 @@ check("v521 V20-1 Paediatrics -> Analgesia, 18 kg with no age: codeine, tramadol
     return [ask(seg(n, "Codeine PO")), ask(seg(n, "Tramadol IV")), ask(seg(n, "Mefenamic")), ask(seg(n, "Ibuprofen PO")), ask(seg(n, "Paracetamol PO load")), /limit: >12 y/.test(seg(n, "Codeine PO")),
       /outside age/.test(seg(k5, "Codeine PO")), /180 mg/.test(seg(k5, "Ibuprofen PO")), ask(seg(big, "Codeine PO")), /22\.5\u201345 mg/.test(seg(big, "Codeine PO"))].join();
   })(), "true,true,true,true,true,true,true,true,false,true");
+// --- v522: "new version" notice in the app's blue (author 26/11/2026) ---
+check("v522 the 'new version' notice uses the light theme's accent blue (#1D3D6B), not the old green; white text on it >= 4.5:1",
+  (function () {
+    const H = require("fs").readFileSync(require("path").join(__dirname, "..", "index.html"), "utf8");
+    const m = H.match(/b\.id = "upd-banner";[\s\S]*?background:(#[0-9A-Fa-f]{6});color:#fff;/);
+    const L = (h) => { const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((x) => x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4)); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+    const bg = m && m[1];
+    return [bg, bg === run("LIGHT.teal"), bg ? ((1.05) / (L(bg) + 0.05)) >= 4.5 : false, /#0E6B62/i.test(H)].join();
+  })(), "#1D3D6B,true,true,false");
+// --- v523: audit v521 V21-1 ---
+check("v523 V21-1 paracetamol loading doses capped at 1000 mg (PCH 2024, as the rows say): 45 kg -> PO 900 mg, PR 1000 mg; 70 kg -> PO 1000 mg, PR 1000 mg; 18 kg 5 y unchanged (360 / 720 mg)",
+  (function () {
+    const P = (a, w) => uiText('(PEDS_OPEN_TAB = 4, React.createElement(PedsCard, { lang: "en", weight: "' + w + '", age: "' + a + '", height: "", sex: "M" }))');
+    const val = (t, k) => { const i = t.indexOf(k); const m = i < 0 ? null : t.slice(i, i + 260).match(/max 1000 mg"?\)? (\d+) mg/); return m ? m[1] : "?"; };
+    const a = P("13", "45"), b = P("16", "70"), c = P("5", "18");
+    return [val(a, "Paracetamol PO load"), val(a, "Paracetamol PR load"), val(b, "Paracetamol PO load"), val(b, "Paracetamol PR load"), val(c, "Paracetamol PO load"), val(c, "Paracetamol PR load")].join(",");
+  })(), "900,1000,1000,1000,360,720");
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
 (function () {
