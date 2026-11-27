@@ -22,12 +22,8 @@ Developed with artificial intelligence (AI) tools.
 | `src/tabs.js` | Clinical cards, guidelines, References card |
 | `src/root.js` | Tool registry, app shell, search |
 | `tests/run-tests.js` | Unit tests — run before every deploy |
-| `tests/audit-check.js` | Checks the audit registry against the code |
 | `tests/package-check.js` | Every needed file is present (folder, and optionally a zip) |
 | `tests/ui-360.mjs` | Playwright screen test at 360 px, 100% and 130% text size |
-| `audit/audit-registry.json` | One entry per card/checklist/drug: status, versions, unverified points |
-| `audit/AUDIT.md` | Human-readable report generated from the registry |
-| `audit/CALC-MODES.md` | Calculation modes |
 | `fonts/`, `icons/` | Self-hosted typeface and app icons |
 | `audio/` | Metronome click tracks (AAC, 100/110/120 per minute, 12 s each) |
 
@@ -84,19 +80,18 @@ Nothing is sent anywhere by the app.
 3. Add a release-notes entry (Greek and English) at the top of `CHANGELOG` in
    `src/data.js`.
 4. Add one test for the change in `tests/run-tests.js`.
-5. Update `audit/audit-registry.json` (status, version, unverified points) and
-   regenerate `audit/AUDIT.md`.
+5. Update the internal audit registry (status, version, unverified points). It is
+   kept with the review packages and is not published in this repository.
 6. Run the tests — they must pass with 0 failures:
 
    ```bash
    node tests/run-tests.js
-   node tests/audit-check.js
    node tests/package-check.js            # add a zip path to check the zip too
    node tests/ui-360.mjs                  # needs Playwright + Chromium (see the file)
    ```
 
 7. Upload **all** changed files to the repository, **including `sw.js`** and
-   `index.html`, keeping the folder structure (`src/`, `audit/`, `tests/`,
+   `index.html`, keeping the folder structure (`src/`, `tests/`,
    `icons/`, `audio/`). GitHub Pages deploys automatically.
 8. Check `sw.js` on the live site (step above).
 
@@ -184,8 +179,7 @@ Do **not** create a new repository — it breaks the address of installed apps.
 
 ## Known gaps
 
-The current list is in `audit/AUDIT.md`, generated from the registry. In
-summary:
+The full list is in the internal audit report (not published). In summary:
 
 - All drug entries carry a source line in both languages, enforced by a test.
   Dose ranges, ceilings and the major warnings were checked against the SmPC or

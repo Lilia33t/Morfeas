@@ -407,9 +407,14 @@ function AnesthesiaAssistant() {
     if (storeGet("aa_disclaimer_ok") !== TERMS_VERSION) return null;
     const seen = Number(storeGet("aa_seen_ver")) || 276;
     if (seen >= APP_VERSION) return null;
-    const items = CHANGELOG.filter((c) => c.v > seen).slice(0, 3);
+    // Author 28/11/2026: only the short NEWS notices, not the detailed release record.
+    const items = NEWS.filter((c) => c.v > seen);
     return items.length ? items : null;
   });
+  // An update with no notice is recorded silently, so the next notice is not mixed with old ones.
+  useEffect(() => {
+    if (!whatsNew && storeGet("aa_disclaimer_ok") === TERMS_VERSION && (Number(storeGet("aa_seen_ver")) || 0) < APP_VERSION) storeSet("aa_seen_ver", APP_VERSION);
+  }, []);
   const dismissWhatsNew = () => { storeSet("aa_seen_ver", APP_VERSION); setWhatsNew(null); };
   const [weight, setWeight] = useState(() => (storeGet("aa_patient") || {}).w || "");
   const [age, setAge] = useState(() => (storeGet("aa_patient") || {}).a || "");
@@ -609,8 +614,7 @@ function AnesthesiaAssistant() {
   } }, React.createElement("div", { style: { fontWeight: 800, fontSize: 18, marginBottom: 10 } },
     "\u2728 " + (lang === "el" ? "\u03A4\u03B9 \u03BD\u03AD\u03BF \u03C5\u03C0\u03AC\u03C1\u03C7\u03B5\u03B9" : "What\u2019s new")),
     whatsNew.map((c) => React.createElement("div", { key: c.v, style: { marginBottom: 10 } },
-      React.createElement("ul", { style: { margin: 0, paddingLeft: 20, fontSize: 14, lineHeight: 1.5 } },
-        (lang === "el" ? c.el : c.en).map((x, i) => React.createElement("li", { key: i }, x))))),
+      React.createElement("div", { "data-news": c.v, style: { fontSize: 14.5, lineHeight: 1.5 } }, lang === "el" ? c.el : c.en))),
     React.createElement("button", { onClick: dismissWhatsNew, style: {
       width: "100%", marginTop: 8, padding: "12px", borderRadius: 12, border: "none", background: S.teal,
       color: S.onAccent, fontWeight: 800, fontSize: 15, cursor: "pointer", fontFamily: "inherit"
