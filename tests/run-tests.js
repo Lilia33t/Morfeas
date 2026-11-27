@@ -1284,9 +1284,9 @@ check("v476: audit part 20: metronome generation guard, AAC ready at app start, 
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
     return String(P.includes("const METRO_AAC = {};") && P.includes("gen !== a.gen") && P.includes("No sound on this device") && require("fs").readFileSync(require("path").join(__dirname,"..","src","root.js"),"utf8").includes("metroPrefetch();") && T.includes("doi:10.1016/j.resuscitation.2025.110769") && !T.replace(/\\u([0-9A-Fa-f]{4})/g,function(m,h){return String.fromCharCode(parseInt(h,16));}).includes("7 ημέρες, και με ρήξη")); })(), "true");
 
-check("v477: 44 px buttons, offline check in About, review date 29/10/2026",
+check("v477: 44 px buttons, offline check in About, review date (v529: 28/11/2026, author)",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String(require("fs").readFileSync(require("path").join(__dirname,"..","index.html"),"utf8").includes("body button { min-height: 44px; }") && require("fs").readFileSync(require("path").join(__dirname,"..","index.html"),"utf8").includes("window.__swErr") && P.includes('padding: "14px 14px", flexShrink: 0,') && T.includes("function OfflineCheck") && T.includes("createElement(OfflineCheck, { lang })") && T.includes('const CONTENT_CHECKED = "29/10/2026";') && P.includes("minWidth: 44, minHeight: 44, padding: 0")); })(), "true");
+    return String(require("fs").readFileSync(require("path").join(__dirname,"..","index.html"),"utf8").includes("body button { min-height: 44px; }") && require("fs").readFileSync(require("path").join(__dirname,"..","index.html"),"utf8").includes("window.__swErr") && P.includes('padding: "14px 14px", flexShrink: 0,') && T.includes("function OfflineCheck") && T.includes("createElement(OfflineCheck, { lang })") && T.includes('const CONTENT_CHECKED = "28/11/2026";') && P.includes("minWidth: 44, minHeight: 44, padding: 0")); })(), "true");
 
 check("v478: gastric ultrasound card: spec test cases, no old 0.4/0.8 limits, card wired in",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
@@ -2301,6 +2301,104 @@ check("v523 V21-1 paracetamol loading doses capped at 1000 mg (PCH 2024, as the 
     const a = P("13", "45"), b = P("16", "70"), c = P("5", "18");
     return [val(a, "Paracetamol PO load"), val(a, "Paracetamol PR load"), val(b, "Paracetamol PO load"), val(b, "Paracetamol PR load"), val(c, "Paracetamol PO load"), val(c, "Paracetamol PR load")].join(",");
   })(), "900,1000,1000,1000,360,720");
+// --- v524: antibiotics audit (v523 ABX-1 ... ABX-10) ---
+const abxUi = (w, a, l) => uiText('React.createElement(AbxList, { lang: "' + (l || "en") + '", weight: "' + w + '", age: "' + a + '" })');
+check("v524 ABX-3 urology: fluoroquinolone no longer first (v526: removed, EU suspension — author 27/11/2026)",
+  (function () {
+    const u = run('JSON.stringify(ABX.find(a => /^Urologic/.test(a.en)))'), x = JSON.parse(u);
+    return String(x.regEn.indexOf("cefazolin or TMP-SMX") > 0 && !/fluoroquinolone/i.test(x.regEn + x.altEn) && !/κινολόν/.test(x.regEl + x.altEl) && /^Aminoglycoside/.test(x.altEn) && /^Αμινογλυκοσίδη/.test(x.altEl));
+  })(), "true");
+check("v524 ABX-4 caesarean section: 2 g with the ACOG note on 3 g at >=120 kg (el + en)",
+  run('(function(){var c=ABX.find(a => /^Cesarean/.test(a.en)); return /ACOG/.test(c.regEn) && /ACOG/.test(c.regEl) && /≥120 kg/.test(c.regEn) && /^Cefazolin 2 g IV before incision/.test(c.regEn);})()'), true);
+check("v524 ABX-5 metronidazole redosing: 8 h attributed to UNMC; Bratzler 2013 'not needed'",
+  (function () { const t = abxUi("70", "50"), e = abxUi("70", "50", "el"); return String(!/UNMC\/Bratzler/.test(t + e) && /8 h per UNMC · Bratzler 2013: not needed/.test(t) && /8 h κατά UNMC · Bratzler 2013: δεν απαιτείται/.test(e)); })(), "true");
+check("v524 ABX-6 duration line (WHO, Bratzler 2013) in el + en",
+  (function () { const t = abxUi("70", "50"), e = abxUi("70", "50", "el"); return String(/no postoperative continuation \(WHO\) · <24 h \(Bratzler 2013\)/.test(t) && /όχι συνέχιση μετά \(WHO\) · <24 h \(Bratzler 2013\)/.test(e)); })(), "true");
+check("v524 ABX-8 allergy: 'Severe β-lactam allergy' label; mild/unverified penicillin allergy -> usually cefazolin (AAAAI/ACAAI 2022)",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const t = abxUi("70", "50"), e = abxUi("70", "50", "el"); return String(T.includes('"Severe \\u03B2-lactam allergy (anaphylaxis or severe skin reaction):"') && /Mild or unverified penicillin allergy: usually cefazolin \(AAAAI\/ACAAI 2022\)/.test(t) && /συνήθως κεφαζολίνη \(AAAAI\/ACAAI 2022\)/.test(e) && !T.includes('"\\u03B2-lactam allergy:"')); })(), "true");
+check("v524 ABX-10 procedure buttons carry aria-expanded",
+  String(run('AbxList.toString().includes("\\"aria-expanded\\": isOpen ? \\"true\\" : \\"false\\"")')), "true");
+check("v524 ABX el = en: same numbers in the antibiotics header and dose line (70 kg, 130 kg, 20 kg/5 y)",
+  (function () { const nums = (s) => (s.match(/\d+(?:\.\d+)?/g) || []).join(","); return String(["70|50", "130|50", "20|5"].every((p) => { const [w, a] = p.split("|"); return nums(abxUi(w, a)) === nums(abxUi(w, a, "el")); })); })(), "true");
+// --- v525: audit v524 V24-1, V24-3 ---
+check("v525 V24-3 inside each procedure cefazolin follows the bar weight (130 kg -> 3 g in 9 rows; caesarean keeps 2 g + ACOG note); <120 kg or no weight -> '2 g (3 g if >=120 kg — see above)'",
+  (function () {
+    const bad = [];
+    const rows = (big, l) => JSON.parse(run('JSON.stringify(ABX.map(x => abxCefRow(x, "' + (l === "el" ? "" : "") + '" + (' + (l === "el") + ' ? x.regEl : x.regEn), ' + big + ', ' + (l === "el") + ')))')).map((r) => (l === "el" ? "Σχήμα: " : "Regimen: ") + r);
+    const big = rows(true), small = rows(false), none = rows(false), bigEl = rows(true, "el");
+    if (!/rowText\(x, el \? x\.regEl : x\.regEn\)/.test(run("AbxList.toString()")) || !run("AbxList.toString()").includes("abxCefRow(x, t, false, el, kidRows)")) bad.push("wiring");
+    const ces = run("ABX.findIndex(a => a.ownCef)");
+    if (ces < 0 || run("ABX.filter(a => a.ownCef).length") !== 1 || !/^Cesarean/.test(run("ABX[" + ces + "].en"))) bad.push("ownCef");
+    big.forEach((t, i) => { const reg = (t.split("Regimen: ")[1] || "").slice(0, 40); if (i === ces) { if (!/^Cefazolin 2 g IV before incision · ACOG/.test(reg)) bad.push("ces " + reg); } else if (!/^Cefazolin 3 g/.test(reg)) bad.push(i + " 130: " + reg); });
+    bigEl.forEach((t, i) => { const reg = (t.split("Σχήμα: ")[1] || "").slice(0, 40); if (i !== ces && !/^Κεφαζολίνη 3 g/.test(reg)) bad.push(i + " el 130: " + reg); });
+    [small, none].forEach((set, k) => set.forEach((t, i) => { const reg = (t.split("Regimen: ")[1] || "").slice(0, 60); if (i !== ces && !/^Cefazolin 2 g( IV)? \(3 g if ≥120 kg — see above\)/.test(reg)) bad.push((k ? "none " : "80 ") + i + ": " + reg); }));
+    return bad.join("; ") || "ok";
+  })(), "ok");
+// --- v526: author 27/11/2026 on audit v525 (Π1–Π6, V25-1, V25-3) ---
+check("v526 ABX-7 nonelective caesarean: azithromycin 500 mg IV over 1 h (ACOG PB 199 · C/SOAP 2016), el + en",
+  run('(function(){var c=ABX.find(a => a.ownCef); return /Nonelective caesarean: azithromycin 500 mg IV over 1 h may be added \\(ACOG PB 199 · C\\/SOAP 2016\\)/.test(c.regEn) && /Μη προγραμματισμένη καισαρική: μπορεί να προστεθεί αζιθρομυκίνη 500 mg IV σε 1 h \\(ACOG PB 199 · C\\/SOAP 2016\\)/.test(c.regEl);})()'), true);
+check("v526 V25-1 no fluoroquinolone in any procedure (EU suspension); one EU line in the header (el + en)",
+  (function () { const t = abxUi("70", "50"), e = abxUi("70", "50", "el"); return String(run('ABX.every(a => !/quinolone/i.test(a.regEn + a.altEn) && !/κινολόν/i.test(a.regEl + a.altEl))') && /Fluoroquinolones: in the EU the indication for perioperative prophylaxis is suspended \(European Commission · EAU 2026\)/.test(t) && /Κινολόνες: στην ΕΕ η ένδειξη για περιεγχειρητική προφύλαξη έχει ανασταλεί/.test(e) && !/quinolones: 120 min/.test(t)); })(), "true");
+check("v526 hysterectomy alternatives as Bratzler 2013 Table 2 without fluoroquinolones",
+  run('(function(){var h=ABX.find(a => a.en === "Hysterectomy"); return h.altEn === "Clindamycin or vancomycin + aminoglycoside or aztreonam · metronidazole + aminoglycoside" && h.altEl === "Κλινδαμυκίνη ή βανκομυκίνη + αμινογλυκοσίδη ή αζτρεονάμη · μετρονιδαζόλη + αμινογλυκοσίδη";})()'), true);
+check("v526 V25-3 child: procedure rows say 'cefazolin (see above)' (caesarean unchanged); adult unchanged",
+  JSON.stringify([run('abxCefRow(ABX[0], ABX[0].regEn, false, false, true)'), run('abxCefRow(ABX[2], ABX[2].regEl, false, true, true)'), run('abxCefRow(ABX.find(a => a.ownCef), "X", false, false, true)'), run('abxCefRow(ABX[0], ABX[0].regEn, true, false, false)'), String(run("AbxList.toString()").includes("abxCefRow(x, t, false, el, kidRows)"))]),
+  JSON.stringify(["Cefazolin IV (see above)", "Κεφαζολίνη (βλ. πάνω) + Μετρονιδαζόλη 500 mg IV", "X", "Cefazolin 3 g IV", "true"]));
+check("v526 Sources: WHO 2018, ACOG PB 199 + C/SOAP, AAAAI/ACAAI 2022, EAU 2026, CHOC/Stanford/UNMC, vancomycin SmPC listed after Bratzler 2013",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const i = T.indexOf("Clinical practice guidelines for antimicrobial prophylaxis in surgery"); const after = T.slice(i, i + 3000); return String(["Global guidelines for the prevention of surgical site infection", "ACOG Practice Bulletin No. 199", "NEJMoa1602044", "10.1016/j.jaci.2022.08.028", "EAU Guidelines on Urological Infections", "Pediatric perioperative/surgical antibiotic prophylaxis", "Vancomycin 1000 mg powder for concentrate"].every((k) => after.includes(k))); })(), "true");
+// --- v527: audit v526 V26-1 (ΕΠΙΚΙΝΔΥΝΟ), V26-2 ---
+check("v527 V26-1 child (and possible child): no procedure row keeps an adult dose (900 mg clindamycin, 500 mg metronidazole, 3 g ampicillin-sulbactam, 2 g cefazolin); caesarean row unchanged; adult rows unchanged",
+  (function () {
+    const bad = [];
+    const rows = (kid, l) => JSON.parse(run('JSON.stringify(ABX.map(x => { var el = ' + (l === "el") + '; var r = abxCefRow(x, el ? x.regEl : x.regEn, false, el, ' + kid + '); var a = el ? x.altEl : x.altEn; return ' + kid + ' ? [abxKidRow(x, r, el), abxKidRow(x, a, el), !!x.ownCef] : [r, a, !!x.ownCef]; }))'));
+    [["en", "(see above)"], ["el", "(βλ. πάνω)"]].forEach(([l, see]) => {
+      rows(true, l).forEach(([r, a, own], i) => { if (own) return; const both = r + " | " + a; if (/900 mg|500 mg|\b3 g\b|\b2 g\b/.test(both)) bad.push(l + " " + i + ": " + both.slice(0, 90)); });
+    });
+    const ad = rows(false, "en"); if (!/Clindamycin 900 mg/.test(ad[9][1]) || !/Metronidazole 500 mg IV/.test(ad[2][0])) bad.push("adult changed");
+    const ent = rows(true, "en")[9]; if (ent[0] !== "Cefazolin (see above) + metronidazole or ampicillin-sulbactam (see above)" || ent[1] !== "Clindamycin (see above)") bad.push("ENT " + JSON.stringify(ent));
+    if (!run("AbxList.toString()").includes("const kidRows = isPeds || maybePeds;")) bad.push("kidRows");
+    return bad.join("; ") || "ok";
+  })(), "ok");
+check("v527 V26-2 gentamicin: header says 'Adult gentamicin 5 mg/kg'; peds line has gentamicin 2.5 mg/kg (dosing weight) and ampicillin-sulbactam 50 mg/kg as ampicillin (el + en)",
+  (function () { const t = abxUi("70", "50"), e = abxUi("70", "50", "el"); return String(run("JSON.stringify(ABX_KID_MGKG)") === '{"clinda":10,"clindaNeo":5,"metro":15,"metroNeo":7.5,"gent":2.5,"ampSulb":50}' && /Peds \(up to the adult dose\): cefazolin 30 mg\/kg, metronidazole 15 mg\/kg \(neonates <1200 g: 7\.5 mg\/kg single dose\), clindamycin 10 mg\/kg \(≤1 month: 5 mg\/kg, Stanford Children's; some products contain benzyl alcohol and are contraindicated in neonates — SmPC\), gentamicin 2\.5 mg\/kg \(dosing weight\), ampicillin-sulbactam 50 mg\/kg as ampicillin/.test(t) && /Παιδιά \(έως τη δόση ενηλίκων\):.*γενταμικίνη 2\.5 mg\/kg/.test(e) && /Γενταμικίνη ενηλίκων 5 mg\/kg/.test(e) && /Adult gentamicin 5 mg\/kg/.test(t)); })(), "true");
+check("v527 author 27/11: caesarean in a child -> 'Cefazolin IV (see above) before incision'; adult caesarean unchanged",
+  JSON.stringify([run('abxCefRow(ABX.find(a => a.ownCef), ABX.find(a => a.ownCef).regEn, false, false, true).slice(0, 44)'), run('abxCefRow(ABX.find(a => a.ownCef), ABX.find(a => a.ownCef).regEl, false, true, true).slice(0, 40)'), run('abxCefRow(ABX.find(a => a.ownCef), ABX.find(a => a.ownCef).regEn, true, false, false).slice(0, 34)')]),
+  JSON.stringify(["Cefazolin IV (see above) before incision · A", "Κεφαζολίνη IV (βλ. πάνω) προ τομής · ACO", "Cefazolin 2 g IV before incision ·"]));
+check("v527 V26-3 vancomycin: 1 g up to 18 y kept (author), with the SmPC note on adolescents >=12 y (el + en); 17 y/130 kg -> 1000 mg",
+  (function () { const t = abxUi("130", "17"), e = abxUi("130", "17", "el"); return String(/1 g in children \(Stanford Children's; age ≥12 y: SmPC up to 2 g\)/.test(t) && /1 g στο παιδί \(Stanford Children's· έφηβοι ≥12 ετών: SmPC έως 2 g\)/.test(e)); })(), "true");
+check("v527 V26-5 penicillin anaphylaxis: one line on how the sources differ (el + en), EAACI 2020 / SWAB 2023 in Sources; the 'Severe allergy' label is unchanged",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const t = abxUi("70", "50"), e = abxUi("70", "50", "el"); return String(/Penicillin anaphylaxis — the sources differ: AAAAI\/ACAAI 2022 and SWAB 2023 → cefazolin without testing; EAACI 2020 → allergy work-up first\./.test(t) && /Αναφυλαξία στην πενικιλλίνη — οι πηγές διαφέρουν/.test(e) && T.includes("doi:10.1111/all.14122") && T.includes("Clin Microbiol Infect 2023;29(7):863") && T.includes('"Severe \\u03B2-lactam allergy (anaphylaxis or severe skin reaction):"')); })(), "true");
+// --- v528: author 28/11/2026 — no dose calculation in antibiotics, only recommended doses; audit v527 V27-1, V27-4 ---
+check("v528 no weight-based dose line in antibiotics, for any weight/age (adult 70/130 kg, child 20 kg 5 y, 17 y 130 kg, newborn 1 kg), el + en; header keeps the recommended doses",
+  (function () {
+    const bad = [];
+    [["70", "50"], ["130", "50"], ["20", "5"], ["130", "17"], ["1", "0"]].forEach(([w, a]) => { ["en", "el"].forEach((l) => { const t = abxUi(w, a, l); if (/For \d+ kg|Για \d+ kg|cefazolin \d+ mg(?!\/)|κεφαζολίνη \d+ mg(?!\/)|vancomycin \d+ mg(?!\/)|βανκομυκίνη \d+ mg(?!\/)/.test(t)) bad.push(w + "/" + a + " " + l); }); });
+    const t = abxUi("70", "50"); if (!/Adult cefazolin: 2 g · 3 g if ≥120 kg \(Bratzler 2013\)/.test(t) || !/Vancomycin 15 mg\/kg, maximum 2 g\/dose in adults \(SmPC\)/.test(t) || !/Adult gentamicin 5 mg\/kg/.test(t)) bad.push("header");
+    const A = run("AbxList.toString()"); if (/Math\.(min|max)\(/.test(A) || /ABX_VANCO_MGKG \* w|30 \* w/.test(A)) bad.push("calc left in AbxList");
+    return bad.join("; ") || "ok";
+  })(), "ok");
+check("v528 rows: adult rows say 'Cefazolin 2 g IV (3 g if >=120 kg — see above)' whatever the weight; child (age) and possible child (no age, <40 kg) -> '(see above)'; 38 kg / 70 y is an adult; root passes the age",
+  (function () {
+    const bad = [], R = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "root.js"), "utf8");
+    if (run('abxCefRow(ABX[0], ABX[0].regEn, false, false, false)') !== "Cefazolin 2 g IV (3 g if ≥120 kg — see above)") bad.push("adult row");
+    if (run('abxKidRow(ABX[2], abxCefRow(ABX[2], ABX[2].regEn, false, false, true), false)') !== "Cefazolin (see above) + Metronidazole IV (see above)") bad.push("child row");
+    if (!/Possibly a child — enter the age\./.test(abxUi("38", "")) || /Possibly a child/.test(abxUi("38", "70")) || /Possibly a child/.test(abxUi("20", "5"))) bad.push("prompt");
+    if (run('[doseCtx("38", "", "", "70").child, doseCtx("20", "", "", "5").child, possibleKid("38", "")].join()') !== "false,true,true") bad.push("child decision");
+    if (!R.includes("React.createElement(AbxList, { lang, weight, age })")) bad.push("root");
+    return bad.join("; ") || "ok";
+  })(), "ok");
+check("v528 V27-1 metronidazole neonates <1200 g: 7.5 mg/kg single dose (Bratzler 2013), el + en, one place (ABX_KID_MGKG.metroNeo)",
+  (function () { const t = abxUi("3", "0"), e = abxUi("3", "0", "el"); return String(run("ABX_KID_MGKG.metroNeo") === 7.5 && /metronidazole 15 mg\/kg \(neonates <1200 g: 7\.5 mg\/kg single dose\)/.test(t) && /μετρονιδαζόλη 15 mg\/kg \(νεογνά <1200 g: 7\.5 mg\/kg εφάπαξ\)/.test(e)); })(), "true");
+check("v528 V27-4 full references: Romano 2020 EAACI title, Wijnakker 2023 SWAB title + doi, Garcia Burgos Eur Urol 2025;88:427–9 doi",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); return String(T.includes("Towards a more precise diagnosis of hypersensitivity to beta-lactams") && T.includes("doi:10.1016/j.cmi.2023.04.008") && T.includes("Eur Urol 2025;88:427\\u20139. doi:10.1016/j.eururo.2025.07.015")); })(), "true");
+// --- v529: author 28/11/2026 (V27-2 α, V27-3 α, content review date) ---
+check("v529 V27-3 caesarean in a minor: azithromycin from 14 y (C/SOAP); under 14 y or no age -> 'the sources give no dose'; adult unchanged (el + en)",
+  JSON.stringify([16, 13, ""].map((a) => run('abxKidRow(ABX.find(x => x.ownCef), ABX.find(x => x.ownCef).regEn, false, "' + a + '")').split(" · Nonelective caesarean: ")[1]).concat([run('abxKidRow(ABX.find(x => x.ownCef), ABX.find(x => x.ownCef).regEl, true, "13")').split("καισαρική: ").pop(), String(run("ABX_AZI_MIN_AGE")), String(run("AbxList.toString()").includes('abxKidRow(x, cefRow(x, t), el, isPeds ? age : "")'))])),
+  JSON.stringify(["azithromycin 500 mg IV over 1 h may be added (ACOG PB 199 · C/SOAP 2016: age ≥14 y)", "azithromycin — the sources give no dose under 14 y (ACOG PB 199 · C/SOAP 2016)", "azithromycin — the sources give no dose under 14 y (ACOG PB 199 · C/SOAP 2016)", "αζιθρομυκίνη — δεν υπάρχει δόση για <14 ετών στις πηγές (ACOG PB 199 · C/SOAP 2016)", "14", "true"]));
+check("v529 V27-2 clindamycin <=1 month 5 mg/kg (Stanford Children's) + benzyl alcohol warning (SmPC), el + en; sources listed",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const e = abxUi("3", "0", "el"); return String(/κλινδαμυκίνη 10 mg\/kg \(≤1 μηνός: 5 mg\/kg, Stanford Children's· ορισμένα σκευάσματα περιέχουν βενζυλική αλκοόλη και αντενδείκνυνται σε νεογνά — SmPC\)/.test(e) && T.includes("NCT01235546 (enrolment from 14 years)") && T.includes("Dalacin C Phosphate 150 mg/ml, SmPC (HPRA, 17 June 2025)")); })(), "true");
+check("v529 About: 'Last content review: 28/11/2026' (el: 'Τελευταίος έλεγχος περιεχομένου'); audit registry abx dated 2026-11-28 with v523–v529",
+  (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const A = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "audit", "audit-registry.json"), "utf8")).items.find((x) => x.id === "abx"); return String(T.includes('const CONTENT_CHECKED = "28/11/2026";') && T.includes('"Last content review: " + CONTENT_CHECKED') && T.includes('"\\u03A4\\u03B5\\u03BB\\u03B5\\u03C5\\u03C4\\u03B1\\u03AF\\u03BF\\u03C2 \\u03AD\\u03BB\\u03B5\\u03B3\\u03C7\\u03BF\\u03C2 \\u03C0\\u03B5\\u03C1\\u03B9\\u03B5\\u03C7\\u03BF\\u03BC\\u03AD\\u03BD\\u03BF\\u03C5: " + CONTENT_CHECKED') && A.date === "2026-11-28" && A.versions.includes(529)); })(), "true");
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
 (function () {

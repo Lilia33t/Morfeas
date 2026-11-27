@@ -7,6 +7,8 @@ opened online.
 
 © 2026 Efstathia Pistioli, MD. All rights reserved (see `LICENSE`).
 
+Developed with artificial intelligence (AI) tools.
+
 ## Structure
 
 | File | Contents |
