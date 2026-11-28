@@ -124,8 +124,8 @@ function emphNums(text) {
 const ADULT_FROM_AGE = /adults?\s*(?:&|and)\s*(>|\u2265)\s*(\d+)\s*(yr|y|years?)\b/i;
 const doseAgeGroup = (ds) => {
   const t = ds.en || "";
-  const p = /\b(children|neonates?|newborns?|infants?)\b/i.test(t), a = /\badults?\b/i.test(t) || /^elderly$/i.test(t.trim());
-  if (p && !a) return "peds";
+  const p = /\b(children|neonates?|newborns?|infants?)\b(?!['’])/i.test(t), a = /\badults?\b/i.test(t) || /^elderly$/i.test(t.trim());
+  if (ds.forChild === true || p && !a) return "peds";
   if (a && !p && !/adolescent/i.test(t) && !/adults?\s*(?:&|and)\s*(>|\u2265)\s*\d+\s*(yr|y|years?)\b/i.test(t)) return "adult";
   return null;
 };
@@ -381,7 +381,7 @@ function rowFitsAge(ds, ctx, starts) {
 // Author 28/11/2026 (V33-1\u03B2, option \u03B1; V35-1): a row for a child is one written for children ("children",
 // "paediatric" anywhere in its title, or a group for children), one whose title gives an age, or one the author
 // marks allAges: true (rows the auditor found the same per kg at every age, with a source).
-const rowForChild = (ds) => doseAgeGroup(ds) === "peds" || /^(children|neonates?|newborns?|infants?|preterm)\b/i.test((ds.en || "").trim()) || /\b(children|paediatric|pediatric)\b/i.test(ds.en || "") || !!rowAge(ds) || ds.allAges === true;
+const rowForChild = (ds) => doseAgeGroup(ds) === "peds" || /^(children|neonates?|newborns?|infants?|preterm)\b/i.test((ds.en || "").trim()) || /\b(children|paediatric|pediatric)\b(?!['’])/i.test(ds.en || "") || ds.forChild === true || !!rowAge(ds) || ds.allAges === true;
 // V35-2: a title that starts with a weight band ("\u226410 kg", ">10\u201333 kg", ">50 kg") is shown to a child only
 // when the weight entered fits it. No weight: shown.
 const rowFitsWeight = (ds, ctx) => {
@@ -483,8 +483,10 @@ function primaryPick(d, ctx) {
     const peds = rows.filter((ds) => doseAgeGroup(ds) === "peds");
     // V36-2 (author 5\u03B3): rows for a child exist but the weight entered fits none of them (paracetamol >10 kg)
     const byWeight = !rows.length && base.some((ds) => rowForChild(ds) && rowFitsAge(ds, ctx) && !rowFitsWeight(ds, ctx));
+    // V41-1 (author 3\u03B1): rows for children exist, but none for this age
+    const byAge = !rows.length && !byWeight && base.some((ds) => rowForChild(ds) && !rowFitsAge(ds, ctx));
     if (peds.length === 1 && !NEO_ROW.test(peds[0].en || "") && (!/\d/.test(peds[0].en || "") || rowAge(peds[0]) && !/kg/.test(peds[0].en || ""))) return pick(peds[0]);
-    return { rows, index: -1, none: rows.length ? { el: rows.length === 1 ? "1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC" : rows.length + " \u03B3\u03C1\u03B1\u03BC\u03BC\u03AD\u03C2 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC", en: rows.length === 1 ? "1 row for children" : rows.length + " rows for children" } : byWeight ? { el: "\u039A\u03B1\u03BC\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03B1\u03C5\u03C4\u03AE \u03C4\u03B7\u03BD \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 \u03AE \u03B1\u03C5\u03C4\u03CC \u03C4\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2" + (d.pedsSee ? " \u2014 \u03B4\u03B5\u03AF\u03C4\u03B5 \u03C4\u03B7\u03BD \u03BA\u03B1\u03C1\u03C4\u03AD\u03BB\u03B1 " + d.pedsSee.el : ""), en: "No row for this age or this weight" + (d.pedsSee ? " \u2014 see the " + d.pedsSee.en + " tab" : "") } : { el: "\u039A\u03B1\u03BC\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03C3\u03B7\u03BC\u03B5\u03B9\u03C9\u03BC\u03AD\u03BD\u03B7 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC", en: "No row marked for children" } };
+    return { rows, index: -1, none: rows.length ? { el: rows.length === 1 ? "1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC" : rows.length + " \u03B3\u03C1\u03B1\u03BC\u03BC\u03AD\u03C2 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC", en: rows.length === 1 ? "1 row for children" : rows.length + " rows for children" } : byWeight ? { el: "\u039A\u03B1\u03BC\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03B1\u03C5\u03C4\u03AE \u03C4\u03B7\u03BD \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 \u03AE \u03B1\u03C5\u03C4\u03CC \u03C4\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2" + (d.pedsSee ? " \u2014 \u03B4\u03B5\u03AF\u03C4\u03B5 \u03C4\u03B7\u03BD \u03BA\u03B1\u03C1\u03C4\u03AD\u03BB\u03B1 " + d.pedsSee.el : ""), en: "No row for this age or this weight" + (d.pedsSee ? " \u2014 see the " + d.pedsSee.en + " tab" : "") } : byAge ? { el: "\u039A\u03B1\u03BC\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03B1\u03C5\u03C4\u03AE \u03C4\u03B7\u03BD \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1", en: "No row for this age" } : { el: "\u039A\u03B1\u03BC\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03C3\u03B7\u03BC\u03B5\u03B9\u03C9\u03BC\u03AD\u03BD\u03B7 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC", en: "No row marked for children" } };
   }
   if (ctx && ctx.aNum >= 18 && doseAgeGroup(marked) === "peds") {
     const ok = rows.find((ds) => doseAgeGroup(ds) !== "peds");
