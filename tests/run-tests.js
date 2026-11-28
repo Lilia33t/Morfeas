@@ -1322,7 +1322,7 @@ check("v485: Part 27A: lidocaine shows both limits in the LA table; no-sex note 
 
 check("v486: Part 27B corrections: bupivacaine, droperidol, dexamethasone, metoclopramide, hydralazine, labetalol, ropivacaine, prilocaine, clonidine",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
-    return String(run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};var D=function(x){return JSON.stringify(x);};var bu=g('bupivacaine'),dr=g('droperidol'),dx=g('dexamethasone'),me=g('metoclopramide'),hy=g('hydralazine'),la=g('labetalol'),ro=g('ropivacaine'),pr=g('prilocaine'),cl=g('clonidine');return [/400 mg.24 h/.test(D(bu.doses))&&!/500 mg/.test(D(bu.doses))&&/6.25.12.5 mg.h/.test(D(bu.doses)), !/20.50/.test(dr.notesEn)&&/5th PONV Consensus 2026/.test(D(dr.doses)), /5th PONV Consensus, Anesth Analg 2026/.test(D(dx.doses))&&!/8.10 mg equivalent/.test(D(dx.doses)), /breast-feeding/.test(me.ciEn)&&/up to 5 days/.test(D(me.doses)), /max 25 mg.24 h/.test(D(hy.doses)), !/small doses/.test(D(la.doses)), !/300 mg for brachial/.test(ro.notesEn), /Not recommended .Aspen/.test(pr.ciEn), /not from the SmPC/.test(cl.notesEn)].join('');})()")==="truetruetruetruetruetruetruetruetrue"); })(), "true");
+    return String(run("(function(){var g=function(id){return DRUGS.filter(function(x){return x.id===id;})[0];};var D=function(x){return JSON.stringify(x);};var bu=g('bupivacaine'),dr=g('droperidol'),dx=g('dexamethasone'),me=g('metoclopramide'),hy=g('hydralazine'),la=g('labetalol'),ro=g('ropivacaine'),pr=g('prilocaine'),cl=g('clonidine');return [/400 mg.24 h/.test(D(bu.doses))&&!/500 mg/.test(D(bu.doses))&&/6.3.12.5 mg.h/.test(D(bu.doses)), !/20.50/.test(dr.notesEn)&&/5th PONV Consensus 2026/.test(D(dr.doses)), /5th PONV Consensus, Anesth Analg 2026/.test(D(dx.doses))&&!/8.10 mg equivalent/.test(D(dx.doses)), /breast-feeding/.test(me.ciEn)&&/up to 5 days/.test(D(me.doses)), /max 25 mg.24 h/.test(D(hy.doses)), !/small doses/.test(D(la.doses)), !/300 mg for brachial/.test(ro.notesEn), /Not recommended .Aspen/.test(pr.ciEn), /not from the SmPC/.test(cl.notesEn)].join('');})()")==="truetruetruetruetruetruetruetruetrue"); })(), "true");
 
 check("v487: Part 28 corrections: crisis haemorrhage card, PCC, heparin, TXA, andexanet, desmopressin",
   (function () { const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8"); const P = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8");
@@ -1533,7 +1533,7 @@ const F2 = (function () {
   };
   const c = { React: R, window: { localStorage: null, addEventListener() {}, removeEventListener() {}, dispatchEvent() {} }, console, setTimeout: () => 0, clearTimeout() {}, Event: function () {} };
   vm.createContext(c);
-  vm.runInContext(["data", "formulas", "primitives", "tabs", "root"].map((f) => fs.readFileSync(p.join(__dirname, "..", "src", f + ".js"), "utf8")).join("\n") + ";this.__ = { DRUGS, CATS, T, MedsTab, DrugCard, SearchResults, doseCtx, doseSummary, drugRows, primaryIndex, doseText, noteSections, SRC_TYPES, verifiedInfo, VERIFIED_MONTHS, doseAgeGroup, isPendingErc, rowsFor, primaryPick, drugLabel, labelPaint, LABELS, DRUG_LABELS, DRUG_LABEL_OPPOSITE };", c);
+  vm.runInContext(["data", "formulas", "primitives", "tabs", "root"].map((f) => fs.readFileSync(p.join(__dirname, "..", "src", f + ".js"), "utf8")).join("\n") + ";this.__ = { DRUGS, CATS, T, MedsTab, DrugCard, SearchResults, doseCtx, doseSummary, drugRows, primaryIndex, doseText, noteSections, SRC_TYPES, verifiedInfo, VERIFIED_MONTHS, doseAgeGroup, isPendingErc, rowsFor, primaryPick, drugLabel, labelPaint, LABELS, DRUG_LABELS, DRUG_LABEL_OPPOSITE, rowFitsAge, rowAge, rowForChild, rowFitsWeight };", c);
   // Render to a plain tree: { tag, props, kids } and strings.
   const render = (n) => {
     if (n === null || n === undefined || n === false || n === true) return [];
@@ -1589,17 +1589,17 @@ check("v501 without a weight: list, card and search show the per-kg dose only, n
     }
     return bad.slice(0, 3).join(" | ") || "ok";
   })(), "ok");
-check("v501 no text lost: every dose row label, fixed dose, per-kg dose, maximum, note group and contraindication of all 95 drugs is in the open card (EL and EN)",
+check("v501 no text lost: every dose row label (v533: every row shown for this age, E2-1), fixed dose, per-kg dose, maximum, note group and contraindication of all 95 drugs is in the open card (EL and EN)",
   (function () {
-    const { DRUGS, T, DrugCard, doseCtx, drugRows, doseText, noteSections, render, text, norm, h } = F2;
+    const { DRUGS, T, DrugCard, doseCtx, drugRows, doseText, noteSections, render, text, norm, h, rowFitsAge } = F2;
     const bad = [];
     for (const lang of ["el", "en"]) for (const d of DRUGS) {
       const ctx = doseCtx("70", "172", "M", "45");
       const card = norm(text(render(h(DrugCard, { d, lang, ctx, sex: "M", t: T[lang] }))));
       const has = (s, what) => { if (!card.includes(norm(String(s)))) bad.push(`${d.id} ${lang} ${what}: ${String(s).slice(0, 40)}`); };
-      for (const ds of drugRows(d)) {
+      for (const ds of drugRows(d).filter((x) => rowFitsAge(x, ctx))) {
         has(ds[lang], "label");
-        const dt = doseText(ds, ctx.wFor(ds), lang);
+        const dt = doseText(ds, 0, lang);
         if (typeof dt === "string") has(dt, ds.fixed ? "fixed" : "per kg");
         else { has(dt.base, "per kg"); has(dt.calc, "dose"); }
         if (ds.max) has(T[lang].maxLabel + ": " + ds.max + " " + ds.unit.replace("/kg", ""), "max");
@@ -1611,28 +1611,31 @@ check("v501 no text lost: every dose row label, fixed dose, per-kg dose, maximum
     }
     return bad.slice(0, 4).join(" | ") || "ok";
   })(), "ok");
-check("v501 card notes kept: other age group, ideal body weight and the calculation line still appear where they apply",
+check("v501 card notes kept: other age group and ideal body weight (v534: no calculation line, no patient dose)",
   (function () {
     const { DRUGS, T, DrugCard, doseCtx, drugRows, primaryIndex, doseAgeGroup, render, text, norm, h } = F2;
     const bad = [];
     const card = (d, w, hgt, sex, age, lang) => norm(text(render(h(DrugCard, { d, lang, ctx: doseCtx(w, hgt, sex, age), sex, t: T[lang] }))));
     const peds = DRUGS.filter((d) => drugRows(d).some((ds) => !ds.fixed && doseAgeGroup(ds) === "peds"));
-    peds.forEach((d) => { if (!card(d, "70", "", "", "45", "el").includes("\u0394\u03B5\u03BD \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9 \u2014 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC")) bad.push("age " + d.id); });
+    // v533 (E2-1): an adult's card no longer lists the rows for children, so their "not calculated" note is gone with them.
+    peds.forEach((d) => { const c = card(d, "70", "", "", "45", "el"); if (drugRows(d).some((ds) => doseAgeGroup(ds) === "peds" && F2.rowAge(ds) && c.includes(norm(ds.el)))) bad.push("age " + d.id); });
     const ibw = DRUGS.filter((d) => drugRows(d).some((ds) => ds.basis === "ibw"));
-    ibw.forEach((d) => { const s = card(d, "120", "170", "", "45", "en"); if (!s.includes("consensus: height \u2212 100 \u2642 / \u2212 105 \u2640") || !s.includes("no sex entered: female formula (lower dose)")) bad.push("ibw " + d.id); if (!card(d, "70", "", "M", "45", "en").includes("Enter height to calculate on ideal body weight")) bad.push("ibw-height " + d.id); });
+    // v534 (author 28/11/2026: no patient dose in the drug cards): the ideal-weight rows say "per kg of ideal body weight",
+    // and there is no calculation line or "calculated values" warning any more.
+    ibw.forEach((d) => { const s = card(d, "120", "170", "", "45", "en"); if (!s.includes("per kg of ideal body weight (consensus: height \u2212 100 \u2642 / \u2212 105 \u2640)") || s.includes("Calculated on")) bad.push("ibw " + d.id); });
     const roc = DRUGS.find((d) => d.id === "rocuronium"), rs = card(roc, "70", "", "", "", "el");
-    if (!rs.includes("0.6 mg/kg \u00D7 70 kg = 42 mg")) bad.push("calculation line");
-    if (!rs.includes("\u26A0 \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03AD\u03BD\u03B5\u03C2 \u03C4\u03B9\u03BC\u03AD\u03C2")) bad.push("verify line");
+    if (rs.includes("\u00D7 70 kg") || rs.includes("42 mg")) bad.push("calculation line");
+    if (rs.includes("\u26A0 \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03AD\u03BD\u03B5\u03C2 \u03C4\u03B9\u03BC\u03AD\u03C2")) bad.push("verify line");
     return bad.slice(0, 4).join(" | ") || "ok " + (peds.length > 0) + " " + (ibw.length > 0);
   })(), "ok true true");
-check("v501 search example of spec \u00A75: \u00AB\u03C1\u03BF\u03BA\u00BB at 70 kg gives Rocuronium \u00B7 \u0394\u03B9\u03B1\u03C3\u03C9\u03BB\u03AE\u03BD\u03C9\u03C3\u03B7 \u00B7 42 mg",
+check("v501 search example of spec \u00A75: \u00AB\u03C1\u03BF\u03BA\u00BB at 70 kg gives Rocuronium \u00B7 \u0394\u03B9\u03B1\u03C3\u03C9\u03BB\u03AE\u03BD\u03C9\u03C3\u03B7 \u00B7 0.6 mg/kg (v534: no patient dose)",
   (function () {
     const { SearchResults, render, text, norm, find, doseNode, h } = F2;
     const sr = render(h(SearchResults, { lang: "el", query: "\u03C1\u03BF\u03BA", onPick() {}, patient: { weight: "70", height: "", sex: "", age: "" } }));
     const hit = find(sr, (x) => x.tag === "button" && /Rocuronium/.test(text(x)))[0];
     if (!hit) return "no result";
     return [norm(text(hit.kids[0].kids[0])), norm(text(find(hit, (x) => x.props["data-dose-label"])[0])), norm(text(doseNode(hit)))].join(" \u00B7 ");
-  })(), "Rocuronium \u00B7 \u0394\u03B9\u03B1\u03C3\u03C9\u03BB\u03AE\u03BD\u03C9\u03C3\u03B7 \u00B7 42 mg");
+  })(), "Rocuronium \u00B7 \u0394\u03B9\u03B1\u03C3\u03C9\u03BB\u03AE\u03BD\u03C9\u03C3\u03B7 \u00B7 0.6 mg/kg");
 check("v501 one calculation: list, card and search call doseSummary; doseText is called only inside doseFor (and the card's existing closing check)",
   (function () {
     const fs = require("fs"), p = require("path"), rd = (f) => fs.readFileSync(p.join(__dirname, "..", "src", f), "utf8");
@@ -1718,16 +1721,17 @@ check("v502 paediatric mode: the limit already used by the dose rows (under 18 y
     const kid = doseCtx("20", "", "", "5"), adult = doseCtx("70", "", "", "45"), none = doseCtx("70", "", "", "");
     let moved = 0;
     for (const d of DRUGS) { const base = drugRows(d), k = rowsFor(d, kid);
-      if (rowsFor(d, adult).some((x, i) => x !== base[i]) || rowsFor(d, none).some((x, i) => x !== base[i])) return "adult order " + d.id;
-      if (k.length !== base.length || base.some(x => k.indexOf(x) < 0)) return "rows lost " + d.id;
+      const baseA = base.filter(x => rowFitsAge(x, adult)), baseK = base.filter(x => rowFitsAge(x, kid) && rowForChild(x) && rowFitsWeight(x, kid));
+      if (rowsFor(d, adult).some((x, i) => x !== baseA[i]) || rowsFor(d, none).some((x, i) => x !== base[i]) || rowsFor(d, none).length !== base.length) return "adult order " + d.id;
+      if (k.length !== baseK.length || baseK.some(x => k.indexOf(x) < 0)) return "rows lost " + d.id;
       const firstNon = k.findIndex(x => doseAgeGroup(x) !== "peds"); if (firstNon >= 0 && k.slice(firstNon).some(x => doseAgeGroup(x) === "peds")) return "order " + d.id;
-      if (k.some((x, i) => x !== base[i])) moved++;
+      if (k.some((x, i) => x !== baseK[i])) moved++;
     }
     const A = { en: "a" }, B = { en: "b", primary: true }, K = { en: "CHILDREN x" };
     return "ok " + (moved > 0) + " " + (primaryIndex([K, A, B], A) === 2) + " " + (primaryIndex([K, A], A) === 1); })()`), "ok true true true");
 check("v502 paediatric mode: for a child (5 years, 20 kg) list = card = search for every drug, and no dose text differs from the adult card's rows",
   (function () {
-    const { DRUGS, T, MedsTab, DrugCard, SearchResults, doseCtx, drugRows, doseText, render, text, norm, find, doseNode, h } = F2;
+    const { DRUGS, T, MedsTab, DrugCard, SearchResults, doseCtx, drugRows, doseText, render, text, norm, find, doseNode, h, rowFitsAge } = F2;
     const bad = [], ctx = doseCtx("20", "", "", "5");
     const list = render(h(MedsTab, { lang: "el", weight: "20", height: "", sex: "", age: "5", focus: null, wBad: false }));
     for (const d of DRUGS) {
@@ -1739,7 +1743,7 @@ check("v502 paediatric mode: for a child (5 years, 20 kg) list = card = search f
       const S = hit ? norm(text(doseNode(hit))) : "(not found)";
       if (!L || L !== C || L !== S) bad.push(`${d.id}: list "${L}" card "${C}" search "${S}"`);
       const all = norm(text(cardTree));
-      for (const ds of drugRows(d)) { const dt = doseText(ds, ctx.wFor(ds), "el"); const want = typeof dt === "string" ? dt : dt.calc; if (!all.includes(norm(ds.el)) || !all.includes(norm(want))) bad.push(d.id + " row missing: " + ds.el.slice(0, 30)); }
+      for (const ds of drugRows(d).filter((x) => rowFitsAge(x, ctx) && F2.rowForChild(x) && F2.rowFitsWeight(x, ctx))) { const dt = doseText(ds, 0, "el"); const want = typeof dt === "string" ? dt : dt.calc; if (!all.includes(norm(ds.el)) || !all.includes(norm(want))) bad.push(d.id + " row missing: " + ds.el.slice(0, 30)); }
     }
     return bad.slice(0, 3).join(" | ") || "ok";
   })(), "ok");
@@ -1847,18 +1851,20 @@ check("v505 short titles: 22 checklists, each a real checklist, Greek and Englis
 // --- v506: fixes from the audit of v505 (V5-1 to V5-13) ---
 check("v506 V5-1 child (5 years, 18 kg): for all 95 drugs the main row in the list, in search and in the card is never an adult row; a paediatric row is chosen only when it is the only one and carries no age or weight limit",
   (function () {
-    const { DRUGS, T, MedsTab, DrugCard, SearchResults, doseCtx, drugRows, primaryPick, doseAgeGroup, render, text, norm, find, doseNode, h } = F2;
+    const { DRUGS, T, MedsTab, DrugCard, SearchResults, doseCtx, drugRows, primaryPick, doseAgeGroup, render, text, norm, find, doseNode, h, rowFitsAge, rowAge, rowForChild, rowFitsWeight } = F2;
     const bad = []; let one = 0, many = 0, none = 0;
     for (const lang of ["el", "en"]) {
       const pt = { weight: "18", height: "110", sex: "", age: "5" }, ctx = doseCtx("18", "110", "", "5");
       const list = render(h(MedsTab, Object.assign({ lang, focus: null, wBad: false }, pt)));
       for (const d of DRUGS) {
-        const pk = primaryPick(d, ctx), nPeds = drugRows(d).filter((x) => doseAgeGroup(x) === "peds").length;
+        const fits = drugRows(d).filter((x) => doseAgeGroup(x) === "peds" && rowFitsAge(x, ctx));
+        const pk = primaryPick(d, ctx), nPeds = fits.length;
         if (pk.index >= 0 && doseAgeGroup(pk.rows[pk.index]) !== "peds") bad.push("main row is not paediatric: " + d.id);
-        const single = drugRows(d).filter((x) => doseAgeGroup(x) === "peds")[0];
-        const auto = nPeds === 1 && !/\d/.test(single.en);
+        // v533 (E2-1): only rows that fit the child's age are listed, so a single fitting row with an age range is chosen too; never one limited by weight.
+        const single = fits[0];
+        const auto = nPeds === 1 && (!/\d/.test(single.en) || !!rowAge(single) && !/kg/.test(single.en));
         if (auto !== (pk.index >= 0)) bad.push("rule: " + d.id);
-        if (pk.index >= 0 && /\d/.test(pk.rows[pk.index].en)) bad.push("row with an age or weight limit chosen: " + d.id);
+        if (pk.index >= 0 && /kg/.test(pk.rows[pk.index].en)) bad.push("row with a weight limit chosen: " + d.id);
         if (lang === "el") { if (auto) one++; else if (nPeds >= 1) many++; else none++; }
         const row = find(list, (x) => x.props["data-drug"] === d.id)[0];
         const lab = find(row, (x) => x.props["data-dose-label"])[0];
@@ -1872,30 +1878,31 @@ check("v506 V5-1 child (5 years, 18 kg): for all 95 drugs the main row in the li
         if (pk.index < 0 && (lab || find(row, (x) => x.props["data-dose-main"] || x.props["data-dose-fixed"]).length || L !== pk.none[lang])) bad.push("a dose is shown without a main row: " + d.id);
         if (pk.index >= 0 && (!lab || norm(text(lab)) !== norm(pk.rows[pk.index][lang]))) bad.push("label: " + d.id);
         // every row for adults that is still listed in the card says so, fixed doses included
+        // (v535, author 28/11/2026: a child's card lists no adult rows at all, so there is none to mark)
         const notes = find(cardTree, (x) => x.props["data-age-note"]).length + (norm(text(cardTree)).split(lang === "el" ? "\u0394\u03B5\u03BD \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9 \u2014 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03B5\u03BD\u03AE\u03BB\u03B9\u03BA\u03B5\u03C2" : "Not calculated \u2014 adult row").length - 1);
-        if (notes !== drugRows(d).filter((x) => doseAgeGroup(x) === "adult").length) bad.push("adult rows without the note: " + d.id);
+        if (notes !== pk.rows.filter((x) => doseAgeGroup(x) === "adult").length) bad.push("adult rows without the note: " + d.id);
       }
     }
     return (bad.slice(0, 4).join(" | ") || "ok") + " " + one + "/" + many + "/" + none;
-  })(), "ok 9/43/43");
-check("v506 V5-1 the auditor's examples: ondansetron, adrenaline, metoclopramide, etomidate, paracetamol (row for \u226410 kg), fentanyl show no dose in the list; glucagon shows its one unrestricted paediatric row",
+  })(), "ok 21/30/44");
+check("v506 V5-1 the auditor's examples: adrenaline, etomidate, paracetamol (row for \u226410 kg), fentanyl show no dose in the list; glucagon shows its one unrestricted paediatric row; v533 (E2-1): ondansetron and metoclopramide (one row for children that fits 5 years) now show it",
   (function () {
     const { DRUGS, MedsTab, render, text, norm, find, h } = F2;
     const list = render(h(MedsTab, { lang: "el", weight: "18", height: "110", sex: "", age: "5", focus: null, wBad: false }));
     const row = (id) => find(list, (x) => x.props["data-drug"] === id)[0];
     const q = (id, k) => { const n = find(row(id), (x) => x.props[k])[0]; return n ? norm(text(n)) : ""; };
-    const out = [q("ondansetron", "data-dose-none") === "1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC", /^\u03A0\u0391\u0399\u0394\u0399\u0391 \u2014/.test(q("glucagon", "data-dose-label")) && !!q("glucagon", "data-dose-fixed"), q("etomidate", "data-dose-none") === "\u039A\u03B1\u03BC\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03C3\u03B7\u03BC\u03B5\u03B9\u03C9\u03BC\u03AD\u03BD\u03B7 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC" && /^\u03A0\u0391\u0399\u0394\u0399\u0391 \(/.test(q("rocuronium", "data-dose-label"))];
+    const out = [q("ondansetron", "data-dose-none") === "1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC", /^\u03A0\u0391\u0399\u0394\u0399\u0391 \u2014/.test(q("glucagon", "data-dose-label")) && !!q("glucagon", "data-dose-fixed"), q("etomidate", "data-dose-none") === "1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC" && /^\u03A0\u0391\u0399\u0394\u0399\u0391 \(/.test(q("rocuronium", "data-dose-label"))];
     ["adrenaline", "metoclopramide", "ondansetron", "etomidate", "paracetamol", "fentanyl", "midazolam", "atropine", "propofol"].forEach((id) => out.push(!q(id, "data-dose-main") && !q(id, "data-dose-fixed") && !!q(id, "data-dose-none")));
     return out.join(",");
-  })(), "true,true,true,true,true,true,true,true,true,true,true,true");
+  })(), "false,true,true,true,true,false,true,true,true,true,true,true");
 check("v506 V5-1 adult (45 years) and no age: the main row is never a paediatric row; without an age it is the author's row, as before",
   run(`(() => { const adult = doseCtx("70", "172", "M", "45"), none = doseCtx("70", "", "", ""), bad = [];
     for (const d of DRUGS) { const a = primaryPick(d, adult), n = primaryPick(d, none), base = drugRows(d);
       if (a.index < 0 || doseAgeGroup(a.rows[a.index]) === "peds") bad.push("adult " + d.id);
       if (n.index !== 0 || n.rows[0] !== base[0] || n.none) bad.push("no age " + d.id);
-      if (a.rows.some((x, i) => x !== base[i])) bad.push("order " + d.id); }
+      const baseA = base.filter((x) => rowFitsAge(x, adult)); if (a.rows.some((x, i) => x !== baseA[i])) bad.push("order " + d.id); }
     const fake = { id: "x", doses: [{ en: "CHILDREN", el: "\\u03A0", fixed: "a" }, { en: "Adults", el: "E", fixed: "b" }] }, onlyKids = { id: "y", doses: [{ en: "Children", el: "\\u03A0", fixed: "a" }] };
-    return (bad.join(",") || "ok") + " " + primaryPick(fake, adult).index + " " + primaryPick(fake, doseCtx("18", "", "", "5")).index + primaryPick({ id: "z", doses: [{ en: "Adults", el: "E", fixed: "b" }, { en: "CHILDREN >8 years", el: "P", fixed: "a" }] }, doseCtx("18", "", "", "5")).index + " " + primaryPick(onlyKids, adult).index + " " + primaryPick(onlyKids, adult).none.en; })()`), "ok 1 0-1 -1 No row for adults");
+    return (bad.join(",") || "ok") + " " + primaryPick(fake, adult).index + " " + primaryPick(fake, doseCtx("18", "", "", "5")).index + primaryPick({ id: "z", doses: [{ en: "Adults", el: "E", fixed: "b" }, { en: "CHILDREN >8 years", el: "P", fixed: "a" }] }, doseCtx("18", "", "", "5")).index + " " + primaryPick(onlyKids, adult).index + " " + primaryPick(onlyKids, adult).none.en; })()`), "ok 0 0-1 -1 No row for adults");
 check("v506 V5-2 \u00AB\u039D\u03AD\u03B1 \u03BA\u03C1\u03AF\u03C3\u03B7\u00BB: asks first, clears the ticks of the checklist, apart from Close; V5-9 copied text says it is not a medical record",
   (function () {
     const fs = require("fs"), p = require("path"), P = fs.readFileSync(p.join(__dirname, "..", "src", "primitives.js"), "utf8"), bad = [];
@@ -1951,11 +1958,11 @@ check("v507 V6-4 child card without a main row: says that the rows are not filte
   (function () {
     const { DRUGS, T, DrugCard, doseCtx, render, text, norm, find, h } = F2;
     const ctx = doseCtx("18", "110", "", "5"), out = [];
-    for (const lang of ["el", "en"]) { let n = 0, miss = 0; for (const d of DRUGS) { const c = render(h(DrugCard, { d, lang, ctx, sex: "", t: T[lang] })); const none = find(c, (x) => x.props["data-dose-none"]).length, note = find(c, (x) => x.props["data-row-limits-note"]); if (none) { n++; if (note.length !== 1 || !/(\u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 \u03AE \u03B2\u03AC\u03C1\u03BF\u03C2|age or weight)/.test(text(note))) miss++; } else if (note.length) miss++; } out.push(n + ":" + miss); }
+    for (const lang of ["el", "en"]) { let n = 0, miss = 0; for (const d of DRUGS) { const c = render(h(DrugCard, { d, lang, ctx, sex: "", t: T[lang] })); const none = find(c, (x) => x.props["data-dose-none"]).length, note = find(c, (x) => x.props["data-row-limits-note"]); if (none) { n++; if (note.length !== 1 || !/(\u03C3\u03C4\u03BF \u03C0\u03B1\u03B9\u03B4\u03AF \u03C6\u03B1\u03AF\u03BD\u03BF\u03BD\u03C4\u03B1\u03B9 \u03BC\u03CC\u03BD\u03BF|for a child only rows for children)/i.test(text(note))) miss++; } else if (note.length) miss++; } out.push(n + ":" + miss); }
     const e = JSON.parse(run("JSON.stringify(CHANGELOG.find(function (x) { return x.v === 506; }))"));
     out.push(/\u03C7\u03C9\u03C1\u03AF\u03C2 \u03CC\u03C1\u03B9\u03BF \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1\u03C2 \u03AE \u03B2\u03AC\u03C1\u03BF\u03C5\u03C2/.test(e.el[0]) && /no age or weight limit/.test(e.en[0]));
     return out.join(",");
-  })(), "86:0,86:0,true");
+  })(), "74:0,74:0,true");
 // --- v508: the black upper half must be visible on the dark and theatre themes (audit of v507, V7-1) ---
 check("v508 V7-1 black upper half on dark themes: adrenaline and suxamethonium get a 1 px frame in the colour of their class on dark and theatre, none on light; no other drug is framed; the frame colour has contrast of at least 3:1 with the card",
   run(`(() => { ${V499_CR} const L = (id) => drugLabel(DRUGS.find(d => d.id === id)), out = [];
@@ -2043,13 +2050,13 @@ check("v513 V12b-3 weight under 40 kg and no age: the card asks for the age; an 
     return [run("AGE_PROMPT_KG"), P.includes('w > 0 && w < AGE_PROMPT_KG && !ctx.hasAge && React.createElement("div", { "data-age-prompt": "1"'),
       P.includes('"\\u03A3\\u03C5\\u03BC\\u03C0\\u03BB\\u03B7\\u03C1\\u03CE\\u03C3\\u03C4\\u03B5 \\u03B7\\u03BB\\u03B9\\u03BA\\u03AF\\u03B1') && P.includes('"Enter the age \\u2014 rows for children and adults are not told apart"')].join();
   })(), "40,true,true");
-check("v513 V12b-6 amiodarone, child in arrest: two rows (after the 3rd shock max 300 mg, after the 5th max 150 mg); 40 kg -> 200 mg and 150 mg, in the card and the paediatric tab",
+check("v513 V12b-6 amiodarone, child in arrest: two rows (after the 3rd shock max 300 mg, after the 5th max 150 mg); the card shows 5 mg/kg (v534), the paediatric tab 40 kg -> 200 mg and 150 mg",
   (function () {
     const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8");
     const r = run(`(() => { const c = doseCtx("40", "", "", "10"); const rows = DRUGS.find((d) => d.id === "amiodarone").doses.filter((x) => /^Children/.test(x.en));
       return rows.length + "|" + rows.map((x) => x.max + ":" + doseSummary(x, c, "en").main).join("|") + "|" + rows.every((x) => /3\\u03B7|5\\u03B7/.test(x.el) && /3rd|5th/.test(x.en)); })()`);
     return r + "|" + (T.includes("fmt(Math.min(5 * w, 300))} mg \\u00B7 5th: ${fmt(Math.min(5 * w, 150))} mg`") && T.includes("${fmt(Math.min(5 * w, 150))} mg` : `3rd:"));
-  })(), "2|300:200 mg|150:150 mg|true|true");
+  })(), "2|300:5 mg/kg|150:5 mg/kg|true|true");
 check("v513 V12b-5 every fixed-text dose row has its English text (nalbuphine pruritus row included)",
   run(`DRUGS.reduce((n, d) => n + (d.doses || []).filter((x) => x.fixed && !x.fixedEn).length, 0) + "|" + DRUGS.find((d) => d.id === "nalbuphine").doses.find((x) => /pruritus/.test(x.en)).fixedEn`), "0|2.5–5 mg IV");
 check("v513 V12b-2/V12b-7 obesity notice: BMI >= 40 (rocuronium also >= 1.3 x ideal weight); none for suxamethonium; no dose changes",
@@ -2058,7 +2065,7 @@ check("v513 V12b-2/V12b-7 obesity notice: BMI >= 40 (rocuronium also >= 1.3 x id
     const prop = doseSummary(drugRows(D("propofol"))[0], big, "en").main, roc = doseSummary(drugRows(D("rocuronium")).find((x) => /RSI/.test(x.en)), big, "en").main;
     return [Object.keys(OBESITY_DOSING).every((id) => on(id, big)), on("succinylcholine", big), on("ketamine", big), on("rocuronium", mid), on("propofol", mid), on("rocuronium", small),
       on("propofol", doseCtx("150", "", "M", "45")), prop, roc, Object.keys(OBESITY_DOSING).every((id) => { const n = obesityNotice(D(id), big, "M"); return n.el && n.en && n.el !== n.en; })].join(); })()`),
-  "true,false,false,true,false,false,false,225–375 mg,150 mg,true");
+  "true,false,false,true,false,false,false,1.5–2.5 mg/kg,1 mg/kg,true");
 check("v513 V12b-2 the obesity map follows the groups of the Bariatric tool (AAGBI/SOBA 2015, Table 3), and both use one BMI limit",
   (function () {
     const T = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "tabs.js"), "utf8");
@@ -2148,7 +2155,7 @@ check("v517 V16-2 (a) grey note only on hypnotics, opioids, relaxants, reversal,
 check("v517 V16-2 (b) dantrolene, BMI >= 40: its own note, actual body weight (EMHG / ANZCA PS55, MHAUS), el and en; no AAGBI wording; no dose change",
   run(`(() => { const d = DRUGS.find((x) => x.id === "dantrolene"), c = doseCtx("150", "170", "M", "45"), n = obesityNotice(d, c, "M");
     return [n.own, /EMHG/.test(n.el) && /ANZCA PS55/.test(n.el) && /MHAUS/.test(n.el), n.en, /AAGBI/.test(n.el + n.en), obesityNotice(d, doseCtx("90", "170", "M", "45"), "M"), doseSummary(drugRows(d)[0], c, "en").main].join("|"); })()`),
-  "true|true|Obesity: dose on actual body weight (EMHG / ANZCA PS55, MHAUS).|false||300 mg");
+  "true|true|Obesity: dose on actual body weight (EMHG / ANZCA PS55, MHAUS).|false||2.5 mg/kg");
 // --- v518: audit E1 (extreme patients), findings E1-1 to E1-7 ---
 // A second sandbox with a tiny static renderer: components run once with their initial state and the visible text
 // is collected, so a test can read what a screen shows. (Added in v518; the main sandbox stays as it was.)
@@ -2411,6 +2418,146 @@ check("v531 what's new: the dialog shows NEWS only (not CHANGELOG); NEWS 531 = '
       n.some((x) => x.v === 531 && x.el === "Αντιβιοτική προφύλαξη: ανανεώθηκε." && x.en === "Antibiotic prophylaxis: updated.") &&
       n.every((x) => x.el && x.en && x.v <= run("APP_VERSION")));
   })(), "true");
+check("v532 Tools: the group is called 'Περιεγχειρητικά' / 'Perioperative' (author 28/11/2026: the sources are elsewhere)",
+  (function () { const R = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "root.js"), "utf8"); return String(R.includes('{ id: "reference", el: "\\u03A0\\u03B5\\u03C1\\u03B9\\u03B5\\u03B3\\u03C7\\u03B5\\u03B9\\u03C1\\u03B7\\u03C4\\u03B9\\u03BA\\u03AC", en: "Perioperative" }') && !R.includes("Perioperative & Reference")); })(), "true");
+// --- v533: audit E2 (hypnotics, gases, opioids, v529): E2-1 rows outside their age not shown (author 28/11/2026); E2-2…E2-7 ---
+check("v533 E2-1 rows for children outside the age of their title are not shown: newborn (0 y) has no nalbuphine 18 months–15 yr, propofol >8 yr / 1 month–3 yr, remifentanil 1–12 yr, midazolam PO/rectal >6 months; 15 y has no midazolam NEONATES or thiopental NEWBORNS/INFANTS; no age = every row; heparin 'children and small adults' and paracetamol '≤10 kg' are not limited by age",
+  run(`(() => { const R = (id, a, w) => rowsFor(DRUGS.find(d => d.id === id), doseCtx(w || "3.5", "", "", a)).map(x => x.en);
+    const has = (id, a, re, w) => R(id, a, w).some(x => re.test(x)), bad = [];
+    if (has("nalbuphine", "0", /18 months/)) bad.push("nalb");
+    if (has("propofol", "0", />8 yr|1 month–3 yr/)) bad.push("prop");
+    if (has("remifentanil", "0", /1–12 yr/)) bad.push("remi");
+    if (has("midazolam", "0", /PO premedication|rectal/)) bad.push("mida");
+    if (has("midazolam", "15", /NEONATES/, "55") || has("thiopental", "15", /NEWBORNS|INFANTS/, "55")) bad.push("15y");
+    if (!has("propofol", "10", />8 yr/, "30") || has("propofol", "8", />8 yr/, "25") || !has("nalbuphine", "1.5", /18 months/, "10") || !has("nalbuphine", "15.9", /18 months/, "50") || has("nalbuphine", "16", /18 months/, "50")) bad.push("edges");
+    DRUGS.forEach(d => { if (rowsFor(d, doseCtx("3.5", "", "", "")).length !== drugRows(d).length) bad.push("no age " + d.id); });
+    if (!has("heparin", "45", /small adults/, "70") || !has("paracetamol", "0.8", /≤10 kg/, "8")) bad.push("not by age");
+    return bad.join(",") || "ok"; })()`), "ok");
+check("v533 E2-1 a single paediatric row that fits the age is the main row (ondansetron 5 y); several fitting rows -> none chosen (propofol 5 y); the card note says rows are filtered by age, not by weight (EL + EN)",
+  run(`(() => { const c = doseCtx("18", "110", "", "5"); const o = primaryPick(DRUGS.find(d => d.id === "ondansetron"), c), p = primaryPick(DRUGS.find(d => d.id === "propofol"), c);
+    return [o.index >= 0 && /1 month–17 yr/.test(o.rows[o.index].en), p.index === -1].join(); })()`) + "|" + String(require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8").includes('"For a child only rows for children, or with an age that fits, are shown; adult rows and rows with no age in their title are not, except rows valid at every age \\u2014 read the title."')), "true,true|true");
+check("v533 E2-2 sufentanil labour epidural: 'may be repeated up to 2 times · total ≤30 mcg' (el: 'επανάληψη έως 2 φορές')",
+  run('(function(){var r=DRUGS.find(d=>d.id==="sufentanil").doses.find(x=>/Labour epidural/.test(x.en)); return r.fixedEn + " | " + r.fixed;})()'), "10 mcg · may be repeated up to 2 times · total ≤30 mcg | 10 mcg · επανάληψη έως 2 φορές · σύνολο ≤30 mcg");
+check("v533 E2-3 / E2-7 nalbuphine: SERB contraindications added (acute surgical abdomen, methadone, partial agonist-antagonists, sodium oxybate, breastfeeding) el + en; children 0.1–0.2 mg/kg",
+  run('(function(){var d=DRUGS.find(x=>x.id==="nalbuphine"), r=d.doses.find(x=>/18 months/.test(x.en)); return [/acute surgical abdomen · concomitant methadone, partial agonist-antagonists or sodium oxybate · breastfeeding \\(except use during labour\\)/.test(d.ciEn), /σύνδρομο οξείας χειρουργικής κοιλίας · συγχορήγηση με μεθαδόνη, με μερικούς αγωνιστές-ανταγωνιστές ή με οξυβικό νάτριο · θηλασμός/.test(d.ciEl), r.lo, r.hi].join();})()'), "true,true,0.1,0.2");
+check("v533 E2-4 oxycodone age per SmPC (UK >18 · HPRA / G.L. Pharma ≥12, bolus ≤5 mg); E2-5 alfentanil obesity 'SmPC: lean body weight — the sources differ'; E2-6 N₂O MAC ~105% (PAR Niontix)",
+  run('(function(){var o=DRUGS.find(x=>x.id==="oxycodone"), n=DRUGS.find(x=>x.id==="n2o"||/N₂O|Nitrous/.test(x.name)); return [/Age: UK OxyNorm >18 years · other SmPCs \\(HPRA, G\\.L\\. Pharma\\) ≥12 years, bolus up to 5 mg\\./.test(o.notesEn), /Ηλικία: UK OxyNorm >18 ετών · άλλα SmPC \\(HPRA, G\\.L\\. Pharma\\) ≥12 ετών, bolus έως 5 mg\\./.test(o.notesEl), !/<18 ετών\\./.test(o.notesEl), OBESITY_DOSING.alfentanil.en, /MAC ~105%/.test(n.notesEn) && /MAC ~105%/.test(n.notesEl) && !/104/.test(n.notesEn + n.notesEl)].join();})()'), "true,true,true,SmPC: lean body weight — the sources differ,true");
+// --- v534: author 28/11/2026 — drug cards without a patient dose; audit v533 V33-1α, V33-2, V33-5, V33-6, V33-1γ ---
+check("v534 drug list, cards and search: no dose is calculated for the patient (adult 70 kg, child 5 y/18 kg, obese 150 kg); every non-fixed row shows its per-kg dose; no 'Calculated on', no '× N kg', no verify line",
+  (function () {
+    const { DRUGS, T, DrugCard, doseCtx, render, text, norm, h, doseSummary, drugRows } = F2;
+    const bad = [];
+    [["70", "172", "45"], ["18", "110", "5"], ["150", "170", "45"]].forEach(([w, hgt, a]) => {
+      const ctx = doseCtx(w, hgt, "M", a);
+      for (const d of DRUGS) {
+        drugRows(d).forEach((ds) => { const s = doseSummary(ds, ctx, "en"); if (!ds.fixed && (s.capped || s.expl || s.perKg || !/\/kg|mg|mcg|µg|U|%|mL/.test(s.main))) bad.push("summary " + d.id); });
+        const c = norm(text(render(h(DrugCard, { d, lang: "en", ctx, sex: "M", t: T.en }))));
+        if (/\u00D7 \d+(\.\d+)? kg =/.test(c) || /Calculated on/.test(c)) bad.push("card " + d.id + " " + w);
+      }
+    });
+    return [...new Set(bad)].slice(0, 5).join(" | ") || "ok";
+  })(), "ok");
+check("v534 V33-2 midazolam, preterm-type rows: a 6-week-old (0.115 y) sees both NEONATES rows (≤32 and >32 weeks), none is chosen automatically, and the card says 'Preterm: gestational / corrected age'; at 1 year they are gone",
+  run(`(() => { const d = DRUGS.find(x => x.id === "midazolam"), c = doseCtx("2.5", "", "", String(6 / 52)), r = rowsFor(d, c).map(x => x.en);
+    const neo = r.filter(x => /NEONATES/.test(x)).length, pk = primaryPick(d, c), gone = rowsFor(d, doseCtx("10", "", "", "1")).some(x => /NEONATES/.test(x.en));
+    return [neo, pk.index === -1 || !/NEONATES/.test(pk.rows[pk.index].en), gone].join(); })()`) + "|" + String(require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8").includes('"Neonates: up to 27 days; preterm: up to 40 weeks + 27 days corrected age (EMA)"')), "2,true,false|true");
+check("v534 V33-5 / V33-1γ: tramadol 'Adults & ≥12 yr' and adrenaline 'adults and >12 yr' are rows from that age (calculated group null, hidden under it); propofol 'ICU sedation (>16 yr)' hidden at 5 y, shown at 17 y",
+  run(`(() => { const has = (id, a, re) => rowsFor(DRUGS.find(x => x.id === id), doseCtx("40", "", "", a)).some(x => re.test(x.en));
+    const g = doseAgeGroup(DRUGS.find(x => x.id === "tramadol").doses.find(x => /Adults & ≥12 yr/.test(x.en)));
+    return [g === null, has("tramadol", "14", /Adults & ≥12/), has("tramadol", "8", /Adults & ≥12/), has("adrenaline", "13", /adults and >12/), has("adrenaline", "12", /adults and >12/), has("propofol", "5", /ICU sedation \\(>16/), has("propofol", "17", /ICU sedation \\(>16/)].join(); })()`), "true,true,false,true,false,false,true");
+check("v534 V33-6: '≤N' / 'a–N' stops at N when another row of the drug starts above N — methylene blue at 3.5 months only the '>3 months' row; adrenaline at 12.5 y not the '6–12 yr' row, at 12 y it is",
+  run(`(() => { const R = (id, a) => rowsFor(DRUGS.find(x => x.id === id), doseCtx("10", "", "", a)).map(x => x.en);
+    return [R("methylene_blue", String(3.5 / 12)).filter(x => /≤3 months/.test(x)).length, R("methylene_blue", String(3.5 / 12)).filter(x => />3 months/.test(x)).length, R("adrenaline", "12.5").some(x => /6–12 yr/.test(x)), R("adrenaline", "12").some(x => /6–12 yr/.test(x))].join(); })()`), "0,1,false,true");
+check("v534 obesity notices no longer say the number is calculated on actual weight (el + en)",
+  run(`(() => { const n = obesityNotice(DRUGS.find(x => x.id === "propofol"), doseCtx("150", "170", "M", "45"), "M"), g = obesityNotice(DRUGS.find(x => x.id === "ketamine"), doseCtx("150", "170", "M", "45"), "M");
+    return [/^Obesity — dosing weight: AAGBI/.test(n.en), !/calculated/.test(n.en + n.el), g ? g.en : "none"].join("|"); })()`), "true|true|Obesity: AAGBI/SOBA 2015 gives no dosing weight for this drug.");
+// --- v535: author 28/11/2026 — V33-1β option α, V33-4 option β, V34-1 ---
+check("v535 V33-1β child: no adult row and no row without an age is shown (midazolam 'Premedication IV (<60 yr)' at 6 weeks, remimazolam at 5 y -> no rows); 'adults & adolescents' from 12 y (etomidate 15 y yes, 10 y no); adults unchanged; rows marked allAges would be kept",
+  run(`(() => { const R = (id, w, a) => rowsFor(DRUGS.find(x => x.id === id), doseCtx(w, "", "", a)).map(x => x.en), bad = [];
+    if (R("midazolam", "2.5", String(6 / 52)).some(x => /Premedication IV \\(<60/.test(x))) bad.push("mida");
+    if (R("remimazolam", "18", "5").length) bad.push("remi");
+    if (!R("etomidate", "55", "15").some(x => /adolescents/.test(x)) || R("etomidate", "30", "10").some(x => /adolescents/.test(x))) bad.push("eto");
+    DRUGS.forEach(d => { if (R(d.id, "18", "5").some(en => { const ds = drugRows(d).find(x => x.en === en); return !rowForChild(ds); })) bad.push("leak " + d.id); });
+    if (!R("heparin", "18", "5").some(x => /CHILDREN and small adults/.test(x))) bad.push("heparin");
+    const fake = { id: "f", doses: [{ en: "Malignant hyperthermia", el: "x", lo: 2.5, hi: 2.5, unit: "mg/kg", allAges: true }, { en: "Something", el: "y", fixed: "1 mg" }] };
+    if (rowsFor(fake, doseCtx("18", "", "", "5")).length !== 1) bad.push("allAges");
+    if (rowsFor(DRUGS.find(x => x.id === "midazolam"), doseCtx("70", "", "", "45")).length !== drugRows(DRUGS.find(x => x.id === "midazolam")).filter(x => rowFitsAge(x, doseCtx("70", "", "", "45"))).length) bad.push("adult");
+    return bad.join(",") || "ok"; })()`), "ok");
+check("v535 child card with no row left: says so and points to the notes (no 'choose a row below'); V33-4 propofol note on induction in children (SmPC), el + en",
+  (function () { const { DRUGS, T, DrugCard, doseCtx, render, text, norm, h } = F2; const c = norm(text(render(h(DrugCard, { d: DRUGS.find((x) => x.id === "remimazolam"), lang: "en", ctx: doseCtx("18", "110", "", "5"), sex: "", t: T.en }))));
+    const p = JSON.parse(run('JSON.stringify(DRUGS.find(x => x.id === "propofol"))'));
+    return String(/No row marked for children\. See the notes and contraindications\./.test(c) && !/Choose a row below/.test(c) && /Induction in children: over 8 years about 2\.5 mg\/kg; in younger children, especially 1 month–3 years, requirements may be higher \(2\.5–4 mg\/kg\); for 4–8 years the SmPC gives no separate figure\./.test(p.notesEn) && /για 4–8 ετών το SmPC δεν δίνει χωριστό αριθμό/.test(p.notesEl)); })(), "true");
+// --- v536: auditor report v535 (V35-1 … V35-5, K35-8) and author 28/11/2026 (1α, 2α, 3β) ---
+check("v536 V35-1 child (5 y): rows that say children/paediatric anywhere in the title are shown (sevo, iso, sux 'older children' by author 2α, neostigmine, glycopyrrolate); 'Child-Pugh' is not a row for children",
+  run(`(() => { const R = (id) => rowsFor(DRUGS.find(x => x.id === id), doseCtx("18", "", "", "5")).map(x => x.en), bad = [];
+    if (!R("sevoflurane").some(x => /adults and children/.test(x))) bad.push("sevo");
+    if (!R("isoflurane").some(x => /Paediatric MAC/.test(x))) bad.push("iso");
+    if (!R("succinylcholine").some(x => /older children/.test(x))) bad.push("sux");
+    const n = R("neostigmine"); if (!n.some(x => /adults & children/.test(x)) || !n.some(x => /Glycopyrrolate/.test(x))) bad.push("neo");
+    if (R("parecoxib").some(x => /Child-Pugh/.test(x))) bad.push("pugh");
+    if (rowForChild({ en: "Elderly <50 kg, moderate hepatic (Child-Pugh 7-9)" })) bad.push("pugh rule");
+    return bad.join(",") || "ok"; })()`), "ok");
+check("v536 V35-2 paracetamol in a child: the '≤10 kg' row only when the weight is ≤10 kg (8 kg yes, 18 kg no rows at all — author 28/11/2026 option β); no weight -> the '≤10 kg' row; adult unchanged",
+  run(`(() => { const d = DRUGS.find(x => x.id === "paracetamol"), R = (w, a) => rowsFor(d, doseCtx(w, "", "", a)).map(x => x.en).filter(x => /kg/.test(x));
+    const a = R("18", "5"), b = R("8", "0.8"), c = R("", "5"), e = R("70", "45");
+    return [a.length === 0, b.length === 1 && /^\\u226410/.test(b[0]), c.length === 1, e.length === drugRows(d).filter(x => /kg/.test(x.en) && rowFitsAge(x, doseCtx("70", "", "", "45"))).length, rowsFor(d, doseCtx("18", "", "", "5")).length].join("|"); })()`), "true|true|true|true|0");
+check("v536 V35-3 heparin card for a child: counts its rows for children (no 'No row marked for children' above them)",
+  (function () { const { DRUGS, T, DrugCard, doseCtx, render, text, norm, h } = F2; const c = norm(text(render(h(DrugCard, { d: DRUGS.find((x) => x.id === "heparin"), lang: "en", ctx: doseCtx("18", "", "", "5"), sex: "", t: T.en }))));
+    return String(!/No row marked for children/.test(c) && /rows? for children/.test(c)); })(), "true");
+check("v536 K35-8 (author 1α): allAges exactly on the rows the auditor proposed, with the rows he excluded left out; dantrolene and lipid emulsion show rows to a child of 5 y and to a neonate; noradrenaline and remimazolam still none",
+  run(`(() => { const A = (id) => drugRows(DRUGS.find(x => x.id === id)).filter(x => x.allAges === true).map(x => x.en), R = (id, w, a) => rowsFor(DRUGS.find(x => x.id === id), doseCtx(w, "", "", a)).length;
+    const n = [A("dantrolene").length, A("intralipid").length, A("ketamine").length, A("fibrinogen").length, A("rfviia").length, A("salbutamol").length].join(",");
+    const ex = A("intralipid").some(x => /fixed doses/.test(x)) || A("ketamine").some(x => /Obstetrics/.test(x)) || A("fibrinogen").some(x => /Acquired/.test(x)) || A("rfviia").some(x => /postpartum|Trauma|Glanzmann/.test(x)) || A("salbutamol").some(x => !/Bronchospasm under anaesthesia/.test(x));
+    const total = DRUGS.reduce((s, d) => s + drugRows(d).filter(x => x.allAges === true).length, 0);
+    return [n, ex, total, R("dantrolene", "18", "5"), R("intralipid", "3.5", "0.01") > 0, R("noradrenaline", "18", "5"), R("remimazolam", "18", "5")].join("|"); })()`), "4,4,6,4,2,1|false|21|4|true|0|0");
+check("v536 V35-4 neonatal note: up to 27 days (EMA), el + en; rFVIIa note on children (SmPC 4.2), el + en",
+  (function () { const pr = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "primitives.js"), "utf8"); const d = JSON.parse(run('JSON.stringify(DRUGS.find(x => x.id === "rfviia"))'));
+    return String(pr.includes("Neonates: up to 27 days; preterm") && pr.includes("\\u03AD\\u03C9\\u03C2 27 \\u03B7\\u03BC\\u03B5\\u03C1\\u03CE\\u03BD") && !pr.includes("up to 28 days") && /higher doses may be needed in paediatric patients/.test(d.notesEn) && /μεγαλύτερες δόσεις/.test(d.notesEl)); })(), "true");
+// --- v537: auditor report Ε3 (v536) and v536 (V36-2); author 28/11/2026 (1α, 2α, 3α, 4α, 5γ) ---
+check("v537 Ε3-1 cisatracurium <2 yr maintenance: no number, 'SmPC: no recommendation (insufficient data)' (el + en); no 0.03 left on that row",
+  run(`(() => { const d = DRUGS.find(x => x.id === "cisatracurium"), r = drugRows(d).find(x => /^CHILDREN <2 yr/.test(x.en));
+    return [r.lo === undefined && r.hi === undefined, r.fixedEn === "SmPC: no recommendation (insufficient data)", /\u03B4\u03B5\u03BD \u03C5\u03C0\u03AC\u03C1\u03C7\u03B5\u03B9 \u03C3\u03CD\u03C3\u03C4\u03B1\u03C3\u03B7/.test(r.fixed), !/0\\.03\\b/.test(JSON.stringify(r))].join(); })()`), "true,true,true,true");
+check("v537 Ε3-2 bupivacaine epidural infusion: thoracic 0.25% 10–18.8 and 0.125% 6.3–12.5 mg/h, el = en; no 'Aspen SE' or 'Irish' in the row",
+  run(`(() => { const r = drugRows(DRUGS.find(x => x.id === "bupivacaine")).find(x => /^Epidural infusion \\(SmPC\\)/.test(x.en)); const n = (s) => (s.match(/\\d+(?:\\.\\d+)?/g) || []).join(" ");
+    return [/thoracic: 0\\.25% \\u2192 10\\u201318\\.8 mg\\/h \\u00B7 0\\.125% \\u2192 6\\.3\\u201312\\.5 mg\\/h/.test(r.fixedEn), n(r.fixed) === n(r.fixedEn), !/Aspen SE|Irish|\\u03B9\\u03C1\\u03BB\\u03B1\\u03BD\\u03B4/.test(r.fixed + r.fixedEn)].join(); })()`), "true,true,true");
+check("v537 Ε3-3 naloxone neonates: the SmPC dose only, no ERC NLS phrase (el + en)",
+  run(`(() => { const r = drugRows(DRUGS.find(x => x.id === "naloxone")).find(x => /^NEONATES/.test(x.en));
+    return [r.fixedEn === "10 \\u00B5g/kg IV (or IM) \\u00B7 repeat every 2\\u20133 min (SmPC)", !/ERC/.test(r.fixed)].join(); })()`), "true,true");
+check("v537 V36-2 paracetamol, child >10 kg: 'No row for this age or this weight — see the Paediatrics → Postop analgesia tab' (el + en); ≤10 kg shows its row; other empty cards keep 'No row marked for children'",
+  run(`(() => { const P = (id, w, a) => primaryPick(DRUGS.find(x => x.id === id), doseCtx(w, "", "", a));
+    const a = P("paracetamol", "18", "5").none, b = P("paracetamol", "8", "0.8"), c = P("remimazolam", "18", "5").none;
+    return [a.en === "No row for this age or this weight \\u2014 see the Paediatrics \\u2192 Analgesia tab", /\\u03BA\\u03B1\\u03C1\\u03C4\\u03AD\\u03BB\\u03B1 \\u03A0\\u03B1\\u03B9\\u03B4\\u03B9\\u03AC \\u2192 \\u0391\\u03BD\\u03B1\\u03BB\\u03B3\\u03B7\\u03C3\\u03AF\\u03B1$/.test(a.el), b.rows.length === 1, c.en === "No row marked for children"].join(); })()`), "true,true,true,true");
+// --- v538: auditor report v537 (V37-1 … V37-3); author 28/11/2026 (1α, 2α, 3α) ---
+check("v538 V37-1 naloxone 'CHILDREN 1 month–11 yr — postoperative': shown at 1 y and 8 y, not to a neonate of 7 days or an adolescent of 15 y; same dose",
+  run(`(() => { const d = DRUGS.find(x => x.id === "naloxone"), r = drugRows(d).find(x => /postoperative \\(BNFc\\)/.test(x.en)), S = (w, a) => rowsFor(d, doseCtx(w, "", "", a)).includes(r);
+    return [/^CHILDREN 1 month\\u201311 yr \\u2014 postoperative \\(BNFc\\)$/.test(r.en), /^\\u03A0\\u0391\\u0399\\u0394\\u0399\\u0391 1 \\u03BC\\u03B7\\u03BD\\u03CC\\u03C2\\u201311 \\u03B5\\u03C4\\u03CE\\u03BD/.test(r.el), S("10", "1"), S("25", "8"), S("3.5", "0.02"), S("55", "15")].join(); })()`), "true,true,true,true,false,false");
+check("v538 V37-1 every row for children with an age in years in its title: rowAge reads that age (each 'N yr' is its lower bound, upper bound or last year)",
+  run(`(() => { const bad = []; DRUGS.forEach(d => drugRows(d).forEach(x => { if (!rowForChild(x) || x.allAges) return; const a = rowAge(x); const ys = ((x.en || "").match(/(\\d+(?:\\.\\d+)?)\\s*yr\\b/g) || []).map(m => parseFloat(m));
+      if (!ys.length) return; if (!a) { if (!/kg|adults/i.test(x.en)) bad.push(d.id + ": " + x.en); return; }
+      ys.forEach(y => { if (![a.min, a.max, a.max - 1, a.le].includes(y)) bad.push(d.id + ": " + x.en); }); }));
+    return bad.join(" | ") || "ok"; })()`), "ok");
+check("v538 V37-2/V37-3 paracetamol points to 'Paediatrics → Analgesia' (el + en); bupivacaine title 'Epidural infusion (SmPC)' (el + en)",
+  run(`(() => { const p = DRUGS.find(x => x.id === "paracetamol").pedsSee, b = drugRows(DRUGS.find(x => x.id === "bupivacaine")).find(x => /^Epidural infusion/.test(x.en));
+    return [p.en === "Paediatrics \\u2192 Analgesia", p.el === "\\u03A0\\u03B1\\u03B9\\u03B4\\u03B9\\u03AC \\u2192 \\u0391\\u03BD\\u03B1\\u03BB\\u03B3\\u03B7\\u03C3\\u03AF\\u03B1", b.en === "Epidural infusion (SmPC)", b.el === "\\u0395\\u03C0\\u03B9\\u03C3\\u03BA\\u03BB\\u03B7\\u03C1\\u03AF\\u03B4\\u03B9\\u03BF\\u03C2 \\u03AD\\u03B3\\u03C7\\u03C5\\u03C3\\u03B7 (SmPC)"].join(); })()`), "true,true,true,true");
+// --- v539: auditor report Ε4 (v538) Ε4-1 … Ε4-3 and v538 V38-1; author 28/11/2026 (1α, 2α, 3β) ---
+check("v539 Ε4-1 insulin, hyperkalaemia in children: 'in cardiac arrest: same dose as an IV bolus (ERC PLS 2025)' (el + en); dose 0.1 U/kg max 10 unchanged",
+  run(`(() => { const r = drugRows(DRUGS.find(x => x.id === "insulin_glucose")).find(x => /^Hyperkalaemia \\u2014 children/.test(x.en));
+    return [/in cardiac arrest: same dose as an IV bolus \\(ERC PLS 2025\\)$/.test(r.en), /\\u03C3\\u03B5 \\u03B1\\u03BD\\u03B1\\u03BA\\u03BF\\u03C0\\u03AE: \\u03AF\\u03B4\\u03B9\\u03B1 \\u03B4\\u03CC\\u03C3\\u03B7 \\u03C9\\u03C2 bolus IV/.test(r.el), r.lo === 0.1 && r.hi === 0.1 && r.max === 10].join(); })()`), "true,true,true");
+check("v539 Ε4-2 adenosine, children first dose: SmPC 0.1 mg/kg (max 6) with the ERC PLS 2025 range 0.1–0.2 mg/kg in the title (el = en); the age 0–18 yr still read",
+  run(`(() => { const r = drugRows(DRUGS.find(x => x.id === "adenosine")).find(x => /^Children 0\\u201318 yr \\u2014 first dose/.test(x.en)); const a = rowAge(r);
+    return [/ERC PLS 2025: 0\\.1\\u20130\\.2 mg\\/kg, max 6 mg\\)$/.test(r.en), /ERC PLS 2025: 0\\.1\\u20130\\.2 mg\\/kg, max 6 mg\\)$/.test(r.el), r.lo === 0.1 && r.max === 6, a && a.min === 0 && a.le === 18].join(); })()`), "true,true,true,true");
+check("v539 Ε4-3 CaCl2 10% hypocalcaemia: ~3.3–6.6 mL for 2.25–4.5 mmol (0.68 mmol/mL), el + en; no '3–7 mL' left",
+  run(`(() => { const r = drugRows(DRUGS.find(x => x.id === "calcium")).find(x => /acute hypocalcaemia/.test(x.en));
+    return [/^~3\\.3\\u20136\\.6 mL \\(2\\.25\\u20134\\.5 mmol\\)/.test(r.fixedEn), /^~3\\.3\\u20136\\.6 mL \\(2\\.25\\u20134\\.5 mmol\\)/.test(r.fixed), (2.25 / 0.68).toFixed(1) + "\\u2013" + (4.5 / 0.68).toFixed(1), !/3\\u20137 mL/.test(JSON.stringify(DRUGS))].join(); })()`), "true,true,3.3–6.6,true");
+check("v539 V38-1 every row for children with an age in months or weeks in its title: rowAge reads it (lower bound, upper bound or the last month/week); weeks ≥20 are gestational age, not counted",
+  run(`(() => { const bad = []; DRUGS.forEach(d => drugRows(d).forEach(x => { if (!rowForChild(x) || x.allAges) return; const a = rowAge(x); const head = (x.en || "").split(" \\u2014 ")[0];
+      const ms = [...head.matchAll(/(\\d+(?:\\.\\d+)?)\\s*(months?|mo|weeks?|wk)\\b/gi)].filter(m => !(/^w/i.test(m[2]) && parseFloat(m[1]) >= 20)).map(m => parseFloat(m[1]) / (/^w/i.test(m[2]) ? 52 : 12));
+      if (!ms.length || !a) return; ms.forEach(y => { if (![a.min, a.max, a.le].some(v => v != null && Math.abs(v - y) < 0.02 || v != null && Math.abs(v - (y + 1 / 12)) < 0.02)) bad.push(d.id + ": " + x.en); }); }));
+    return bad.join(" | ") || "ok"; })()`), "ok");
+// --- v540: author 28/11/2026 (option β) — NEWS notice for this update ---
+check("v540 NEWS 540 (author's text, el + en) is listed first; NEWS 531 kept; a user who last saw 531 gets only the 540 notice",
+  run(`(() => { const a = NEWS[0], seen = 531, items = NEWS.filter((c) => c.v > seen);
+    return [a.v === 540, a.el === "\\u03A6\\u03AC\\u03C1\\u03BC\\u03B1\\u03BA\\u03B1: \\u03B5\\u03BC\\u03C6\\u03B1\\u03BD\\u03AF\\u03B6\\u03BF\\u03BD\\u03C4\\u03B1\\u03B9 \\u03BF\\u03B9 \\u03C3\\u03C5\\u03BD\\u03B9\\u03C3\\u03C4\\u03CE\\u03BC\\u03B5\\u03BD\\u03B5\\u03C2 \\u03B4\\u03CC\\u03C3\\u03B5\\u03B9\\u03C2\\u00B7 \\u03B7 \\u03B4\\u03CC\\u03C3\\u03B7 \\u03B3\\u03B9\\u03B1 \\u03C4\\u03BF\\u03BD \\u03B1\\u03C3\\u03B8\\u03B5\\u03BD\\u03AE \\u03B4\\u03B5\\u03BD \\u03C5\\u03C0\\u03BF\\u03BB\\u03BF\\u03B3\\u03AF\\u03B6\\u03B5\\u03C4\\u03B1\\u03B9 \\u03C0\\u03B9\\u03B1 \\u03C3\\u03C4\\u03B9\\u03C2 \\u03BA\\u03AC\\u03C1\\u03C4\\u03B5\\u03C2.", a.en === "Drugs: the recommended doses are shown; the dose for the patient is no longer calculated on the cards.", NEWS.some((c) => c.v === 531), items.length === 1 && items[0].v === 540].join(); })()`), "true,true,true,true,true");
 // Audit registry: every tool, drug, checklist, score and guideline in the app
 // must have an entry in audit/audit-registry.json (pending items are allowed).
 (function () {

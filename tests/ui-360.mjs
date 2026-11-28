@@ -246,7 +246,8 @@ for (const zoomSteps of [0, 2]) {
   await p4.waitForSelector('[data-drug-card="rocuronium"]');
   const hero = () => p4.evaluate(() => document.querySelector("[data-dose-hero] [data-dose-main],[data-dose-hero] [data-dose-fixed]").textContent.replace(/\s+/g, " ").trim());
   const inCard = await hero();
-  if (inList !== "42 mg" || inCard !== "42 mg") failures.push(`rocuronium at 70 kg: list "${inList}", card "${inCard}", expected 42 mg`);
+  // v534 (author 28/11/2026): no patient dose in the drug list and cards — the recommended dose per kg.
+  if (inList !== "0.6 mg/kg" || inCard !== "0.6 mg/kg") failures.push(`rocuronium at 70 kg: list "${inList}", card "${inCard}", expected 0.6 mg/kg`);
   const cardInfo = await p4.evaluate(() => { const c = document.querySelector("[data-drug-card]"); const t = c.textContent; const big = c.querySelector("[data-dose-hero] [data-dose-main] span"); return { ml: /\d\s?mL\b(?!\/)/.test(c.querySelector("[data-dose-hero]").textContent), size: parseFloat(getComputedStyle(big).fontSize), weight: getComputedStyle(big).fontWeight, rows: c.querySelectorAll("[data-dose-row]").length, boxes: c.querySelectorAll("[data-card-box]").length, chips: c.querySelectorAll('[role="group"] button').length }; });
   if (cardInfo.size < 52 || cardInfo.weight !== "600") failures.push(`drug card: large dose is ${cardInfo.size} px / ${cardInfo.weight}`);
   if (cardInfo.ml) failures.push("drug card: a mL line is shown (phase 4, not yet)");
@@ -263,7 +264,7 @@ for (const zoomSteps of [0, 2]) {
   await p4.fill('#root input[aria-label="Αναζήτηση"]', "ροκ");
   await p4.waitForSelector("#root button [data-dose-main]");
   const inSearch = await p4.evaluate(() => { const b = [...document.querySelectorAll("#root button")].find((x) => /Rocuronium/.test(x.textContent) && x.querySelector("[data-dose-main]")); return b ? b.querySelector("[data-dose-label]").textContent + " · " + b.querySelector("[data-dose-main]").textContent : ""; });
-  if (inSearch !== "Διασωλήνωση · 42 mg") failures.push(`search "ροκ" at 70 kg: "${inSearch}"`);
+  if (inSearch !== "Διασωλήνωση · 0.6 mg/kg") failures.push(`search "ροκ" at 70 kg: "${inSearch}"`);
   await p4.fill('#root input[aria-label="Αναζήτηση"]', "");
   // without a weight: per-kg dose only
   await p4.fill('#root input[aria-label^="Βάρος"]', "");
@@ -289,9 +290,10 @@ for (const zoomSteps of [0, 2]) {
   // paediatric mode: label on every screen, paediatric row first in the list
   // A child never gets an adult row as the main dose (audit V5-1): one paediatric row = that row; several = no dose, open the card.
   const kidList = await p5.evaluate(() => { const g = (id) => { const r = document.querySelector(`[data-drug="${id}"]`); const q = (s) => (r.querySelector(s) || {}).textContent || ""; return { label: q("[data-dose-label]"), dose: q("[data-dose-main],[data-dose-fixed]"), none: q("[data-dose-none]") }; }; return { ond: g("ondansetron"), pro: g("propofol"), roc: g("etomidate"), tag: (document.querySelector("[data-peds-label]") || {}).textContent || "" }; });
-  if (kidList.ond.dose || kidList.ond.label || !/1 γραμμή για παιδιά/.test(kidList.ond.none)) failures.push("ondansetron for a child: " + JSON.stringify(kidList.ond));
+  // v533 (E2-1): its one row for children fits 5 years, so it is the main row.
+  if (!/ΠΑΙΔΙΑ 1 μηνός–17 ετών/.test(kidList.ond.label) || !kidList.ond.dose || kidList.ond.none) failures.push("ondansetron for a child: " + JSON.stringify(kidList.ond));
   if (kidList.pro.dose || !/γραμμές για παιδιά/.test(kidList.pro.none)) failures.push("propofol for a child: " + JSON.stringify(kidList.pro));
-  if (kidList.roc.dose || !/Καμία γραμμή σημειωμένη για παιδιά/.test(kidList.roc.none)) failures.push("etomidate for a child: " + JSON.stringify(kidList.roc));
+  if (kidList.roc.dose || !/1 γραμμή για παιδιά/.test(kidList.roc.none)) failures.push("etomidate for a child: " + JSON.stringify(kidList.roc));
   await p5.locator('[data-drug="propofol"] [data-row] > button:first-child').click();
   await p5.waitForSelector('[data-drug-card="propofol"]');
   const kidDrugs = await p5.evaluate(() => { const c = document.querySelector("[data-drug-card]"); return { label: (document.querySelector("[data-peds-label]") || {}).textContent || "", row: c.querySelector("[data-dose-row]").textContent, big: !!c.querySelector("[data-dose-hero] [data-dose-main], [data-dose-hero] [data-dose-fixed]"), none: (c.querySelector("[data-dose-hero] [data-dose-none]") || {}).textContent || "", pressed: c.querySelectorAll('[role="group"] button[aria-pressed="true"]').length }; });

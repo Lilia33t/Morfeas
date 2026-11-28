@@ -104,7 +104,7 @@ function ToolsTab({ lang, weight, age, height, sex, focus, onUse }) {
     { id: "subspecialty", el: "\u03A5\u03C0\u03BF\u03B5\u03B9\u03B4\u03B9\u03BA\u03CC\u03C4\u03B7\u03C4\u03B5\u03C2", en: "Subspecialties" },
     { id: "analgesia", el: "\u0391\u03BD\u03B1\u03BB\u03B3\u03B7\u03C3\u03AF\u03B1 & \u03A0\u03B5\u03C1\u03B9\u03BF\u03C7\u03B9\u03BA\u03AE", en: "Analgesia & Regional" },
     { id: "calc", el: "\u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03C4\u03AD\u03C2 & \u03A6\u03B1\u03C1\u03BC\u03B1\u03BA\u03BF\u03BB\u03BF\u03B3\u03AF\u03B1", en: "Calculators & Pharmacology" },
-    { id: "reference", el: "\u03A0\u03B5\u03C1\u03B9\u03B5\u03B3\u03C7\u03B5\u03B9\u03C1\u03B7\u03C4\u03B9\u03BA\u03AC & \u03A0\u03B7\u03B3\u03AD\u03C2", en: "Perioperative & Reference" }
+    { id: "reference", el: "\u03A0\u03B5\u03C1\u03B9\u03B5\u03B3\u03C7\u03B5\u03B9\u03C1\u03B7\u03C4\u03B9\u03BA\u03AC", en: "Perioperative" }
   ];
   const [scoreOpen, setScoreOpen] = useState("apfel");
   const allScores = [...SCORES, ...MULTI_SCORES];

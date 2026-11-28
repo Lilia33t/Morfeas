@@ -120,11 +120,13 @@ function emphNums(text) {
 }
 // Age group of a calculated dose row, read from its English label: rows naming only children/neonates/infants are
 // paediatric, rows naming only adults (or exactly "Elderly") are adult; anything else (unlabelled, or both) applies to all ages.
+// V33-5: "Adults & \u226512 yr", "adults and >12 yr" are rows for every age from that year (not adult-only rows).
+const ADULT_FROM_AGE = /adults?\s*(?:&|and)\s*(>|\u2265)\s*(\d+)\s*(yr|y|years?)\b/i;
 const doseAgeGroup = (ds) => {
   const t = ds.en || "";
   const p = /\b(children|neonates?|newborns?|infants?)\b/i.test(t), a = /\badults?\b/i.test(t) || /^elderly$/i.test(t.trim());
   if (p && !a) return "peds";
-  if (a && !p && !/adolescent/i.test(t)) return "adult";
+  if (a && !p && !/adolescent/i.test(t) && !/adults?\s*(?:&|and)\s*(>|\u2265)\s*\d+\s*(yr|y|years?)\b/i.test(t)) return "adult";
   return null;
 };
 // Favourites: tools, drugs and checklists in one list, at most FAV_MAX, kept
@@ -227,7 +229,7 @@ const OBESITY_DOSING = {
   thiopental: { grp: "LBW" },
   fentanyl: { grp: "LBW" },
   rocuronium: { grp: "LBW", ibw130: true, el: "SmPC: \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 \u2014 \u03BF\u03B9 \u03C0\u03B7\u03B3\u03AD\u03C2 \u03B4\u03B9\u03B1\u03C6\u03AD\u03C1\u03BF\u03C5\u03BD", en: "SmPC: ideal body weight \u2014 the sources differ" },
-  alfentanil: { grp: "ABW" },
+  alfentanil: { grp: "ABW", el: "SmPC: \u03AC\u03BB\u03B9\u03C0\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2 \u2014 \u03BF\u03B9 \u03C0\u03B7\u03B3\u03AD\u03C2 \u03B4\u03B9\u03B1\u03C6\u03AD\u03C1\u03BF\u03C5\u03BD", en: "SmPC: lean body weight \u2014 the sources differ" },
   neostigmine: { grp: "ABW" },
   sugammadex: { grp: "ABW", el: "SmPC: \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 \u2014 \u03BF\u03B9 \u03C0\u03B7\u03B3\u03AD\u03C2 \u03B4\u03B9\u03B1\u03C6\u03AD\u03C1\u03BF\u03C5\u03BD", en: "SmPC: actual body weight \u2014 the sources differ" },
   morphine: { grp: "LBW" },
@@ -266,8 +268,8 @@ function obesityNotice(d, ctx, sex) {
   if (!o && obesityPerKg(d) && ctx && ctx.w > 0 && ctx.hNum > 0) {
     const b = bmiCalc(ctx.w, ctx.hNum);
     if (b != null && b >= OBESITY_WARN_BMI) return { grey: true,
-      el: "\u03A0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA\u03AF\u03B1: \u03BF \u03B1\u03C1\u03B9\u03B8\u03BC\u03CC\u03C2 \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C3\u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2\u00B7 \u03B7 AAGBI/SOBA 2015 \u03B4\u03B5\u03BD \u03B4\u03AF\u03BD\u03B5\u03B9 \u03B2\u03AC\u03C1\u03BF\u03C2 \u03B3\u03B9\u03B1 \u03B1\u03C5\u03C4\u03CC \u03C4\u03BF \u03C6\u03AC\u03C1\u03BC\u03B1\u03BA\u03BF.",
-      en: "Obesity: the number is on actual body weight; AAGBI/SOBA 2015 gives no weight for this drug." };
+      el: "\u03A0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA\u03AF\u03B1: \u03B7 AAGBI/SOBA 2015 \u03B4\u03B5\u03BD \u03B4\u03AF\u03BD\u03B5\u03B9 \u03B2\u03AC\u03C1\u03BF\u03C2 \u03B4\u03BF\u03C3\u03BF\u03BB\u03BF\u03B3\u03AF\u03B1\u03C2 \u03B3\u03B9\u03B1 \u03B1\u03C5\u03C4\u03CC \u03C4\u03BF \u03C6\u03AC\u03C1\u03BC\u03B1\u03BA\u03BF.",
+      en: "Obesity: AAGBI/SOBA 2015 gives no dosing weight for this drug." };
     return null;
   }
   if (!o || !ctx || !(ctx.w > 0) || !(ctx.hNum > 0)) return null;
@@ -281,8 +283,8 @@ function obesityNotice(d, ctx, sex) {
     NOTE_IBW: { el: "\u039F\u03B9 \u03C3\u03B7\u03BC\u03B5\u03B9\u03CE\u03C3\u03B5\u03B9\u03C2 \u03C4\u03B7\u03C2 \u03BA\u03AC\u03C1\u03C4\u03B1\u03C2: \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2", en: "The card's notes: ideal body weight" }
   }[o.grp];
   return {
-    el: "\u03A0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA\u03AF\u03B1: \u03BF \u03B1\u03C1\u03B9\u03B8\u03BC\u03CC\u03C2 \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03AD\u03BD\u03BF\u03C2 \u03C3\u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2. " + G.el + (o.el ? " \u00B7 " + o.el : "") + ". \u0394\u03B5\u03AF\u03C4\u03B5 \u03C4\u03BF \u03B5\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03BF \u00AB\u0392\u03B1\u03C1\u03B9\u03B1\u03C4\u03C1\u03B9\u03BA\u03CC\u03C2 / \u03A0\u03B1\u03C7\u03CD\u03C3\u03B1\u03C1\u03BA\u03BF\u03C2 \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2\u00BB.",
-    en: "Obesity: the number is calculated on actual body weight. " + G.en + (o.en ? " \u00B7 " + o.en : "") + ". See the \u201CBariatric / Obese patient\u201D tool."
+    el: "\u03A0\u03B1\u03C7\u03C5\u03C3\u03B1\u03C1\u03BA\u03AF\u03B1 \u2014 \u03B2\u03AC\u03C1\u03BF\u03C2 \u03B4\u03BF\u03C3\u03BF\u03BB\u03BF\u03B3\u03AF\u03B1\u03C2: " + G.el + (o.el ? " \u00B7 " + o.el : "") + ". \u0394\u03B5\u03AF\u03C4\u03B5 \u03C4\u03BF \u03B5\u03C1\u03B3\u03B1\u03BB\u03B5\u03AF\u03BF \u00AB\u0392\u03B1\u03C1\u03B9\u03B1\u03C4\u03C1\u03B9\u03BA\u03CC\u03C2 / \u03A0\u03B1\u03C7\u03CD\u03C3\u03B1\u03C1\u03BA\u03BF\u03C2 \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2\u00BB.",
+    en: "Obesity \u2014 dosing weight: " + G.en + (o.en ? " \u00B7 " + o.en : "") + ". See the \u201CBariatric / Obese patient\u201D tool."
   };
 }
 // --- One dose calculation for the whole app (new look, spec \u00A75) ---
@@ -305,8 +307,11 @@ function doseCtx(weight, height, sex, age) {
   const child = hasAge && aNum < 18;
   return { w, hNum, ibwRaw, wIbw, aNum, hasAge, offAge, wFor, child };
 }
+// Author 28/11/2026: the drug list, the cards and search show the recommended dose only (per kg, fixed text,
+// maximum); no dose is calculated for the patient here. The tools keep their own calculations.
+const DRUG_CARD_CALC = false;
 function doseFor(ds, ctx, lang) {
-  const wd = ctx.wFor(ds);
+  const wd = DRUG_CARD_CALC ? ctx.wFor(ds) : 0;
   return { wd, dt: doseText(ds, wd, lang) };
 }
 // The dose of one row as the list, search and the card's large number show it:
@@ -319,10 +324,82 @@ function doseSummary(ds, ctx, lang) {
   return { main: dt.calc, perKg: dt.base, capped: dt.capped, expl: dt.expl };
 }
 const drugRows = (d) => (d.doses || []).filter((ds) => !isPendingErc(ds));
+// Audit E2-1 (author 28/11/2026: "what is outside the age, we do not show"). The age range of a row for children,
+// read from its own English title as the author wrote it; years, upper limit exclusive. null = the row is not
+// limited by age (adult rows and rows for all ages). A row for children with no age in its title is for
+// children: 0 to 18 years. "a\u2013b yr" includes year b (up to the next birthday); "\u2264N" likewise; "<N" and ">N" as written.
+const AGE_UNIT = (u) => /^(months?|mo)$/i.test(u || "") ? 1 / 12 : 1;
+function rowAge(ds) {
+  const t = (ds.en || "").trim();
+  const kid = doseAgeGroup(ds) === "peds" || /^(children|neonates?|newborns?|infants?|preterm)\b/i.test(t);
+  if (!kid) {
+    // A row for adults and children that names a lower age for the children ("adults and children >3 months").
+    const m = t.match(/children\s*(>|\u2265)\s*(\d+(?:\.\d+)?)\s*(months?|mo|yr|y|years?)\b/i);
+    if (m) return { min: +m[2] * AGE_UNIT(m[3]), minIn: m[1] === "\u2265", max: Infinity };
+    // "adults & adolescents": adolescents from 12 years (ICH E11: 12 to 16\u201318 years).
+    if (/\badolescents?\b/i.test(t) && /\badults?\b/i.test(t)) return { min: 12, minIn: true, max: Infinity };
+    // V33-5: "Adults & \u226512 yr" \u2014 from that age.
+    const a = t.match(ADULT_FROM_AGE);
+    if (a) return { min: +a[2], minIn: a[1] === "\u2265", max: Infinity };
+    // V33-1\u03B3: an adult row with only a lower age in brackets, e.g. "ICU sedation (>16 yr)". Not when the brackets
+    // give alternatives ("\u226560 yr / debilitated", "or ASA III").
+    const b = t.match(/\(\s*(>|\u2265)\s*(\d+)\s*(yr|y|years?)\s*\)/i);
+    if (b) return { min: +b[2], minIn: b[1] === "\u2265", max: Infinity };
+    return null;
+  }
+  const head = t.split(" \u2014 ")[0];
+  // Rows also for (small) adults, and rows limited by weight, are not limited by age here.
+  if (/\b(and|&)\s+(small\s+)?adults?\b/i.test(head) || /\bkg\b/.test(head)) return null;
+  let min = 0, minIn = true, max = 18;
+  let m;
+  let le = null;
+  if ((m = head.match(/(?:neonates|birth)\s*\u2013\s*(\d+)\s*(yr|y|years?)\b/i))) max = Math.min(18, (+m[1] + 1) * AGE_UNIT(m[2]));
+  else if ((m = head.match(/(\d+(?:\.\d+)?)\s*(months?|mo|yr|y|years?)?\s*\u2013\s*(<)?\s*(\d+(?:\.\d+)?)\s*(months?|mo|yr|y|years?)\b/i))) {
+    const u2 = AGE_UNIT(m[5]), u1 = m[2] ? AGE_UNIT(m[2]) : u2;
+    min = +m[1] * u1; max = Math.min(18, m[3] ? +m[4] * u2 : (+m[4] + 1) * u2); if (!m[3]) le = +m[4] * u2;
+  } else {
+    const lo = head.match(/(>|\u2265)\s*(\d+(?:\.\d+)?)\s*(months?|mo|yr|y|years?)\b/i);
+    const hi = head.match(/(<|\u2264|up to)\s*(\d+(?:\.\d+)?)\s*(months?|mo|yr|y|years?)\b/i);
+    if (lo) { min = +lo[2] * AGE_UNIT(lo[3]); minIn = lo[1] === "\u2265"; }
+    if (hi) { max = Math.min(18, hi[1] === "<" ? +hi[2] * AGE_UNIT(hi[3]) : (+hi[2] + 1) * AGE_UNIT(hi[3])); if (hi[1] !== "<") le = +hi[2] * AGE_UNIT(hi[3]); }
+    else if (/infants?/i.test(head)) max = 1;
+    // V33-2: "weeks" and "preterm" are gestational / corrected age, not age since birth: shown to every infant under 1 year.
+    else if (/neonates?|newborns?|preterm/i.test(head)) max = 1;
+  }
+  return { min, minIn, max, le };
+}
+// With an age entered, is the patient inside the row's age range? Without an age every row is shown, as before.
+const NEO_ROW = /neonat|newborn|preterm/i;
+function rowFitsAge(ds, ctx, starts) {
+  if (!ctx || !ctx.hasAge) return true;
+  const r = rowAge(ds);
+  if (!r) return true;
+  const a = ctx.aNum;
+  const upper = r.le != null && (starts || []).some((s) => Math.abs(s - r.le) < 1e-9) ? a <= r.le : a < r.max;
+  return (r.minIn ? a >= r.min : a > r.min) && upper;
+}
+// Author 28/11/2026 (V33-1\u03B2, option \u03B1; V35-1): a row for a child is one written for children ("children",
+// "paediatric" anywhere in its title, or a group for children), one whose title gives an age, or one the author
+// marks allAges: true (rows the auditor found the same per kg at every age, with a source).
+const rowForChild = (ds) => doseAgeGroup(ds) === "peds" || /^(children|neonates?|newborns?|infants?|preterm)\b/i.test((ds.en || "").trim()) || /\b(children|paediatric|pediatric)\b/i.test(ds.en || "") || !!rowAge(ds) || ds.allAges === true;
+// V35-2: a title that starts with a weight band ("\u226410 kg", ">10\u201333 kg", ">50 kg") is shown to a child only
+// when the weight entered fits it. No weight: shown.
+const rowFitsWeight = (ds, ctx) => {
+  if (!ctx || !ctx.child || !(ctx.w > 0)) return true;
+  const t = (ds.en || "").trim(); let m;
+  if ((m = t.match(/^(\u2264|<)\s*(\d+(?:\.\d+)?)\s*kg\b/))) return m[1] === "\u2264" ? ctx.w <= +m[2] : ctx.w < +m[2];
+  if ((m = t.match(/^>\s*(\d+(?:\.\d+)?)\s*[\u2013-]\s*(\d+(?:\.\d+)?)\s*kg\b/))) return ctx.w > +m[1] && ctx.w <= +m[2];
+  if ((m = t.match(/^(>|\u2265)\s*(\d+(?:\.\d+)?)\s*kg\b/))) return m[1] === ">" ? ctx.w > +m[2] : ctx.w >= +m[2];
+  return true;
+};
 // The rows of a drug in the order the card lists them. For a child the rows written for children come first
-// (spec \u00A79.2); nothing is hidden and no dose changes.
+// (spec \u00A79.2); no dose changes. A row for children outside the patient's age is not shown (E2-1).
 const rowsFor = (d, ctx) => {
-  const rows = drugRows(d);
+  // V33-6: a row "\u2264N" (or "a\u2013N") stops at N when another row of the drug starts above N.
+  const starts = drugRows(d).map(rowAge).filter((r) => r && !r.minIn && r.min > 0).map((r) => r.min);
+  // Author 28/11/2026 (V33-1\u03B2, option \u03B1): for a child, only rows written for children, rows whose title gives an age
+  // that fits, or rows the author marks allAges: true. Adult rows and rows with no age are not shown to a child.
+  const rows = drugRows(d).filter((ds) => rowFitsAge(ds, ctx, starts) && (!ctx || !ctx.child || rowForChild(ds) && rowFitsWeight(ds, ctx)));
   if (!ctx || !ctx.child) return rows;
   return rows.filter((ds) => doseAgeGroup(ds) === "peds").concat(rows.filter((ds) => doseAgeGroup(ds) !== "peds"));
 };
@@ -404,8 +481,10 @@ function primaryPick(d, ctx) {
   const pick = (ds) => ({ rows, index: rows.indexOf(ds), none: null });
   if (ctx && ctx.child) {
     const peds = rows.filter((ds) => doseAgeGroup(ds) === "peds");
-    if (peds.length === 1 && !/\d/.test(peds[0].en || "")) return pick(peds[0]);
-    return { rows, index: -1, none: peds.length ? { el: peds.length === 1 ? "1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC" : peds.length + " \u03B3\u03C1\u03B1\u03BC\u03BC\u03AD\u03C2 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC", en: peds.length === 1 ? "1 row for children" : peds.length + " rows for children" } : { el: "\u039A\u03B1\u03BC\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03C3\u03B7\u03BC\u03B5\u03B9\u03C9\u03BC\u03AD\u03BD\u03B7 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC", en: "No row marked for children" } };
+    // V36-2 (author 5\u03B3): rows for a child exist but the weight entered fits none of them (paracetamol >10 kg)
+    const byWeight = !rows.length && base.some((ds) => rowForChild(ds) && rowFitsAge(ds, ctx) && !rowFitsWeight(ds, ctx));
+    if (peds.length === 1 && !NEO_ROW.test(peds[0].en || "") && (!/\d/.test(peds[0].en || "") || rowAge(peds[0]) && !/kg/.test(peds[0].en || ""))) return pick(peds[0]);
+    return { rows, index: -1, none: rows.length ? { el: rows.length === 1 ? "1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC" : rows.length + " \u03B3\u03C1\u03B1\u03BC\u03BC\u03AD\u03C2 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC", en: rows.length === 1 ? "1 row for children" : rows.length + " rows for children" } : byWeight ? { el: "\u039A\u03B1\u03BC\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03B1\u03C5\u03C4\u03AE \u03C4\u03B7\u03BD \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 \u03AE \u03B1\u03C5\u03C4\u03CC \u03C4\u03BF \u03B2\u03AC\u03C1\u03BF\u03C2" + (d.pedsSee ? " \u2014 \u03B4\u03B5\u03AF\u03C4\u03B5 \u03C4\u03B7\u03BD \u03BA\u03B1\u03C1\u03C4\u03AD\u03BB\u03B1 " + d.pedsSee.el : ""), en: "No row for this age or this weight" + (d.pedsSee ? " \u2014 see the " + d.pedsSee.en + " tab" : "") } : { el: "\u039A\u03B1\u03BC\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03C3\u03B7\u03BC\u03B5\u03B9\u03C9\u03BC\u03AD\u03BD\u03B7 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC", en: "No row marked for children" } };
   }
   if (ctx && ctx.aNum >= 18 && doseAgeGroup(marked) === "peds") {
     const ok = rows.find((ds) => doseAgeGroup(ds) !== "peds");
@@ -428,14 +507,15 @@ function DrugCard({ d, lang, ctx, sex, t, labOn }) {
   // The notes that belong to one dose row, as before: other age group, ideal body weight, maximum.
   const rowNotes = (ds, wd) => {
     // A row for the other age group says so on every kind of row, fixed doses included (audit V5-1).
-    const og = offAge(ds), calcRow = w > 0 && !ds.fixed;
+    const og = offAge(ds), calcRow = DRUG_CARD_CALC && w > 0 && !ds.fixed;
     const ageNote2 = og && !calcRow ? React.createElement("span", { key: "a2", "data-age-note": "1", style: { display: "block", fontSize: 12.5, color: S.amber, fontWeight: 600, marginTop: 3 } }, og === "peds" ? (el ? "\u0393\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC \u2014 \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2 \u226518 \u03B5\u03C4\u03CE\u03BD" : "Row for children \u2014 patient \u226518 years") : (el ? "\u0393\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03B5\u03BD\u03AE\u03BB\u03B9\u03BA\u03B5\u03C2 \u2014 \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2 <18 \u03B5\u03C4\u03CE\u03BD" : "Row for adults \u2014 patient <18 years")) : null;
     const ageNote = og && calcRow ? React.createElement("span", { key: "a", style: { display: "block", fontSize: 12.5, color: S.muted, fontWeight: 400, marginTop: 3 } }, og === "peds" ? (el ? "\u0394\u03B5\u03BD \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9 \u2014 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC, \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2 \u226518 \u03B5\u03C4\u03CE\u03BD" : "Not calculated \u2014 paediatric row, patient \u226518 years") : (el ? "\u0394\u03B5\u03BD \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03B5\u03C4\u03B1\u03B9 \u2014 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B3\u03B9\u03B1 \u03B5\u03BD\u03AE\u03BB\u03B9\u03BA\u03B5\u03C2, \u03B1\u03C3\u03B8\u03B5\u03BD\u03AE\u03C2 <18 \u03B5\u03C4\u03CE\u03BD" : "Not calculated \u2014 adult row, patient <18 years")) : null;
     // Without a sex the consensus formula falls back to the female one (height \u2212 105), which gives the lower dose.
     const noSexNote = sex === "M" || sex === "F" ? "" : (el ? " \u00B7 \u03C7\u03C9\u03C1\u03AF\u03C2 \u03C6\u03CD\u03BB\u03BF: \u03C4\u03CD\u03C0\u03BF\u03C2 \u03B3\u03C5\u03BD\u03B1\u03B9\u03BA\u03CE\u03BD (\u03BC\u03B9\u03BA\u03C1\u03CC\u03C4\u03B5\u03C1\u03B7 \u03B4\u03CC\u03C3\u03B7)" : " \u00B7 no sex entered: female formula (lower dose)");
-    const ibwNote = !og && ds.basis === "ibw" && w > 0 ? React.createElement("span", { key: "i", style: { display: "block", fontSize: 12.5, color: wd ? S.muted : S.amber, fontWeight: wd ? 400 : 600, marginTop: 3 } }, wd ? wd < ibwRaw ? (el ? "\u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03C3\u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 %s kg, \u03BC\u03B9\u03BA\u03C1\u03CC\u03C4\u03B5\u03C1\u03BF \u03B1\u03C0\u03CC \u03C4\u03BF \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC %i kg (consensus: \u03CD\u03C8\u03BF\u03C2 \u2212 100 \u2642 / \u2212 105 \u2640)" : "Calculated on actual weight %s kg, lower than the ideal weight %i kg (consensus: height \u2212 100 \u2642 / \u2212 105 \u2640)").replace("%s", fmt(wd)).replace("%i", fmt(ibwRaw)) + noSexNote : (el ? "\u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03C3\u03B5 \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 %s kg (consensus: \u03CD\u03C8\u03BF\u03C2 \u2212 100 \u2642 / \u2212 105 \u2640)" : "Calculated on ideal body weight %s kg (consensus: height \u2212 100 \u2642 / \u2212 105 \u2640)").replace("%s", fmt(wd)) + noSexNote : (el ? "\u03A3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03CD\u03C8\u03BF\u03C2 \u03B3\u03B9\u03B1 \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC \u03C3\u03B5 \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2" : "Enter height to calculate on ideal body weight")) : null;
+    const ibwNote = !DRUG_CARD_CALC && ds.basis === "ibw" ? React.createElement("span", { key: "i", "data-ibw-note": "1", style: { display: "block", fontSize: 12.5, color: S.muted, fontWeight: 400, marginTop: 3 } }, el ? "\u03B1\u03BD\u03AC kg \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03BF\u03CD \u03B2\u03AC\u03C1\u03BF\u03C5\u03C2 (consensus: \u03CD\u03C8\u03BF\u03C2 \u2212 100 \u2642 / \u2212 105 \u2640)\u00B7 \u03B1\u03BD \u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 \u03B5\u03AF\u03BD\u03B1\u03B9 \u03BC\u03B9\u03BA\u03C1\u03CC\u03C4\u03B5\u03C1\u03BF, \u03C3\u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC" : "per kg of ideal body weight (consensus: height \u2212 100 \u2642 / \u2212 105 \u2640); if the actual weight is lower, on the actual weight") : !og && ds.basis === "ibw" && w > 0 ? React.createElement("span", { key: "i", style: { display: "block", fontSize: 12.5, color: wd ? S.muted : S.amber, fontWeight: wd ? 400 : 600, marginTop: 3 } }, wd ? wd < ibwRaw ? (el ? "\u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03C3\u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 %s kg, \u03BC\u03B9\u03BA\u03C1\u03CC\u03C4\u03B5\u03C1\u03BF \u03B1\u03C0\u03CC \u03C4\u03BF \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC %i kg (consensus: \u03CD\u03C8\u03BF\u03C2 \u2212 100 \u2642 / \u2212 105 \u2640)" : "Calculated on actual weight %s kg, lower than the ideal weight %i kg (consensus: height \u2212 100 \u2642 / \u2212 105 \u2640)").replace("%s", fmt(wd)).replace("%i", fmt(ibwRaw)) + noSexNote : (el ? "\u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03C3\u03B5 \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 %s kg (consensus: \u03CD\u03C8\u03BF\u03C2 \u2212 100 \u2642 / \u2212 105 \u2640)" : "Calculated on ideal body weight %s kg (consensus: height \u2212 100 \u2642 / \u2212 105 \u2640)").replace("%s", fmt(wd)) + noSexNote : (el ? "\u03A3\u03C5\u03BC\u03C0\u03BB\u03B7\u03C1\u03CE\u03C3\u03C4\u03B5 \u03CD\u03C8\u03BF\u03C2 \u03B3\u03B9\u03B1 \u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC \u03C3\u03B5 \u03B9\u03B4\u03B1\u03BD\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2" : "Enter height to calculate on ideal body weight")) : null;
     const maxLine = ds.max ? React.createElement("span", { key: "m", style: { display: "block", fontSize: 12.5, color: S.muted, fontWeight: 400, marginTop: 3 } }, t.maxLabel, ": ", ds.max, " ", ds.unit.replace("/kg", "")) : null;
-    return [ageNote, ageNote2, ibwNote, maxLine];
+    const neoNote = ctx.child && NEO_ROW.test(ds.en || "") ? React.createElement("span", { key: "n", "data-neo-note": "1", style: { display: "block", fontSize: 12.5, color: S.amber, fontWeight: 600, marginTop: 3 } }, el ? "\u039D\u03B5\u03BF\u03B3\u03BD\u03AC: \u03AD\u03C9\u03C2 27 \u03B7\u03BC\u03B5\u03C1\u03CE\u03BD\u00B7 \u03C0\u03C1\u03CC\u03C9\u03C1\u03B1: \u03AD\u03C9\u03C2 40 \u03B5\u03B2\u03B4. + 27 \u03B7\u03BC\u03AD\u03C1\u03B5\u03C2 \u03B4\u03B9\u03BF\u03C1\u03B8\u03C9\u03BC\u03AD\u03BD\u03B7\u03C2 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1\u03C2 (EMA)" : "Neonates: up to 27 days; preterm: up to 40 weeks + 27 days corrected age (EMA)") : null;
+    return [ageNote, ageNote2, ibwNote, maxLine, neoNote];
   };
   const cat = CATS.find((c) => c.id === d.cat);
   const hero = rows[sel];
@@ -467,9 +547,9 @@ function DrugCard({ d, lang, ctx, sex, t, labOn }) {
     obNote && !obNote.grey && !obNote.own && React.createElement("div", { "data-obesity-note": "1", role: "note", style: { background: S.tintDanger, color: S.ink, boxShadow: `inset 0 0 0 1.5px ${S.red}`, borderRadius: 14, padding: "10px 14px", fontSize: 13.5, fontWeight: 600, lineHeight: 1.45, overflowWrap: "break-word" } }, "\u26A0 ", obNote[lang]),
     // 3. the dose for the patient
     !hero && pk.none && React.createElement("div", { "data-dose-hero": "1", role: "note", style: { background: S.tintWarn, color: S.tintWarnFg, borderRadius: 14, padding: "11px 14px", fontSize: 14, fontWeight: 600, lineHeight: 1.4 } },
-      React.createElement("span", { "data-dose-none": "1" }, pk.none[lang]), el ? ". \u0394\u03B9\u03B1\u03BB\u03AD\u03BE\u03C4\u03B5 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B1\u03C0\u03CC \u03BA\u03AC\u03C4\u03C9." : ". Choose a row below.",
+      React.createElement("span", { "data-dose-none": "1" }, pk.none[lang]), rows.length ? (el ? ". \u0394\u03B9\u03B1\u03BB\u03AD\u03BE\u03C4\u03B5 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B1\u03C0\u03CC \u03BA\u03AC\u03C4\u03C9." : ". Choose a row below.") : (el ? ". \u0394\u03B5\u03AF\u03C4\u03B5 \u03C4\u03B9\u03C2 \u03C3\u03B7\u03BC\u03B5\u03B9\u03CE\u03C3\u03B5\u03B9\u03C2 \u03BA\u03B1\u03B9 \u03C4\u03B9\u03C2 \u03B1\u03BD\u03C4\u03B5\u03BD\u03B4\u03B5\u03AF\u03BE\u03B5\u03B9\u03C2." : ". See the notes and contraindications."),
       // Until every row carries its own age and weight limits, the card says plainly that it does not check them (audit V6-4).
-      React.createElement("span", { "data-row-limits-note": "1", style: { display: "block", fontWeight: 400, marginTop: 4 } }, el ? "\u039F\u03B9 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AD\u03C2 \u03B4\u03B5\u03BD \u03C6\u03B9\u03BB\u03C4\u03C1\u03AC\u03C1\u03BF\u03BD\u03C4\u03B1\u03B9 \u03BA\u03B1\u03C4\u03AC \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 \u03AE \u03B2\u03AC\u03C1\u03BF\u03C2 \u2014 \u03B4\u03B9\u03B1\u03B2\u03AC\u03C3\u03C4\u03B5 \u03C4\u03BF\u03BD \u03C4\u03AF\u03C4\u03BB\u03BF \u03BA\u03AC\u03B8\u03B5 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE\u03C2." : "The rows are not filtered by age or weight \u2014 read the title of each row.")),
+      React.createElement("span", { "data-row-limits-note": "1", style: { display: "block", fontWeight: 400, marginTop: 4 } }, el ? "\u03A3\u03C4\u03BF \u03C0\u03B1\u03B9\u03B4\u03AF \u03C6\u03B1\u03AF\u03BD\u03BF\u03BD\u03C4\u03B1\u03B9 \u03BC\u03CC\u03BD\u03BF \u03BF\u03B9 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AD\u03C2 \u03B3\u03B9\u03B1 \u03C0\u03B1\u03B9\u03B4\u03B9\u03AC \u03AE \u03BC\u03B5 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 \u03C0\u03BF\u03C5 \u03C4\u03B1\u03B9\u03C1\u03B9\u03AC\u03B6\u03B5\u03B9\u00B7 \u03BF\u03B9 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AD\u03C2 \u03B5\u03BD\u03B7\u03BB\u03AF\u03BA\u03C9\u03BD \u03BA\u03B1\u03B9 \u03CC\u03C3\u03B5\u03C2 \u03B4\u03B5\u03BD \u03AD\u03C7\u03BF\u03C5\u03BD \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 \u03C3\u03C4\u03BF\u03BD \u03C4\u03AF\u03C4\u03BB\u03BF \u03B4\u03B5\u03BD \u03C6\u03B1\u03AF\u03BD\u03BF\u03BD\u03C4\u03B1\u03B9, \u03B5\u03BA\u03C4\u03CC\u03C2 \u03B1\u03C0\u03CC \u03CC\u03C3\u03B5\u03C2 \u03B9\u03C3\u03C7\u03CD\u03BF\u03C5\u03BD \u03C3\u03B5 \u03BA\u03AC\u03B8\u03B5 \u03B7\u03BB\u03B9\u03BA\u03AF\u03B1 \u2014 \u03B4\u03B9\u03B1\u03B2\u03AC\u03C3\u03C4\u03B5 \u03C4\u03BF\u03BD \u03C4\u03AF\u03C4\u03BB\u03BF." : "For a child only rows for children, or with an age that fits, are shown; adult rows and rows with no age in their title are not, except rows valid at every age \u2014 read the title.")),
     hero && React.createElement("div", { ref: heroRef, "data-dose-hero": "1", style: { position: "relative", overflow: "hidden", background: S.card, border: `1px solid ${S.line}`, borderRadius: 16, padding: showLab ? "12px 16px 14px 24px" : "12px 16px 14px", boxShadow: "0 1px 2px rgba(16,38,46,.06)" } },
       showLab && React.createElement("span", { "aria-hidden": "true", "data-label-bar": "1", style: { position: "absolute", left: 0, top: 0, bottom: 0, width: 10, background: labelPaint(lab), boxShadow: labelFrame(lab) || "none", borderRight: labelFrame(lab) ? "none" : `1px solid ${S.line}` } }),
       React.createElement("div", { style: { fontSize: 13, color: S.muted, fontWeight: 400, lineHeight: 1.35, marginBottom: 4, overflowWrap: "break-word" } }, hero[lang]),
@@ -482,10 +562,10 @@ function DrugCard({ d, lang, ctx, sex, t, labOn }) {
             React.createElement("span", { style: { fontSize: 21, fontWeight: 400, color: S.muted } }, split(hs.main)[1])),
           hs.capped && React.createElement("span", { style: { fontSize: 13.5, fontWeight: 600, color: S.amber } }, "(" + t.maxLabel + ")")),
       hs.expl && React.createElement("div", { "aria-label": el ? "\u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2" : "Calculation", style: { fontSize: 13.5, color: S.muted, fontWeight: 400, lineHeight: 1.4, marginTop: 4, fontVariantNumeric: "tabular-nums", overflowWrap: "break-word" } }, hs.expl),
-      !hs.fixed && !w && React.createElement("div", { style: { fontSize: 13, color: S.amber, fontWeight: 600, marginTop: 4 } }, "\u2696 ", t.weightNeeded),
+      DRUG_CARD_CALC && !hs.fixed && !w && React.createElement("div", { style: { fontSize: 13, color: S.amber, fontWeight: 600, marginTop: 4 } }, "\u2696 ", t.weightNeeded),
       rowNotes(hero, hwd)),
     // 5. every other row of the drug, already calculated; a tap makes it the large dose
-    (rows.length > 1 || sel < 0) && React.createElement("div", null,
+    rows.length > 0 && (rows.length > 1 || sel < 0) && React.createElement("div", null,
       React.createElement("div", { style: { fontSize: 12.5, color: S.muted, fontWeight: 400, padding: "2px 4px 6px" } }, sel < 0 ? (el ? "\u0395\u03BD\u03B4\u03B5\u03AF\u03BE\u03B5\u03B9\u03C2" : "Indications") : (el ? "\u0386\u03BB\u03BB\u03B5\u03C2 \u03B5\u03BD\u03B4\u03B5\u03AF\u03BE\u03B5\u03B9\u03C2" : "Other indications")),
       React.createElement("div", { style: { background: S.card, border: `1px solid ${S.line}`, borderRadius: 14, overflow: "hidden" } },
         rows.map((ds, i) => {
@@ -513,7 +593,7 @@ function DrugCard({ d, lang, ctx, sex, t, labOn }) {
     (srcTypes.length > 0 || ver) && React.createElement("div", { "data-src-tags": "1", style: { display: "flex", flexWrap: "wrap", gap: 6 } },
       srcTypes.map((k) => React.createElement("span", { key: k, style: chip }, SRC_TYPES[k][lang])),
       ver && React.createElement("span", { style: { ...chip, color: ver.old ? S.amber : S.teal, borderColor: ver.old ? S.amber : S.teal } }, (el ? "\u03B5\u03BB\u03AD\u03B3\u03C7\u03B8\u03B7\u03BA\u03B5 " : "checked ") + ver.text)),
-    w > 0 && d.doses.some((ds) => typeof doseText(ds, w, lang) !== "string") && React.createElement("div", { style: { fontSize: 12, color: S.amber, fontWeight: 600, lineHeight: 1.4, padding: "0 2px" } }, el ? "\u26A0 \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03AD\u03BD\u03B5\u03C2 \u03C4\u03B9\u03BC\u03AD\u03C2 \u03C3\u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 \u03C4\u03B7\u03C2 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE\u03C2 \u03B1\u03C3\u03B8\u03B5\u03BD\u03BF\u03CD\u03C2, \u03B5\u03BA\u03C4\u03CC\u03C2 \u03B1\u03BD \u03B1\u03BD\u03B1\u03B3\u03C1\u03AC\u03C6\u03B5\u03C4\u03B1\u03B9 \u03AC\u03BB\u03BB\u03BF \u2014 \u03B5\u03C0\u03B1\u03BB\u03B7\u03B8\u03B5\u03CD\u03C3\u03C4\u03B5 \u03C0\u03C1\u03B9\u03BD \u03C4\u03B7 \u03C7\u03BF\u03C1\u03AE\u03B3\u03B7\u03C3\u03B7." : "\u26A0 Calculated on the actual weight in the patient bar unless stated otherwise \u2014 verify before administration."));
+    DRUG_CARD_CALC && w > 0 && d.doses.some((ds) => typeof doseText(ds, w, lang) !== "string") && React.createElement("div", { style: { fontSize: 12, color: S.amber, fontWeight: 600, lineHeight: 1.4, padding: "0 2px" } }, el ? "\u26A0 \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03AD\u03BD\u03B5\u03C2 \u03C4\u03B9\u03BC\u03AD\u03C2 \u03C3\u03C4\u03BF \u03C0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03CC \u03B2\u03AC\u03C1\u03BF\u03C2 \u03C4\u03B7\u03C2 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE\u03C2 \u03B1\u03C3\u03B8\u03B5\u03BD\u03BF\u03CD\u03C2, \u03B5\u03BA\u03C4\u03CC\u03C2 \u03B1\u03BD \u03B1\u03BD\u03B1\u03B3\u03C1\u03AC\u03C6\u03B5\u03C4\u03B1\u03B9 \u03AC\u03BB\u03BB\u03BF \u2014 \u03B5\u03C0\u03B1\u03BB\u03B7\u03B8\u03B5\u03CD\u03C3\u03C4\u03B5 \u03C0\u03C1\u03B9\u03BD \u03C4\u03B7 \u03C7\u03BF\u03C1\u03AE\u03B3\u03B7\u03C3\u03B7." : "\u26A0 Calculated on the actual weight in the patient bar unless stated otherwise \u2014 verify before administration."));
 }
 function MedsTab({ lang, weight, height, sex, age, focus, wBad }) {
   const t = T[lang];
